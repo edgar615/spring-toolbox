@@ -1,0 +1,11 @@
+eventbus:
+  consumer:
+    group: test
+    servers:  120.76.158.7:9092
+    pattern: .*
+    offsets:
+       - DeviceControlEvent_1_3,0,1
+       - DeviceControlEvent_4,1,100
+  producer:
+    retries: 1
+    servers:  120.76.158.7:9092 #多个用逗号,分隔
