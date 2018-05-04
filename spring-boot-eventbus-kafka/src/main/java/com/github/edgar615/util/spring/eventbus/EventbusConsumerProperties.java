@@ -73,7 +73,7 @@ public class EventbusConsumerProperties {
   /**
    * 最大配额，当未处理的事件超过配额时，需要暂停消费
    */
-  private long maxQuota = DEFAULT_MAX_QUOTA;
+  private int maxQuota = DEFAULT_MAX_QUOTA;
 
   private List<String> offsets = new ArrayList<>();
 
@@ -153,11 +153,11 @@ public class EventbusConsumerProperties {
     this.blockedCheckerMs = blockedCheckerMs;
   }
 
-  public long getMaxQuota() {
+  public int getMaxQuota() {
     return maxQuota;
   }
 
-  public void setMaxQuota(long maxQuota) {
+  public void setMaxQuota(int maxQuota) {
     this.maxQuota = maxQuota;
   }
 

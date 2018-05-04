@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.ErrorCode;
+import com.github.edgar615.util.exception.StatusBind;
 import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.validation.ValidationException;
 import org.slf4j.Logger;
@@ -223,7 +224,7 @@ public class ExceptionHandlerController {
   public ModelAndView handleSystemException(
           SystemException ex, HttpServletRequest request, HttpServletResponse response) {
     LOGGER.warn("Handling SystemException: {}", ex.getErrorCode().getNumber(), ex);
-    response.setStatus(ex.getErrorCode().getStatusCode());
+    response.setStatus(StatusBind.instance().statusCode(ex.getErrorCode().getNumber()));
     String contentType = request.getContentType();
     if (contentType != null && contentType.startsWith("application/json")) {
       ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
@@ -232,7 +233,7 @@ public class ExceptionHandlerController {
       mav.addAllObjects(ex.getProperties());
       return mav;
     } else {
-      int statusCode = ex.getErrorCode().getStatusCode();
+      int statusCode = StatusBind.instance().statusCode(ex.getErrorCode().getNumber());
       if (systemProperty.getPages().containsKey(statusCode + "")) {
         ModelAndView mav = new ModelAndView();
         mav.setViewName(systemProperty.getPages().get(statusCode + ""));
@@ -283,10 +284,6 @@ public class ExceptionHandlerController {
         return message;
       }
 
-      @Override
-      public int getStatusCode() {
-        return status.value();
-      }
     };
   }
 
