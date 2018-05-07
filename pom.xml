@@ -21,9 +21,11 @@
         <module>spring-boot-util-web</module>
         <module>spring-boot-util-jdbc</module>
         <module>spring-boot-eventbus-kafka</module>
+        <module>spring-boot-simple-auth</module>
     </modules>
 
     <properties>
+        <release.version>0.2.2</release.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
