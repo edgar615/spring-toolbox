@@ -19,20 +19,24 @@ public class EventbusConsumerProperties {
   public static final int DEFAULT_WORKER_POOL_SIZE =
           2 * Runtime.getRuntime().availableProcessors();
 
-  private static final boolean DEFAULT_AUTO_COMMIT = false;
+  private static final boolean DEFAULT_AUTO_COMMIT = true;
 
   private static final int DEFAULT_SESSION_TIMEOUT_MS = 30000;
 
-  private static final String DEFAULT_AUTO_OFFSET_RESET = "latest";
+  private static final String DEFAULT_AUTO_OFFSET_RESET = "earliest";
 
   private static int DEFAULT_BLOCKER_CHECKER_MS = 1000;
 
-  private static int DEFAULT_MAX_QUOTA = 30000;
+  private static int DEFAULT_MAX_QUOTA = 1000;
 
   /**
    * 是否自动提交，默认值false
    */
   private final boolean consumerAutoCommit = DEFAULT_AUTO_COMMIT;
+
+  private static final int DEFAULT_MAX_POLL_RECORDS = 500;
+
+  private int maxPollRecords = DEFAULT_MAX_POLL_RECORDS;
 
   /**
    * 订阅的主题
@@ -161,4 +165,11 @@ public class EventbusConsumerProperties {
     this.maxQuota = maxQuota;
   }
 
+  public int getMaxPollRecords() {
+    return maxPollRecords;
+  }
+
+  public void setMaxPollRecords(int maxPollRecords) {
+    this.maxPollRecords = maxPollRecords;
+  }
 }

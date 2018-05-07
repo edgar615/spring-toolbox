@@ -67,6 +67,7 @@ public class EventbusPropertiesAutoConfiguration {
             .setConsumerAutoOffsetRest(properties.getConsumerAutoOffsetReset())
             .setConsumerSessionTimeoutMs(properties.getConsumerSessionTimeoutMs())
             .setGroup(properties.getGroup())
+            .setMaxPollRecords(properties.getMaxPollRecords())
             .setWorkerPoolSize(properties.getWorkerPoolSize());
     if (!Strings.isNullOrEmpty(properties.getPattern())) {
       options.setPattern(properties.getPattern());
