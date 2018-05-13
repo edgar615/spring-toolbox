@@ -46,6 +46,8 @@
         <util.version>1.0.18.beta3</util.version>
         <guava.version>21.0</guava.version>
 
+        <caffeine.version>2.6.2</caffeine.version>
+
     </properties>
 
     <repositories>
@@ -138,6 +140,13 @@
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>util</artifactId>
                 <version>${util.version}</version>
+            </dependency>
+
+            <!--cache-->
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
             </dependency>
 
             <!--日志-->
