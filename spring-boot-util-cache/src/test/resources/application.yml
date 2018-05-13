@@ -1,0 +1,5 @@
+cache:
+  enabled: true
+  spec:
+    - name=testCache1,type=caffeine,maximumSize=50,expireAfterWrite=5s
+    - name=testCache2,type=caffeine,maximumSize=5000,expireAfterWrite=30s

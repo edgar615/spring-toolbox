@@ -43,6 +43,13 @@
                 <version>${project.parent.version}</version>
             </dependency>
 
+            <!--缓存-->
+            <dependency>
+                <groupId>com.github.edgar615</groupId>
+                <artifactId>spring-boot-util-cache</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+
             <!--jdbc支持-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
