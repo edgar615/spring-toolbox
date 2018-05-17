@@ -1,5 +1,7 @@
 package com.github.edgar615.util.spring.jdbc;
 
+import com.google.common.base.Joiner;
+
 import com.github.edgar615.util.base.MorePreconditions;
 import com.github.edgar615.util.base.StringUtils;
 import com.github.edgar615.util.db.Jdbc;
@@ -7,18 +9,17 @@ import com.github.edgar615.util.db.Persistent;
 import com.github.edgar615.util.db.SQLBindings;
 import com.github.edgar615.util.db.SqlBuilder;
 import com.github.edgar615.util.search.Example;
-import com.google.common.base.Joiner;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
-import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.sql.DataSource;
 
 /**
  * Created by Edgar on 2017/8/8.
@@ -71,7 +72,7 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   public <ID, T extends Persistent<ID>> int deleteByExample(Class<T> elementType,
-                                                             Example example) {
+                                                            Example example) {
     example = removeUndefinedField(elementType, example);
 
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -98,25 +99,69 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  public <ID, T extends Persistent<ID>> int updateByExample(Persistent<ID> persistent,
-                                                             Example example) {
+  public <ID, T extends Persistent<ID>> int updateById(Persistent<ID> persistent,
+                                                       Map<String, Integer> addOrSub,
+                                                       List<String> nullFields, ID id) {
     boolean noUpdated = persistent.toMap().values().stream()
             .allMatch(v -> v == null);
+    boolean noAddOrSub = addOrSub.keySet().stream()
+            .allMatch(v -> !persistent.fields().contains(v));
+    boolean noNull = nullFields.stream()
+            .allMatch(v -> !persistent.fields().contains(v));
     if (noUpdated) {
       return 0;
     }
+    SQLBindings sqlBindings = SqlBuilder.updateById(persistent, addOrSub, nullFields, id);
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    return jdbcTemplate.update(sqlBindings.sql(), sqlBindings.bindings().toArray());
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> int updateByExample(Persistent<ID> persistent,
+                                                            Example example) {
+    return updateByExample(persistent, null, null, example);
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> int updateByExample(Persistent<ID> persistent,
+                                                            Map<String, Integer> addOrSub,
+                                                            List<String> nullFields,
+                                                            Example example) {
     //对example做一次清洗，将表中不存在的条件删除，避免频繁出现500错误
     example = example.removeUndefinedField(persistent.fields());
     Map<String, Object> map = persistent.toMap();
     List<String> columns = new ArrayList<>();
     List<Object> params = new ArrayList<>();
-    List<String> virtualFields  = persistent.virtualFields();
+    List<String> virtualFields = persistent.virtualFields();
     map.forEach((k, v) -> {
       if (v != null && !virtualFields.contains(k)) {
         columns.add(StringUtils.underscoreName(k) + " = ?");
         params.add(v);
       }
     });
+    if (addOrSub != null) {
+      for (Map.Entry<String, Integer> entry : addOrSub.entrySet()) {
+        String key = entry.getKey();
+        if (persistent.fields().contains(key)) {
+          String underScoreKey = StringUtils.underscoreName(key);
+          if (entry.getValue() > 0) {
+            columns.add(underScoreKey + " = " + underScoreKey + " + " + entry.getValue());
+          } else {
+            columns.add(
+                    underScoreKey + " = " + underScoreKey + " - " + entry.getValue());
+          }
+        }
+      }
+    }
+    if (nullFields != null) {
+      List<String> nullColumns = nullFields.stream()
+              .filter(f -> persistent.fields().contains(f))
+              .map(f -> StringUtils.underscoreName(f))
+              .map(f -> f + " = null")
+              .collect(Collectors.toList());
+      columns.addAll(nullColumns);
+    }
+
     if (columns.isEmpty()) {
       return 0;
     }
@@ -129,47 +174,6 @@ public class JdbcImpl implements Jdbc {
             .append(" set ")
             .append(Joiner.on(",").join(columns));
     List<Object> args = new ArrayList<>(params);
-    if (!example.criteria().isEmpty()) {
-      SQLBindings sqlBindings = SqlBuilder.whereSql(example.criteria());
-      sql.append(" where ")
-              .append(sqlBindings.sql());
-      args.addAll(sqlBindings.bindings());
-    }
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-    return jdbcTemplate.update(sql.toString(), args.toArray());
-  }
-
-  @Override
-  public <ID, T extends Persistent<ID>> int setNullById(Class<T> elementType, List<String> fields,
-                                                        ID id) {
-    List<String> columns = removeUndefinedColumn(elementType, fields);
-    if (columns.isEmpty()) {
-      return 0;
-    }
-    SQLBindings sqlBindings = SqlBuilder.setNullById(elementType, columns, id);
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-    return jdbcTemplate.update(sqlBindings.sql(), sqlBindings.bindings().toArray());
-  }
-
-  @Override
-  public <ID, T extends Persistent<ID>> int setNullByExample(Class<T> elementType,
-                                                              List<String> fields,
-                                                              Example example) {
-    List<String> columns = removeUndefinedColumn(elementType, fields);
-    if (columns.isEmpty()) {
-      return 0;
-    }
-    List<String> updatedColumn = columns.stream()
-            .map(c -> c + " = null")
-            .collect(Collectors.toList());
-
-    String tableName = StringUtils.underscoreName(elementType.getSimpleName());
-    StringBuilder sql = new StringBuilder();
-    sql.append("update ")
-            .append(tableName)
-            .append(" set ")
-            .append(Joiner.on(",").join(updatedColumn));
-    List<Object> args = new ArrayList<>();
     if (!example.criteria().isEmpty()) {
       SQLBindings sqlBindings = SqlBuilder.whereSql(example.criteria());
       sql.append(" where ")
@@ -246,7 +250,7 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   public <ID, T extends Persistent<ID>> int countByExample(Class<T> elementType,
-                                                            Example example) {
+                                                           Example example) {
     example = removeUndefinedField(elementType, example);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     SQLBindings sqlBindings = SqlBuilder.whereSql(example.criteria());
