@@ -87,18 +87,6 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  public <ID> int updateById(Persistent<ID> persistent, ID id) {
-    boolean noUpdated = persistent.toMap().values().stream()
-            .allMatch(v -> v == null);
-    if (noUpdated) {
-      return 0;
-    }
-    SQLBindings sqlBindings = SqlBuilder.updateById(persistent, id);
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-    return jdbcTemplate.update(sqlBindings.sql(), sqlBindings.bindings().toArray());
-  }
-
-  @Override
   public <ID> int updateById(Persistent<ID> persistent,
                                                        Map<String, Integer> addOrSub,
                                                        List<String> nullFields, ID id) {
@@ -114,12 +102,6 @@ public class JdbcImpl implements Jdbc {
     SQLBindings sqlBindings = SqlBuilder.updateById(persistent, addOrSub, nullFields, id);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     return jdbcTemplate.update(sqlBindings.sql(), sqlBindings.bindings().toArray());
-  }
-
-  @Override
-  public <ID> int updateByExample(Persistent<ID> persistent,
-                                                            Example example) {
-    return updateByExample(persistent, null, null, example);
   }
 
   @Override
