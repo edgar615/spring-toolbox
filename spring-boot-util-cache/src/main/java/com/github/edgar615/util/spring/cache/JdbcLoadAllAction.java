@@ -9,7 +9,13 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * Created by Edgar on 2018/5/18.
+ * 从数据库中加载数据的工具类,这个工具类会一直执行，直到load方法返回null或者空
+ * Builder必须传入下列参数：
+ * jdbc
+ * elementType 实体的class
+ * example 默认的查询条件，不应该带排序功能，因为这个工具类会用主键生序排列，如果增加了排序，会导致加载的数据不一致.
+ * limit 每次加载的数量
+ * consumer 加载到数据之后的处理类
  *
  * @author Edgar  Date 2018/5/18
  */

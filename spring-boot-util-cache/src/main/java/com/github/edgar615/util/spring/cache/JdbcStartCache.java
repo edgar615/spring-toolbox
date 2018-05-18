@@ -7,7 +7,14 @@ import com.github.edgar615.util.search.Example;
 import java.util.function.BiConsumer;
 
 /**
- * Created by Edgar on 2018/5/18.
+ * 从数据库中加载数据的工具类,这个工具类会一直执行，直到load方法返回null或者空
+ * Builder必须传入下列参数：
+ * jdbc
+ * elementType 实体的class
+ * example 默认的查询条件，不应该带排序功能，因为这个工具类会用主键生序排列，如果增加了排序，会导致加载的数据不一致.
+ * limit 每次加载的数量
+ * consumer 加载前对example的动态修改，这个类的主要作用是：在第一次加载全部数据到内存中后，如果每次都重新加载会比较耗时，所以在AbstractStartCache
+ * 中记录了上次加载的时间，调用方可以根据上次加载时间缩小加载的范围，例如：lastModifyOn >= lastLoadOn
  *
  * @author Edgar  Date 2018/5/18
  */
@@ -41,7 +48,9 @@ public class JdbcStartCache<ID, T extends Persistent<ID>> extends AbstractStartC
     Example newExample = Example.create();
     newExample.addCriteria(example.criteria());
     newExample.addFields(example.fields());
-    consumer.accept(newExample, lastLoadOn());
+    if (consumer != null) {
+      consumer.accept(newExample, lastLoadOn());
+    }
     JdbcLoadAllAction.<ID, T>builder()
             .setConsumer(this::handleResult)
             .setJdbc(jdbc)

@@ -34,6 +34,11 @@ public abstract class AbstractStartCache<ID, T extends Persistent<ID>>
             .findFirst().orElseGet(null);
   }
 
+  @Override
+  public void clear() {
+    this.elements.clear();
+  }
+
   protected long lastLoadOn() {
     return lastLoadOn;
   }
