@@ -87,7 +87,7 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  public <ID, T extends Persistent<ID>> int updateById(Persistent<ID> persistent, ID id) {
+  public <ID> int updateById(Persistent<ID> persistent, ID id) {
     boolean noUpdated = persistent.toMap().values().stream()
             .allMatch(v -> v == null);
     if (noUpdated) {
@@ -99,7 +99,7 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  public <ID, T extends Persistent<ID>> int updateById(Persistent<ID> persistent,
+  public <ID> int updateById(Persistent<ID> persistent,
                                                        Map<String, Integer> addOrSub,
                                                        List<String> nullFields, ID id) {
     boolean noUpdated = persistent.toMap().values().stream()
@@ -108,7 +108,7 @@ public class JdbcImpl implements Jdbc {
             .allMatch(v -> !persistent.fields().contains(v));
     boolean noNull = nullFields.stream()
             .allMatch(v -> !persistent.fields().contains(v));
-    if (noUpdated) {
+    if (noUpdated && noAddOrSub && noNull) {
       return 0;
     }
     SQLBindings sqlBindings = SqlBuilder.updateById(persistent, addOrSub, nullFields, id);
@@ -117,13 +117,13 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  public <ID, T extends Persistent<ID>> int updateByExample(Persistent<ID> persistent,
+  public <ID> int updateByExample(Persistent<ID> persistent,
                                                             Example example) {
     return updateByExample(persistent, null, null, example);
   }
 
   @Override
-  public <ID, T extends Persistent<ID>> int updateByExample(Persistent<ID> persistent,
+  public <ID> int updateByExample(Persistent<ID> persistent,
                                                             Map<String, Integer> addOrSub,
                                                             List<String> nullFields,
                                                             Example example) {
