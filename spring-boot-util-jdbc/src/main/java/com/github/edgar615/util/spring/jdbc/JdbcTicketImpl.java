@@ -1,5 +1,7 @@
 package com.github.edgar615.util.spring.jdbc;
 
+import com.google.common.base.Strings;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.StatementCallback;
 
@@ -24,6 +26,8 @@ import javax.sql.DataSource;
  */
 class JdbcTicketImpl implements JdbcTicket {
 
+  private final String ticketTable;
+
   private final String stub;
 
   private final int maxSize;
@@ -36,8 +40,13 @@ class JdbcTicketImpl implements JdbcTicket {
 
   private volatile boolean jobRunning = false;
 
-  JdbcTicketImpl(String stub, int maxSize, DataSource dataSource,
+  JdbcTicketImpl(String ticketTable, String stub, int maxSize, DataSource dataSource,
                  ExecutorService executorService) {
+    if (Strings.isNullOrEmpty(ticketTable)) {
+      this.ticketTable = "ticket64";
+    } else {
+      this.ticketTable = ticketTable;
+    }
     this.stub = stub;
     this.maxSize = maxSize;
     this.dataSource = dataSource;
@@ -72,7 +81,7 @@ class JdbcTicketImpl implements JdbcTicket {
   private long reqTicket() {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     long id = jdbcTemplate.execute((StatementCallback<Long>) stmt -> {
-      stmt.execute("replace into ticket64 (stub) values ('" + stub + "')");
+      stmt.execute("replace into " + ticketTable + "(stub) values ('" + stub + "')");
       ResultSet resultSet = stmt.executeQuery("select last_insert_id() as id");
       long result = -1;
       if (resultSet.next()) {

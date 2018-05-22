@@ -44,7 +44,6 @@
         <logback.version>1.2.3</logback.version>
 
         <util.version>1.0.18.RELEASE</util.version>
-        <guava.version>21.0</guava.version>
 
         <caffeine.version>2.6.2</caffeine.version>
 

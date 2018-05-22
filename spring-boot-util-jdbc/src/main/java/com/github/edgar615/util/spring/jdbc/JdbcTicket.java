@@ -17,8 +17,8 @@ public interface JdbcTicket {
    */
   long ticket();
 
-  static JdbcTicket create(String stub, int maxSize, DataSource dataSource,
+  static JdbcTicket create(String ticketTable, String stub, int maxSize, DataSource dataSource,
                            ExecutorService executorService) {
-    return new JdbcTicketImpl(stub, maxSize, dataSource, executorService);
+    return new JdbcTicketImpl(ticketTable, stub, maxSize, dataSource, executorService);
   }
 }
