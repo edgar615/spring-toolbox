@@ -9,18 +9,33 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-simple-auth</artifactId>
+    <artifactId>spring-boot-startcache-binlog</artifactId>
+
+    <properties>
+        <binlog.version>0.13.0</binlog.version>
+        <mysql.mapping.version>0.0.1</mysql.mapping.version>
+    </properties>
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.edgar615</groupId>
-            <artifactId>spring-boot-util-jwt</artifactId>
+            <artifactId>spring-boot-util-cache</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.github.shyiko</groupId>
+            <artifactId>mysql-binlog-connector-java</artifactId>
+            <version>${binlog.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.github.edgar615</groupId>
-            <artifactId>spring-boot-util-web</artifactId>
-            <version>${project.parent.version}</version>
+            <artifactId>mysql-mapping</artifactId>
+            <version>${mysql.mapping.version}</version>
         </dependency>
     </dependencies>
 
@@ -51,4 +66,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

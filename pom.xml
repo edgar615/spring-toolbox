@@ -12,7 +12,7 @@
 
     <groupId>com.github.edgar615</groupId>
     <artifactId>microservice-scaffold</artifactId>
-    <version>0.2.2</version>
+    <version>0.2.3</version>
 
     <packaging>pom</packaging>
     <modules>
@@ -23,10 +23,11 @@
         <module>spring-boot-eventbus-kafka</module>
         <module>spring-boot-simple-auth</module>
         <module>spring-boot-util-cache</module>
+        <module>spring-boot-startcache-binlog</module>
     </modules>
 
     <properties>
-        <release.version>0.2.2</release.version>
+        <release.version>0.2.3</release.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
