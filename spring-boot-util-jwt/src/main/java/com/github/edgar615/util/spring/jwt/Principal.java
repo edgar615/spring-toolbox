@@ -17,7 +17,7 @@ public interface Principal {
 
   String getMail();
 
-  Long getCompanyCode();
+  String getCompanyCode();
 
   String getJti();
 

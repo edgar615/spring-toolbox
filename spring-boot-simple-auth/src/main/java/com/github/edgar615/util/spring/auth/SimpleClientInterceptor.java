@@ -47,7 +47,7 @@ public class SimpleClientInterceptor extends HandlerInterceptorAdapter {
       String appKeyString = new String(Base64.getDecoder().decode(appKeyHeader));
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> clientMap = mapper.readValue(appKeyString, Map.class);
-      Long companyCode = (Long) clientMap.get("companyCode");
+      String companyCode = (String) clientMap.get("companyCode");
       String appKey = (String) clientMap.get("appKey");
       String appName = (String) clientMap.get("appName");
       Objects.requireNonNull(companyCode);

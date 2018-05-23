@@ -90,7 +90,7 @@ public class JwtProviderImpl implements JwtProvider {
     Long userId = jwt.getClaims().get("userId").asLong();
     loginUser.setUserId(userId);
     if (jwt.getClaims().containsKey("companyCode")) {
-      Long companyCode = jwt.getClaims().get("companyCode").asLong();
+      String companyCode = jwt.getClaims().get("companyCode").asString();
       loginUser.setCompanyCode(companyCode);
     }
     if (jwt.getClaims().containsKey("username")) {

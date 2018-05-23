@@ -5,7 +5,7 @@ package com.github.edgar615.util.spring.auth;
  */
 public class ClientInfo {
 
-  private long companyCode;
+  private String companyCode;
 
   private String appKey;
 
@@ -19,11 +19,11 @@ public class ClientInfo {
     this.appName = appName;
   }
 
-  public long getCompanyCode() {
+  public String getCompanyCode() {
     return companyCode;
   }
 
-  public void setCompanyCode(long companyCode) {
+  public void setCompanyCode(String companyCode) {
     this.companyCode = companyCode;
   }
 

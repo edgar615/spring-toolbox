@@ -19,7 +19,7 @@ public class PrincipalImpl implements Principal {
 
   private String mail;
 
-  private Long companyCode;
+  private String companyCode;
 
   private String jti;
 
@@ -85,11 +85,11 @@ public class PrincipalImpl implements Principal {
   }
 
   @Override
-  public Long getCompanyCode() {
+  public String getCompanyCode() {
     return companyCode;
   }
 
-  public void setCompanyCode(Long companyCode) {
+  public void setCompanyCode(String companyCode) {
     this.companyCode = companyCode;
   }
 

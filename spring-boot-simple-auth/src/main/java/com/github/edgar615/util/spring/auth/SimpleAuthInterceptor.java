@@ -52,7 +52,7 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
       String appKeyString = new String(Base64.getDecoder().decode(principalHeader));
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> principalMap = mapper.readValue(appKeyString, Map.class);
-      Long companyCode = (Long) principalMap.get("companyCode");
+      String companyCode = (String) principalMap.get("companyCode");
       Long userId = (Long) principalMap.get("userId");
       String username = (String) principalMap.get("username");
       String fullname = (String) principalMap.get("fullname");
@@ -64,7 +64,7 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
       PrincipalImpl principal = new PrincipalImpl();
       principal.setUserId(userId);
       principalMap.remove("userId");
-      principal.setCompanyCode(-1l);
+      principal.setCompanyCode(companyCode);
       principalMap.remove("companyCode");
       if (!Strings.isNullOrEmpty(username)) {
         principal.setUsername(username);
