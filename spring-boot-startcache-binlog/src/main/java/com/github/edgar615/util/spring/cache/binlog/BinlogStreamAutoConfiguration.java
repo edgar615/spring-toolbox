@@ -47,7 +47,7 @@ public class BinlogStreamAutoConfiguration {
   private static final String SPLIT_KEY_VALUE = "=";
 
   @Bean
-  @ConditionalOnProperty(name = "binlog.enabled", matchIfMissing = false, havingValue = "true")
+  @ConditionalOnProperty(name = "startcache.binlog.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(BinlogStream.class)
   @ConditionalOnBean(StartCacheManager.class)
   public BinlogStream cacheManager(BinlogProperties binlogProperties, DataSourceProperties dataSourceProperties,

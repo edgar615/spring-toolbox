@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/9/20.
  */
-@ConfigurationProperties(prefix = "binlog")
+@ConfigurationProperties(prefix = "startcache.binlog")
 public class BinlogProperties {
 
   /**
