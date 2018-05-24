@@ -1,18 +1,9 @@
-package com.github.edgar615.util.spring.jdbc;
+package com.github.edgar615.util.spring.operatelog;
 
-import com.github.edgar615.util.db.Jdbc;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
 
 /**
  * Created by Administrator on 2017/10/7.
@@ -31,24 +22,18 @@ import javax.sql.DataSource;
  * @ConditionalOnWebApplication：当前项目是Web 项目的条件下。
  */
 @Configuration
-@ConditionalOnWebApplication
-@AutoConfigureAfter(DataSourceAutoConfiguration.class)
-public class JdbcAutoConfiguration {
+public class UserOperateAutoConfiguration {
 
-  @Autowired
-  private DataSource dataSource;
+  private static final String SPLIT_OPTIONS = ",";
 
-  @Bean
-  @ConditionalOnMissingBean({Jdbc.class, CacheManager.class})
-  public Jdbc jdbc() {
-    return new JdbcImpl(dataSource);
-  }
+  private static final String SPLIT_KEY_VALUE = "=";
 
   @Bean
-  @ConditionalOnMissingBean({Jdbc.class})
-  @ConditionalOnBean({CacheManager.class})
-  public Jdbc cachedJdbc(@Autowired CacheManager cacheManager) {
-    return new CacheWrappedJdbc(new JdbcImpl(dataSource), cacheManager);
+  @ConditionalOnProperty(name = "operateLog.enabled", matchIfMissing = false, havingValue = "true")
+  @ConditionalOnMissingBean(OperateLogAspect.class)
+  public OperateLogAspect cacheManager() {
+    return new OperateLogAspect();
   }
+
 
 }

@@ -24,6 +24,7 @@
         <module>spring-boot-simple-auth</module>
         <module>spring-boot-util-cache</module>
         <module>spring-boot-startcache-binlog</module>
+        <module>spring-boot-util-operatelog</module>
     </modules>
 
     <properties>
