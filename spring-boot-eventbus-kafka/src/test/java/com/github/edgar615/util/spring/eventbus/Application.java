@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Controller;
 
-@SpringBootApplication(scanBasePackages = {"com.edgar.**", "com.github.edgar615.**"})//扫描jar
+@SpringBootApplication(scanBasePackages = {"com.github.edgar615.**"})//扫描jar
 public class Application {
   public static void main(String[] args) {
     SpringApplication.run(Application.class, args);

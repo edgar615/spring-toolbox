@@ -7,19 +7,19 @@
     <parent>
         <groupId>com.github.edgar615</groupId>
         <artifactId>microservice-scaffold</artifactId>
-        <version>0.2.4</version>
+        <version>0.2.3</version>
     </parent>
+    <artifactId>spring-boot-eventbus-kafka</artifactId>
 
-    <artifactId>spring-boot-util-jdbc</artifactId>
 
+    <properties>
+        <eventbus.version>1.0.10</eventbus.version>
+    </properties>
     <dependencies>
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
 
         <dependency>
@@ -28,7 +28,8 @@
         </dependency>
         <dependency>
             <groupId>com.github.edgar615</groupId>
-            <artifactId>util</artifactId>
+            <artifactId>eventbus-kafka</artifactId>
+            <version>${eventbus.version}</version>
         </dependency>
 
         <dependency>

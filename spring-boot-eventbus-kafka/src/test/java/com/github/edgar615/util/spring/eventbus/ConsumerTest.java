@@ -15,13 +15,13 @@ import javax.annotation.PostConstruct;
 @Service
 public class ConsumerTest {
 
-  @Autowired
-  private EventConsumer consumer;
-
-  @PostConstruct
-  public void consumer() {
-    consumer.consumer(null, null, e -> {
-      System.out.println(e);
-    });
-  }
+//  @Autowired
+//  private EventConsumer consumer;
+//
+//  @PostConstruct
+//  public void consumer() {
+//    consumer.consumer(null, null, e -> {
+//      System.out.println(e);
+//    });
+//  }
 }

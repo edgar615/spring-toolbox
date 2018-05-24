@@ -7,25 +7,17 @@
     <parent>
         <groupId>com.github.edgar615</groupId>
         <artifactId>microservice-scaffold</artifactId>
-        <version>0.2.4</version>
+        <version>0.2.3</version>
     </parent>
 
-    <artifactId>spring-boot-util-jdbc</artifactId>
+    <artifactId>spring-boot-util-web</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.github.edgar615</groupId>
             <artifactId>util</artifactId>
@@ -37,6 +29,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

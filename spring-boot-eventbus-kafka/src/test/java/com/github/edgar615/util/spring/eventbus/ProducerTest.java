@@ -20,16 +20,16 @@ import javax.annotation.PostConstruct;
 @Service
 public class ProducerTest {
 
-  @Autowired
-  private EventProducer producer;
-
-  @PostConstruct
-  public void producer() {
-    for (int i = 0; i < 1000; i++) {
-      System.out.println(i);
-      Message message = Message.create("" + i, ImmutableMap.of("foo", "bar"));
-      Event event = Event.create("DeviceControlEvent_1_3", message);
-      producer.send(event);
-    }
-  }
+//  @Autowired
+//  private EventProducer producer;
+//
+//  @PostConstruct
+//  public void producer() {
+//    for (int i = 0; i < 1000; i++) {
+//      System.out.println(i);
+//      Message message = Message.create("" + i, ImmutableMap.of("foo", "bar"));
+//      Event event = Event.create("DeviceControlEvent_1_3", message);
+//      producer.send(event);
+//    }
+//  }
 }
