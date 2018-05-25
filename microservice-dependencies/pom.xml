@@ -30,6 +30,11 @@
                 <artifactId>spring-boot-util-web</artifactId>
                 <version>${scaffold.release.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.edgar615</groupId>
+                <artifactId>spring-boot-util-operatelog</artifactId>
+                <version>${scaffold.release.version}</version>
+            </dependency>
             <!--jwt-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
