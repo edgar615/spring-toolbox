@@ -13,3 +13,17 @@ spring.cache.type= # Cache type, auto-detected according to the environment by d
 spring boot的cache不能为每个cache单独设置过期时间，网上有一个方法
 https://blog.csdn.net/xiaolyuh123/article/details/78819898
 我觉得太麻烦，所以通过这个工程自定义不同的Cache
+
+激活这个配置的方式如下:
+```
+cache:
+  enabled: true
+  spec:
+    - name=testCache1,type=caffeine,maximumSize=50,expireAfterWrite=5s
+    - name=testCache2,type=caffeine,maximumSize=5000,expireAfterWrite=30s
+```
+
+现在只实现了caffeine的缓存
+
+有些经常使用的数据（如字典、元数据）变动较少，为了提高性能，可以在系统启动时就加载到内存中
+这个cache为StartCache

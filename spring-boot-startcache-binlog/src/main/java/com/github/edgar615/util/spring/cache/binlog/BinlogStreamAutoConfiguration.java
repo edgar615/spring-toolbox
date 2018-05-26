@@ -1,27 +1,13 @@
 package com.github.edgar615.util.spring.cache.binlog;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.edgar615.util.spring.cache.CacheConfig;
-import com.github.edgar615.util.spring.cache.CacheProperties;
 import com.github.edgar615.util.spring.cache.StartCacheManager;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
-import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Created by Administrator on 2017/10/7.
@@ -43,9 +29,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties({BinlogProperties.class, DataSourceProperties.class})
 public class BinlogStreamAutoConfiguration {
 
-  private static final String SPLIT_OPTIONS = ",";
-  private static final String SPLIT_KEY_VALUE = "=";
-
   @Bean
   @ConditionalOnProperty(name = "startcache.binlog.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(BinlogStream.class)
@@ -55,62 +38,5 @@ public class BinlogStreamAutoConfiguration {
     return BinlogStream.create(binlogProperties, dataSourceProperties, cacheManager);
   }
 
-  public CacheConfig config(String spec) {
-    List<String> options = Splitter.on(SPLIT_OPTIONS)
-            .trimResults().omitEmptyStrings()
-            .splitToList(spec);
-    CacheConfig cacheConfig = new CacheConfig();
-    for (String option : options) {
-      String[] keyAndValue = option.split(SPLIT_KEY_VALUE);
-      Preconditions.checkArgument(keyAndValue.length <= 2,
-              "key-value pair %s with more than one equals sign", option);
-      String key = keyAndValue[0].trim();
-      String value = (keyAndValue.length == 1) ? null : keyAndValue[1].trim();
-      if (key.equalsIgnoreCase("type")) {
-        cacheConfig.setType(value);
-      } else if (key.equalsIgnoreCase("name")) {
-        cacheConfig.setName(value);
-      } else if (key.equalsIgnoreCase("maximumSize")) {
-        cacheConfig.setMaximumSize(Long.parseLong(value));
-      } else if (key.equalsIgnoreCase("expireAfterAccess")) {
-        TimeUnit timeUnit = parseTimeUnit(key, value);
-        long duration = parseDuration(key, value);
-        cacheConfig.setExpireAfterAccess(timeUnit.toSeconds(duration));
-      } else if (key.equalsIgnoreCase("expireAfterWrite")) {
-        TimeUnit timeUnit = parseTimeUnit(key, value);
-        long duration = parseDuration(key, value);
-        cacheConfig.setExpireAfterWrite(timeUnit.toSeconds(duration));
-      } else if (key.equalsIgnoreCase("refreshAfterWrite")) {
-        TimeUnit timeUnit = parseTimeUnit(key, value);
-        long duration = parseDuration(key, value);
-        cacheConfig.setRefreshAfterWrite(timeUnit.toSeconds(duration));
-      }
-    }
-    return cacheConfig;
-  }
-
-  private static long parseDuration(String key, String value) {
-    Preconditions.checkArgument((value != null) && !value.isEmpty(), String.format("value of key %s omitted", key));
-    String duration = value.substring(0, value.length() - 1);
-    return Long.parseLong(duration);
-  }
-
-  private TimeUnit parseTimeUnit(String key, String value) {
-    Preconditions.checkArgument((value != null) && !value.isEmpty(), String.format("value of key %s omitted", key));
-    char lastChar = Character.toLowerCase(value.charAt(value.length() - 1));
-    switch (lastChar) {
-      case 'd':
-        return TimeUnit.DAYS;
-      case 'h':
-        return TimeUnit.HOURS;
-      case 'm':
-        return TimeUnit.MINUTES;
-      case 's':
-        return TimeUnit.SECONDS;
-      default:
-        throw new IllegalArgumentException(String.format(
-                "key %s invalid format; was %s, must end with one of [dDhHmMsS]", key, value));
-    }
-  }
 
 }

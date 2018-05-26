@@ -35,19 +35,18 @@ import javax.sql.DataSource;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class JdbcAutoConfiguration {
 
-  @Autowired
-  private DataSource dataSource;
-
   @Bean
   @ConditionalOnMissingBean({Jdbc.class, CacheManager.class})
-  public Jdbc jdbc() {
+  @ConditionalOnBean(DataSource.class)
+  public Jdbc jdbc(@Autowired DataSource dataSource) {
     return new JdbcImpl(dataSource);
   }
 
   @Bean
+  @ConditionalOnProperty(name = "jdbc.cache.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean({Jdbc.class})
-  @ConditionalOnBean({CacheManager.class})
-  public Jdbc cachedJdbc(@Autowired CacheManager cacheManager) {
+  @ConditionalOnBean({DataSource.class, CacheManager.class})
+  public Jdbc cachedJdbc(@Autowired DataSource dataSource, @Autowired CacheManager cacheManager) {
     return new CacheWrappedJdbc(new JdbcImpl(dataSource), cacheManager);
   }
 
