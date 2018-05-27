@@ -49,6 +49,8 @@
 
         <caffeine.version>2.6.2</caffeine.version>
 
+        <restassured.version>3.1.0</restassured.version>
+
     </properties>
 
     <repositories>
@@ -167,6 +169,12 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${restassured.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

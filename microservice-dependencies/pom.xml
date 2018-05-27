@@ -102,6 +102,19 @@
                 <version>${jdbc.codegen.version}</version>
                 <scope>test</scope>
             </dependency>
+            <!--测试包-->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${restassured.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <!--文档生成，测试环境-->
             <dependency>
