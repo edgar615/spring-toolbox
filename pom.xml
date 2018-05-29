@@ -25,6 +25,7 @@
         <module>spring-boot-util-cache</module>
         <module>spring-boot-startcache-binlog</module>
         <module>spring-boot-util-operatelog</module>
+        <module>spring-cloud-util-feign</module>
     </modules>
 
     <properties>
@@ -35,7 +36,6 @@
         <project.build.sourceEncoding>${java.encoding}</project.build.sourceEncoding>
 
         <junit.version>4.12</junit.version>
-        <spring.boot.version>1.5.10.RELEASE</spring.boot.version>
         <spring.cloud.version>Finchley.M9</spring.cloud.version>
         <cloud.start.version>1.4.3.RELEASE</cloud.start.version>
         <org.aspectj.version>1.7.2</org.aspectj.version>
