@@ -1,21 +1,22 @@
 package com.github.edgar615.util.spring.auth;
 
+import com.google.common.base.Strings;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.edgar615.util.spring.jwt.Principal;
 import com.github.edgar615.util.spring.jwt.PrincipalHolder;
 import com.github.edgar615.util.spring.jwt.PrincipalImpl;
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * jwt的拦截器.
@@ -53,7 +54,13 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> principalMap = mapper.readValue(appKeyString, Map.class);
       String companyCode = (String) principalMap.get("companyCode");
-      Long userId = (Long) principalMap.get("userId");
+      Number number = (Number) principalMap.get("userId");
+      Long userId;
+      if (number instanceof Long) {
+        userId = (Long) number;
+      } else {
+        userId = number.longValue();
+      }
       String username = (String) principalMap.get("username");
       String fullname = (String) principalMap.get("fullname");
       String tel = (String) principalMap.get("tel");
