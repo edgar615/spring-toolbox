@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.auth;
+package com.github.edgar615.util.spring.appkey;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
@@ -56,7 +56,7 @@ public class SimpleClientInterceptor extends HandlerInterceptorAdapter {
       ClientInfo clientInfo = new ClientInfo();
       clientInfo.setAppKey(appKey);
       clientInfo.setCompanyCode(companyCode);
-      clientInfo.setAppName(appName);
+      clientInfo.setName(appName);
       return clientInfo;
     } catch (Exception e) {
       return null;

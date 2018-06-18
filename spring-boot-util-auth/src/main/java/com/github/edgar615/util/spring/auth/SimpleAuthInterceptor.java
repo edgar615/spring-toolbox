@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * jwt的拦截器.
  */
-@Service
 public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SimpleAuthInterceptor.class);

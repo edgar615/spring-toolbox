@@ -1,4 +1,5 @@
-package com.github.edgar615.util.spring.auth;
+package com.github.edgar615.util.spring.appkey;
+
 
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;

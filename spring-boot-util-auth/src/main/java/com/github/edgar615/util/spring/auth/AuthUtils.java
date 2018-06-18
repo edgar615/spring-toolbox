@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuthUtils {
-  public static void addClientInterceptors(InterceptorRegistry registry, SimpleClientInterceptor interceptor, ClientProperties clientProperties) {
+
+  public static void addSimpleAuthInterceptors(InterceptorRegistry registry, SimpleAuthInterceptor interceptor, AuthProperties authProperties) {
     List<String> excludePathPatternsForAuth = new ArrayList<>();
-    if (clientProperties.getIgnore() != null) {
-      excludePathPatternsForAuth.addAll(clientProperties.getIgnore());
+    if (authProperties.getIgnore() != null) {
+      excludePathPatternsForAuth.addAll(authProperties.getIgnore());
     }
     String[] patterns =
             excludePathPatternsForAuth.toArray(new String[excludePathPatternsForAuth.size()]);
@@ -17,7 +18,7 @@ public class AuthUtils {
             .excludePathPatterns(patterns);
   }
 
-  public static void addAuthInterceptors(InterceptorRegistry registry, SimpleAuthInterceptor interceptor, AuthProperties authProperties) {
+  public static void addAuthInterceptors(InterceptorRegistry registry, AuthInterceptor interceptor, AuthProperties authProperties) {
     List<String> excludePathPatternsForAuth = new ArrayList<>();
     if (authProperties.getIgnore() != null) {
       excludePathPatternsForAuth.addAll(authProperties.getIgnore());

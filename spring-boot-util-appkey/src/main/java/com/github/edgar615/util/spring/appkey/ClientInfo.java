@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.auth;
+package com.github.edgar615.util.spring.appkey;
 
 /**
  * Created by Administrator on 2016/4/22.
@@ -9,14 +9,16 @@ public class ClientInfo {
 
   private String appKey;
 
-  private String appName;
+  private String appSecret;
 
-  public String getAppName() {
-    return appName;
+  private String name;
+
+  public String getName() {
+    return name;
   }
 
-  public void setAppName(String appName) {
-    this.appName = appName;
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getCompanyCode() {
@@ -33,5 +35,13 @@ public class ClientInfo {
 
   public void setAppKey(String appKey) {
     this.appKey = appKey;
+  }
+
+  public String getAppSecret() {
+    return appSecret;
+  }
+
+  public void setAppSecret(String appSecret) {
+    this.appSecret = appSecret;
   }
 }

@@ -21,11 +21,12 @@
         <module>spring-boot-util-web</module>
         <module>spring-boot-util-jdbc</module>
         <module>spring-boot-eventbus-kafka</module>
-        <module>spring-boot-simple-auth</module>
+        <module>spring-boot-util-auth</module>
         <module>spring-boot-util-cache</module>
         <module>spring-boot-startcache-binlog</module>
         <module>spring-boot-util-operatelog</module>
         <module>spring-cloud-util-feign</module>
+        <module>spring-boot-util-appkey</module>
     </modules>
 
     <properties>

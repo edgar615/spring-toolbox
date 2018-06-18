@@ -1,5 +1,8 @@
 package com.github.edgar615.util.spring.auth;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**
@@ -7,7 +10,9 @@ import java.util.List;
  *
  * @author Edgar  Date 2017/11/16
  */
-public class ClientProperties {
+@ConfigurationProperties(prefix = "auth")
+@Service
+public class AuthProperties {
   private List<String> ignore;
 
   public List<String> getIgnore() {
