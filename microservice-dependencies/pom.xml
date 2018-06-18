@@ -44,7 +44,13 @@
 
             <dependency>
                 <groupId>com.github.edgar615</groupId>
-                <artifactId>spring-boot-simple-auth</artifactId>
+                <artifactId>spring-boot-util-auth</artifactId>
+                <version>${scaffold.release.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.edgar615</groupId>
+                <artifactId>spring-boot-util-appkey</artifactId>
                 <version>${scaffold.release.version}</version>
             </dependency>
 
