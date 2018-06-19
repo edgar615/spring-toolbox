@@ -47,10 +47,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     } catch (Exception e) {
       throw e;
     }
-    if (principal == null) {
-      throw SystemException.create(DefaultErrorCode.UNKOWN_LOGIN);
+    if (principal != null) {
+      PrincipalHolder.set(principal);
     }
-    PrincipalHolder.set(principal);
     return super.preHandle(request, response, handler);
   }
 
