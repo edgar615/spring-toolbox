@@ -20,6 +20,12 @@
 
         <dependency>
             <groupId>com.github.edgar615</groupId>
+            <artifactId>spring-boot-util-web</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.edgar615</groupId>
             <artifactId>util</artifactId>
         </dependency>
 

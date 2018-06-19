@@ -48,7 +48,7 @@
         <slf4j.version>1.7.14</slf4j.version>
         <logback.version>1.2.3</logback.version>
 
-        <util.version>1.0.18.RELEASE</util.version>
+        <util.version>1.0.19.BETA1</util.version>
 
         <caffeine.version>2.6.2</caffeine.version>
 

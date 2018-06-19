@@ -9,10 +9,17 @@ import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Administrator on 2017/8/18.
@@ -56,6 +63,10 @@ public class JwtProviderImpl implements JwtProvider {
     }
     Algorithm algorithm = null;
     try {
+      if (principal.ext() != null && !principal.ext().isEmpty()) {
+        ObjectMapper mapper = new ObjectMapper();
+        builder.withClaim("ext", mapper.writeValueAsString(principal.ext()));
+      }
       algorithm = Algorithm.HMAC256(jwtProperty.getSecret());
     } catch (Exception e) {
       throw throwSystemException(e);
@@ -86,34 +97,44 @@ public class JwtProviderImpl implements JwtProvider {
     if (jwtProperty.getIssuer() != null) {
       verification.withIssuer(jwtProperty.getIssuer());
     }
-    PrincipalImpl loginUser = new PrincipalImpl();
+    PrincipalImpl principal = new PrincipalImpl();
     Long userId = jwt.getClaims().get("userId").asLong();
-    loginUser.setUserId(userId);
+    principal.setUserId(userId);
     if (jwt.getClaims().containsKey("companyCode")) {
       String companyCode = jwt.getClaims().get("companyCode").asString();
-      loginUser.setCompanyCode(companyCode);
+      principal.setCompanyCode(companyCode);
     }
     if (jwt.getClaims().containsKey("username")) {
       String username = jwt.getClaims().get("username").asString();
-      loginUser.setUsername(username);
+      principal.setUsername(username);
     }
     if (jwt.getClaims().containsKey("fullname")) {
       String fullname = jwt.getClaims().get("fullname").asString();
-      loginUser.setFullname(fullname);
+      principal.setFullname(fullname);
     }
     if (jwt.getClaims().containsKey("tel")) {
       String tel = jwt.getClaims().get("tel").asString();
-      loginUser.setTel(tel);
+      principal.setTel(tel);
     }
     if (jwt.getClaims().containsKey("mail")) {
       String mail = jwt.getClaims().get("mail").asString();
-      loginUser.setMail(mail);
+      principal.setMail(mail);
     }
     if (jwt.getClaims().containsKey("jti")) {
       String jti = jwt.getClaims().get("jti").asString();
-      loginUser.setJti(jti);
+      principal.setJti(jti);
     }
-    return loginUser;
+    if (jwt.getClaims().containsKey("ext")) {
+      try {
+        ObjectMapper mapper = new ObjectMapper();
+        String ext = jwt.getClaims().get("ext").asString();
+        Map<String, Object> extMap = mapper.readValue(ext, Map.class);
+        extMap.forEach((k, v) -> principal.addExt(k, v));
+      } catch (Exception e) {
+        //ignore
+      }
+    }
+    return principal;
   }
 
   private SystemException throwSystemException(Exception e) {

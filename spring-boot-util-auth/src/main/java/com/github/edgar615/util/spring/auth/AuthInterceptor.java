@@ -1,16 +1,14 @@
 package com.github.edgar615.util.spring.auth;
 
+import com.google.common.base.Strings;
+
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.spring.jwt.JwtProvider;
 import com.github.edgar615.util.spring.jwt.Principal;
 import com.github.edgar615.util.spring.jwt.PrincipalHolder;
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -26,6 +24,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(AuthInterceptor.class);
 
+  private final JwtProvider jwtProvider;
+
+  public AuthInterceptor(JwtProvider jwtProvider) {this.jwtProvider = jwtProvider;}
+
   @Override
   public boolean preHandle(HttpServletRequest request,
                            HttpServletResponse response, Object handler) throws Exception {
@@ -36,10 +38,6 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     if (handler instanceof ResourceHttpRequestHandler) {
       return super.preHandle(request, response, handler);
     }
-    BeanFactory factory = WebApplicationContextUtils
-            .getRequiredWebApplicationContext(request.getServletContext());
-    JwtProvider jwtProvider = factory.getBean(JwtProvider.class);
-    //TOKEN要么在参数中，要么在cookie中，要么在请求头Authorization: Bearer <token>中
     Principal principal = null;
     try {
       String token = extractToken(request);
@@ -47,7 +45,6 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         principal = jwtProvider.decodeUser(token);
       }
     } catch (Exception e) {
-      LOGGER.error("AuthTripped", e);
       throw e;
     }
     if (principal == null) {

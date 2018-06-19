@@ -7,25 +7,29 @@ import java.util.List;
 
 public class AuthUtils {
 
-  public static void addSimpleAuthInterceptors(InterceptorRegistry registry, SimpleAuthInterceptor interceptor, AuthProperties authProperties) {
-    List<String> excludePathPatternsForAuth = new ArrayList<>();
-    if (authProperties.getIgnore() != null) {
-      excludePathPatternsForAuth.addAll(authProperties.getIgnore());
-    }
-    String[] patterns =
-            excludePathPatternsForAuth.toArray(new String[excludePathPatternsForAuth.size()]);
+  public static void addSimpleAuthInterceptors(InterceptorRegistry registry,
+                                               SimpleAuthInterceptor interceptor,
+                                               AuthProperties authProperties,
+                                               int order) {
+    String[] patterns = patterns(authProperties);
     registry.addInterceptor(interceptor).addPathPatterns("/**")
-            .excludePathPatterns(patterns);
+            .excludePathPatterns(patterns).order(order);
   }
 
-  public static void addAuthInterceptors(InterceptorRegistry registry, AuthInterceptor interceptor, AuthProperties authProperties) {
-    List<String> excludePathPatternsForAuth = new ArrayList<>();
+  private static String[] patterns(AuthProperties authProperties) {List<String>
+          excludePathPatternsForAuth = new ArrayList<>();
     if (authProperties.getIgnore() != null) {
       excludePathPatternsForAuth.addAll(authProperties.getIgnore());
     }
-    String[] patterns =
-            excludePathPatternsForAuth.toArray(new String[excludePathPatternsForAuth.size()]);
+    excludePathPatternsForAuth.add("/error");
+    return excludePathPatternsForAuth.toArray(new String[excludePathPatternsForAuth.size()]);
+  }
+
+  public static void addAuthInterceptors(InterceptorRegistry registry, AuthInterceptor interceptor,
+                                         AuthProperties authProperties,
+                                         int order) {
+    String[] patterns = patterns(authProperties);
     registry.addInterceptor(interceptor).addPathPatterns("/**")
-            .excludePathPatterns(patterns);
+            .excludePathPatterns(patterns).order(order);
   }
 }

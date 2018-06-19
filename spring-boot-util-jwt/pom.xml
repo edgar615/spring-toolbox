@@ -13,7 +13,7 @@
     <artifactId>spring-boot-util-jwt</artifactId>
 
     <properties>
-        <jwt.version>3.2.0</jwt.version>
+        <jwt.version>3.3.0</jwt.version>
     </properties>
 
     <dependencies>

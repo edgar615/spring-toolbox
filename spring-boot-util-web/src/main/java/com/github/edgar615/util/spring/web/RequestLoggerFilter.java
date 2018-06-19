@@ -81,12 +81,13 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     //    String reqBody = DoogiesUtil._stream2String(request.getInputStream());   // THIS WOULD
     // NOT WORK!
     // So we need to apply some stronger magic here :-)
-    ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
+    ResettableStreamRequestWrapper wrappedRequest
+            = new ResettableStreamRequestWrapper(request);
     ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
 
     // I can only log the request's body AFTER the request has been made and
     // ContentCachingRequestWrapper did its work.
-    String requestBody = getBody(wrappedRequest);
+    String body = wrappedRequest.getRequestBody();
     Log.create(LOGGER)
             .setLogType(LogType.SR)
             .setEvent("http.request.received")
@@ -95,18 +96,12 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
             .addArg(request.getServletPath())
             .addArg(headerString(request))
             .addArg(paramString(request))
-            .addArg(requestBody)
+            .addArg(Strings.isNullOrEmpty(body) ? "no body" : body)
             .info();
     long startTime = System.currentTimeMillis();
     filterChain.doFilter(wrappedRequest,
                          wrappedResponse);     // ======== This performs the actual request!
     wrappedResponse.addHeader("x-request-id", traceId);
-    Log.create(LOGGER)
-            .setLogType(LogType.LOG)
-            .setEvent("request.body")
-            .setMessage("[{}]")
-            .addArg(getBody(wrappedRequest))
-            .info();
     Log.create(LOGGER)
             .setLogType(LogType.SS)
             .setEvent("http.request.reply")
@@ -123,6 +118,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
 
   }
 
+  @Deprecated
   private String getBody(ContentCachingRequestWrapper request) {
     // wrap request to make sure we can read the body of the request (otherwise it will be consumed by the actual
     // request handler)
@@ -145,6 +141,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     return "no body";
   }
 
+  @Deprecated
   private String getContentAsString(byte[] buf, int maxLength, String charsetName) {
     if (buf == null || buf.length == 0) return "";
     int length = Math.min(buf.length, this.maxPayloadLength);

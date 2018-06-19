@@ -1,23 +1,25 @@
 package com.github.edgar615.util.spring.appkey;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+
 import com.github.edgar615.util.base.EncryptUtils;
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
+import com.github.edgar615.util.spring.web.ResettableStreamRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 从请求头中解析对应的Client.
@@ -25,6 +27,10 @@ import java.util.List;
 public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ClientInfoInterceptor.class);
+
+  private final ClientFinder clientFinder;
+
+  public ClientInfoInterceptor(ClientFinder clientFinder) {this.clientFinder = clientFinder;}
 
   @Override
   public boolean preHandle(HttpServletRequest request,
@@ -44,15 +50,13 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
   private void findAndCheckClient(HttpServletRequest request) {
     String appKey = request.getParameter("appKey");
     if (Strings.isNullOrEmpty(appKey)) {
-      return;
+      throw SystemException.create(DefaultErrorCode.MISSING_ARGS)
+              .setDetails("appKey");
     }
-    BeanFactory factory = WebApplicationContextUtils
-            .getRequiredWebApplicationContext(request.getServletContext());
-    ClientFinder clientFinder = factory.getBean(ClientFinder.class);
-    ClientInfo clientInfo =  clientFinder.get(appKey);
+    ClientInfo clientInfo = clientFinder.get(appKey);
     if (clientInfo == null) {
       throw SystemException.create(DefaultErrorCode.PERMISSION_DENIED)
-              .setDetails("undefined appkey");
+              .setDetails("undefined appKey");
     }
     checkSign(request, clientInfo);
     ClientHolder.set(clientInfo);
@@ -66,7 +70,7 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
       throw SystemException.create(DefaultErrorCode.INVALID_REQ)
               .setDetails("signMethod required");
     }
-   List<String> optionMethods = new ArrayList<>();
+    List<String> optionMethods = new ArrayList<>();
     optionMethods.add("HMACSHA256");
     optionMethods.add("HMACSHA512");
     optionMethods.add("HMACMD5");
@@ -75,14 +79,14 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
       throw SystemException.create(DefaultErrorCode.INVALID_REQ)
               .setDetails("signMethod only support HMACSHA256 | HMACSHA512 | HMACMD5 | MD5");
     }
-  String clientSignValue = request.getParameter("sign");
+    String clientSignValue = request.getParameter("sign");
     if (Strings.isNullOrEmpty(clientSignValue)) {
       throw SystemException.create(DefaultErrorCode.INVALID_REQ)
               .setDetails("sign required");
     }
     String serverSignValue = signTopRequest(request, secret, signMethod);
     if (!clientSignValue.equalsIgnoreCase(serverSignValue)) {
-      throw  SystemException.create(DefaultErrorCode.INVALID_REQ)
+      throw SystemException.create(DefaultErrorCode.INVALID_REQ)
               .set("details", "Incorrect sign");
     }
   }
@@ -106,18 +110,35 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
     return sign;
   }
 
+  private Map<String, String> baseMap(HttpServletRequest request) {
+    Map<String, String> params = new HashMap<>();
+    for (String key : request.getParameterMap().keySet()) {
+      String value = request.getParameter(key);
+      if (!key.equalsIgnoreCase("sign") && !Strings.isNullOrEmpty(value)) {
+        params.put(key, value);
+      }
+    }
+    if (request.getMethod().equalsIgnoreCase("POST")
+        || request.getMethod().equalsIgnoreCase("PUT")) {
+      if (request instanceof ResettableStreamRequestWrapper) {
+        ResettableStreamRequestWrapper requestWrapper = (ResettableStreamRequestWrapper) request;
+        params.put("body", requestWrapper.getRequestBody());
+      }
+    }
+    return params;
+  }
+
   private String baseString(HttpServletRequest request) {
+    Map<String, String> params = baseMap(request);
     // 第一步：检查参数是否已经排序
-    String[] keys = request.getParameterMap().keySet().toArray(new String[request.getParameterMap().size()]);
+    String[] keys = params.keySet().toArray(new String[params.size()]);
+
     Arrays.sort(keys);
 
     // 第二步：把所有参数名和参数值串在一起
     List<String> query = new ArrayList<>(keys.length);
     for (String key : keys) {
-      String value = request.getParameter(key);
-      if (!Strings.isNullOrEmpty(value)) {
-        query.add(key + "=" + value);
-      }
+      query.add(key + "=" + params.get(key));
     }
     return Joiner.on("&").join(query);
   }
