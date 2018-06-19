@@ -38,6 +38,7 @@
         <project.build.sourceEncoding>${java.encoding}</project.build.sourceEncoding>
 
         <junit.version>4.12</junit.version>
+        <spring.version>5.0.5.RELEASE</spring.version>
         <spring.cloud.version>Finchley.M9</spring.cloud.version>
         <cloud.start.version>1.4.3.RELEASE</cloud.start.version>
         <org.aspectj.version>1.7.2</org.aspectj.version>
@@ -124,6 +125,11 @@
                 <version>${cloud.start.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjrt</artifactId>

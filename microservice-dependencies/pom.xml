@@ -24,6 +24,7 @@
 
     <dependencyManagement>
         <dependencies>
+
             <!--web支持-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
