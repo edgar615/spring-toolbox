@@ -101,6 +101,12 @@
                 <version>${scaffold.release.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.github.edgar615</groupId>
+                <artifactId>spring-boot-eventbus-local</artifactId>
+                <version>${scaffold.release.version}</version>
+            </dependency>
+
             <!--持久层生成-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>

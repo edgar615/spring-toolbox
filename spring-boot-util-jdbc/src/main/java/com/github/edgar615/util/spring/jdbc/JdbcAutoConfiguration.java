@@ -36,7 +36,8 @@ import javax.sql.DataSource;
 public class JdbcAutoConfiguration {
 
   @Bean
-  @ConditionalOnMissingBean({Jdbc.class, CacheManager.class})
+  @ConditionalOnProperty(name = "jdbc.cache.enabled", matchIfMissing = true, havingValue = "false")
+  @ConditionalOnMissingBean({Jdbc.class})
   @ConditionalOnBean(DataSource.class)
   public Jdbc jdbc(@Autowired DataSource dataSource) {
     return new JdbcImpl(dataSource);
