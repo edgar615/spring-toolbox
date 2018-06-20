@@ -139,7 +139,7 @@ class BinlogStreamImpl implements BinlogStream {
     }
 
     private Map<String, Object> lowCamelKey(String tableName, Map<Integer, Object> source) {
-      Table table = TableUtils.getTable(tableName);
+      Table table = TableUtils.getAndCheck(tableName);
       Map<String, Object> target = new HashMap<>();
       source.forEach((k, v) -> {
         String lowCamelName

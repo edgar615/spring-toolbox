@@ -30,7 +30,7 @@ public class InsertData implements DmlData {
     TableMapEventData tableMapEventData = tableMap.getData();
     this.database = tableMapEventData.getDatabase();
     this.table = tableMapEventData.getTable();
-    Table table = TableUtils.getTable(this.table);
+    Table table = TableUtils.getAndCheck(this.table);
     WriteRowsEventData writeRowsEventData = writeRow.getData();
     BitSet bitSet = writeRowsEventData.getIncludedColumns();
     List<Serializable[]> rows = writeRowsEventData.getRows();

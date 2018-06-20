@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author Edgar  Date 2018/5/22
  */
 public class TableUtils {
-  public static Table getTable(String tableName) {
+  public static Table getAndCheck(String tableName) {
     Optional<Table> optional =
             TableRegistry.instance().tables().stream()
                     .filter(table -> table.getName()
@@ -24,5 +24,14 @@ public class TableUtils {
       throw new NoSuchElementException("table:" + tableName);
     }
     return optional.get();
+  }
+
+  public static Table get(String tableName) {
+    Optional<Table> optional =
+            TableRegistry.instance().tables().stream()
+                    .filter(table -> table.getName()
+                            .equalsIgnoreCase(tableName))
+                    .findFirst();
+    return optional.orElse(null);
   }
 }

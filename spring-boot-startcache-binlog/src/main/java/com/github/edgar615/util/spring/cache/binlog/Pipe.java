@@ -3,6 +3,7 @@ package com.github.edgar615.util.spring.cache.binlog;
 import com.github.shyiko.mysql.binlog.event.Event;
 import com.github.shyiko.mysql.binlog.event.EventType;
 import com.github.shyiko.mysql.binlog.event.QueryEventData;
+import com.github.shyiko.mysql.binlog.event.TableMapEventData;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -75,25 +76,36 @@ public class Pipe {
   public void composeInsert() {
     Event tableMap = events.get(events.size() - 2);
     Event writeRow = events.getLast();
-    InsertData insertData = new InsertData(tableMap, writeRow);
+    TableMapEventData tableMapEventData = tableMap.getData();
+    if (TableUtils.get(tableMapEventData.getTable()) != null) {
+      InsertData insertData = new InsertData(tableMap, writeRow);
 //    rowEvent = false;
-    datas.add(insertData);
+      datas.add(insertData);
+    }
   }
 
   public void composeDelete() {
     Event tableMap = events.get(events.size() - 2);
     Event deleteRow = events.getLast();
-    DeleteData deleteData = new DeleteData(tableMap, deleteRow);
+    TableMapEventData tableMapEventData = tableMap.getData();
+    if (TableUtils.get(tableMapEventData.getTable()) != null) {
+      DeleteData deleteData = new DeleteData(tableMap, deleteRow);
 //    rowEvent = false;
-    datas.add(deleteData);
+      datas.add(deleteData);
+    }
+
   }
 
   public void composeUpdate() {
     Event tableMap = events.get(events.size() - 2);
     Event updateRow = events.getLast();
-    UpdateData updateData = new UpdateData(tableMap, updateRow);
+    TableMapEventData tableMapEventData = tableMap.getData();
+    if (TableUtils.get(tableMapEventData.getTable()) != null) {
+      UpdateData updateData = new UpdateData(tableMap, updateRow);
 //    rowEvent = false;
-    datas.add(updateData);
+      datas.add(updateData);
+    }
+
   }
 
   private void flush() {
