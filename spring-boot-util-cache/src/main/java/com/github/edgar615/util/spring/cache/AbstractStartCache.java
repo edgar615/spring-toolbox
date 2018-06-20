@@ -62,7 +62,7 @@ public abstract class AbstractStartCache<ID, T extends Persistent<ID>>
 
   public T get(ID id) {
     return elements.stream().filter(e -> e.id().equals(id))
-            .findFirst().orElseGet(null);
+            .findFirst().orElse(null);
   }
 
   @Override
