@@ -30,12 +30,18 @@ import org.springframework.context.annotation.Configuration;
 public class BinlogStreamAutoConfiguration {
 
   @Bean
-  @ConditionalOnProperty(name = "startcache.binlog.enabled", matchIfMissing = false, havingValue = "true")
+  @ConditionalOnProperty(name = "startcache.binlog.enabled", matchIfMissing = false, havingValue
+          = "true")
   @ConditionalOnMissingBean(BinlogStream.class)
   @ConditionalOnBean(StartCacheManager.class)
-  public BinlogStream cacheManager(BinlogProperties binlogProperties, DataSourceProperties dataSourceProperties,
-                                   @Autowired StartCacheManager cacheManager) {
-    return BinlogStream.create(binlogProperties, dataSourceProperties, cacheManager);
+  public BinlogStream binlogStream(BinlogProperties binlogProperties,
+                                   DataSourceProperties dataSourceProperties,
+                                   @Autowired StartCacheManager startCacheManager) {
+    BinlogStream binlogStream
+            = BinlogStream.create(binlogProperties, dataSourceProperties,
+                                  startCacheManager);
+    binlogStream.start();
+    return binlogStream;
   }
 
 

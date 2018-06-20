@@ -32,7 +32,7 @@ public class OperateLogAspect {
   @Autowired
   private ApplicationEventPublisher publisher;
 
-  @Pointcut("@annotation(com.jcclouds.microservice.log.UserOperate)")
+  @Pointcut("@annotation(com.github.edgar615.util.spring.operatelog.UserOperate)")
   public void controllerAspect() {}
 
   @AfterReturning(value = "controllerAspect() && @annotation(annotation) ", argNames = "annotation")

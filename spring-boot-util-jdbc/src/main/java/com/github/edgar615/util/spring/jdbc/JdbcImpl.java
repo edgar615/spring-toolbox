@@ -190,7 +190,14 @@ public class JdbcImpl implements Jdbc {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     SQLBindings sqlBindings = SqlBuilder.whereSql(example.criteria());
     String tableName = StringUtils.underscoreName(elementType.getSimpleName());
-    String sql = "select *  from "
+    String selectedField = "*";
+    if (!example.fields().isEmpty()) {
+      selectedField = Joiner.on(",")
+              .join(example.fields().stream()
+                            .map(f -> StringUtils.underscoreName(f))
+                            .collect(Collectors.toList()));
+    }
+    String sql = "select " + selectedField + "  from "
                  + tableName;
     if (!example.criteria().isEmpty()) {
       sql += " where " + sqlBindings.sql();
@@ -211,7 +218,14 @@ public class JdbcImpl implements Jdbc {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     SQLBindings sqlBindings = SqlBuilder.whereSql(example.criteria());
     String tableName = StringUtils.underscoreName(elementType.getSimpleName());
-    String sql = "select *  from "
+    String selectedField = "*";
+    if (!example.fields().isEmpty()) {
+      selectedField = Joiner.on(",")
+              .join(example.fields().stream()
+                            .map(f -> StringUtils.underscoreName(f))
+                            .collect(Collectors.toList()));
+    }
+    String sql = "select " + selectedField + "  from "
                  + tableName;
     if (!example.criteria().isEmpty()) {
       sql += " where " + sqlBindings.sql();

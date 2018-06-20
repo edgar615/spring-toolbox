@@ -24,10 +24,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class UserOperateAutoConfiguration {
 
-  private static final String SPLIT_OPTIONS = ",";
-
-  private static final String SPLIT_KEY_VALUE = "=";
-
   @Bean
   @ConditionalOnProperty(name = "operateLog.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(OperateLogAspect.class)
