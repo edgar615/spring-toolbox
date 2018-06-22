@@ -3,6 +3,8 @@ package com.github.edgar615.util.spring.cache.binlog;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
 
+import com.github.edgar615.mysql.mapping.Column;
+import com.github.edgar615.mysql.mapping.ParameterType;
 import com.github.edgar615.mysql.mapping.Table;
 import com.github.edgar615.mysql.mapping.TableMapping;
 import com.github.edgar615.mysql.mapping.TableMappingOptions;
@@ -15,6 +17,7 @@ import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,12 +145,59 @@ class BinlogStreamImpl implements BinlogStream {
       Table table = TableUtils.getAndCheck(tableName);
       Map<String, Object> target = new HashMap<>();
       source.forEach((k, v) -> {
+        Column column = table.getColumns().get(k);
         String lowCamelName
                 = CaseFormat.LOWER_UNDERSCORE.converterTo(CaseFormat.LOWER_CAMEL)
-                .convert(table.getColumns().get(k).getName().toLowerCase());
-        target.put(lowCamelName, v);
+                .convert(column.getName().toLowerCase());
+        target.put(lowCamelName, parse(column, v));
       });
       return target;
     }
+  }
+
+  private Object parse(Column column, Object value) {
+    if (column.getParameterType() == ParameterType.BOOLEAN) {
+      if (value == null) {
+        return value;
+      } else if (value.equals(1)) {
+        return true;
+      } else if (value.equals(0)) {
+        return false;
+      } else {
+        return null;
+      }
+    }
+    if (column.getParameterType() == ParameterType.INTEGER) {
+      if (value == null) {
+        return value;
+      }
+      return Integer.parseInt(value.toString());
+    }
+    if (column.getParameterType() == ParameterType.LONG) {
+      if (value == null) {
+        return value;
+      }
+      return Long.parseLong(value.toString());
+    }
+    if (column.getParameterType() == ParameterType.FLOAT) {
+      if (value == null) {
+        return value;
+      }
+      return Float.parseFloat(value.toString());
+    }
+    if (column.getParameterType() == ParameterType.DOUBLE) {
+      if (value == null) {
+        return value;
+      }
+      return Double.parseDouble(value.toString());
+    }
+    if (column.getParameterType() == ParameterType.BIGDECIMAL) {
+      if (value == null) {
+        return value;
+      }
+      return new BigDecimal(value.toString());
+    }
+    //todo 其他转换
+    return value;
   }
 }
