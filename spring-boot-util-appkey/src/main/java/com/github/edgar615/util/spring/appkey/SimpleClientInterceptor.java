@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -36,6 +37,13 @@ public class SimpleClientInterceptor extends HandlerInterceptorAdapter {
       ClientHolder.set(clientInfo);
     }
     return super.preHandle(request, response, handler);
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                              Object handler, @Nullable Exception ex) throws Exception {
+    ClientHolder.clear();
+    super.afterCompletion(request, response, handler, ex);
   }
 
   private ClientInfo extractClientInfo(HttpServletRequest request) {

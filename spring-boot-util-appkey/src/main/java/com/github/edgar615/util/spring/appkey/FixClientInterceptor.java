@@ -1,5 +1,6 @@
 package com.github.edgar615.util.spring.appkey;
 
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,5 +29,12 @@ public class FixClientInterceptor extends HandlerInterceptorAdapter {
     clientInfo.setName(clientFixProperties.getName());
     ClientHolder.set(clientInfo);
     return super.preHandle(request, response, handler);
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                              Object handler, @Nullable Exception ex) throws Exception {
+    ClientHolder.clear();
+    super.afterCompletion(request, response, handler, ex);
   }
 }

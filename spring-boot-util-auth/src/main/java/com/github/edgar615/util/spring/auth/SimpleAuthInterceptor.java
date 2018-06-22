@@ -8,6 +8,7 @@ import com.github.edgar615.util.spring.jwt.PrincipalHolder;
 import com.github.edgar615.util.spring.jwt.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
@@ -41,6 +42,13 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
       PrincipalHolder.set(principal);
     }
     return super.preHandle(request, response, handler);
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                              Object handler, @Nullable Exception ex) throws Exception {
+    PrincipalHolder.clear();
+    super.afterCompletion(request, response, handler, ex);
   }
 
   private Principal extractPrincipal(HttpServletRequest request) {

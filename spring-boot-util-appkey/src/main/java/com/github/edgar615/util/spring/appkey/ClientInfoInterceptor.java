@@ -9,6 +9,7 @@ import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.spring.web.ResettableStreamRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -45,6 +46,13 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
 
     findAndCheckClient(request);
     return super.preHandle(request, response, handler);
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                              Object handler, @Nullable Exception ex) throws Exception {
+    ClientHolder.clear();
+    super.afterCompletion(request, response, handler, ex);
   }
 
   private void findAndCheckClient(HttpServletRequest request) {

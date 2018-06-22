@@ -9,6 +9,7 @@ import com.github.edgar615.util.spring.jwt.Principal;
 import com.github.edgar615.util.spring.jwt.PrincipalHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -51,6 +52,13 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
       PrincipalHolder.set(principal);
     }
     return super.preHandle(request, response, handler);
+  }
+
+  @Override
+  public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
+                              Object handler, @Nullable Exception ex) throws Exception {
+    PrincipalHolder.clear();
+    super.afterCompletion(request, response, handler, ex);
   }
 
   private String extractToken(HttpServletRequest request) {
