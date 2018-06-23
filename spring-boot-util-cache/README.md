@@ -21,9 +21,43 @@ cache:
   spec:
     - name=testCache1,type=caffeine,maximumSize=50,expireAfterWrite=5s
     - name=testCache2,type=caffeine,maximumSize=5000,expireAfterWrite=30s
+  dynamic:
+      - name=dynamicCache,type=caffeine,maximumSize=50,expireAfterWrite=5s
 ```
 
 现在只实现了caffeine的缓存
 
 有些经常使用的数据（如字典、元数据）变动较少，为了提高性能，可以在系统启动时就加载到内存中
 这个cache为StartCache
+
+动态缓存名
+这个功能带有一点业务特征，多租户的数据，需要根据租户来缓存，清除的时候只清除租户的缓存，避免所有的缓存失效。
+
+如果使用动态缓存名，还需要实现CacheResolver
+
+```
+@Configuration
+@EnableCaching
+public class CacheConfig extends CachingConfigurerSupport {
+
+    @Autowired
+    private CacheManager cacheManager;
+
+    @Override
+    public CacheResolver cacheResolver() {
+        return new DynamicCacheResolver(cacheManager);
+    }
+}
+```
+
+然后在`@Cacheable`，`@CacheEvict`注解的方法上加上`@DynamicCacheName`注解，此时会从`CacheManager`中查询
+名为cacheNames-dynamicName的缓存，如果不存在这个缓存，且dynamic中定义了cacheName对应的名字，则会自动创建一个缓存
+
+```
+  @Cacheable(cacheNames = "foo", key = "#p3 + '-' + #p4")
+  @DynamicCacheName("#p0 + '-' + #p1")
+  public List<Article> find(String identifier, String companyCode, int start, int limit) {
+    //
+  }
+```
+
