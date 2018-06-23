@@ -1,24 +1,18 @@
 package com.github.edgar615.util.spring.cache;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Maps;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -43,35 +37,33 @@ import java.util.stream.Collectors;
 public class CacheAutoConfiguration {
 
   private static final String SPLIT_OPTIONS = ",";
+
   private static final String SPLIT_KEY_VALUE = "=";
+
+  private static long parseDuration(String key, String value) {
+    Preconditions.checkArgument((value != null) && !value.isEmpty(),
+                                String.format("value of key %s omitted", key));
+    String duration = value.substring(0, value.length() - 1);
+    return Long.parseLong(duration);
+  }
 
   @Bean
   @ConditionalOnProperty(name = "cache.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(CacheManager.class)
   public CacheManager cacheManager(CacheProperties properties) {
-    List<Cache> caches = new ArrayList<>();
     List<CacheConfig> cacheConfigs = properties.getSpec().stream().map(this::config)
             .collect(Collectors.toList());
-    for (CacheConfig cacheConfig : cacheConfigs) {
-      if ("caffeine".equalsIgnoreCase(cacheConfig.getType())) {
-        Caffeine caffeine = Caffeine.newBuilder();
-        if (cacheConfig.getMaximumSize() != null) {
-          caffeine.maximumSize(cacheConfig.getMaximumSize());
-        }
-        if (cacheConfig.getExpireAfterWrite() != null) {
-          caffeine.expireAfterWrite(cacheConfig.getExpireAfterWrite(), TimeUnit.SECONDS);
-        }
-        if (cacheConfig.getExpireAfterAccess() != null) {
-          caffeine.expireAfterAccess(cacheConfig.getExpireAfterAccess(), TimeUnit.SECONDS);
-        }
-        if (cacheConfig.getRefreshAfterWrite() != null) {
-          caffeine.refreshAfterWrite(cacheConfig.getRefreshAfterWrite(), TimeUnit.SECONDS);
-        }
-        caches.add(new CaffeineCache(cacheConfig.getName(), caffeine.build()));
-      }
-
-    }
+    List<Cache> caches = cacheConfigs.stream()
+            .map(CacheUtils::createCache)
+            .filter(c -> c != null)
+            .collect(Collectors.toList());
     SimpleCacheManager cacheManager = new SimpleCacheManager();
+    if (properties.getDynamic() != null
+        && !properties.getDynamic().isEmpty()) {
+      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
+              .collect(Collectors.toList());
+      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
+    }
     cacheManager.setCaches(caches);
     return cacheManager;
   }
@@ -84,7 +76,7 @@ public class CacheAutoConfiguration {
     for (String option : options) {
       String[] keyAndValue = option.split(SPLIT_KEY_VALUE);
       Preconditions.checkArgument(keyAndValue.length <= 2,
-              "key-value pair %s with more than one equals sign", option);
+                                  "key-value pair %s with more than one equals sign", option);
       String key = keyAndValue[0].trim();
       String value = (keyAndValue.length == 1) ? null : keyAndValue[1].trim();
       if (key.equalsIgnoreCase("type")) {
@@ -110,14 +102,9 @@ public class CacheAutoConfiguration {
     return cacheConfig;
   }
 
-  private static long parseDuration(String key, String value) {
-    Preconditions.checkArgument((value != null) && !value.isEmpty(), String.format("value of key %s omitted", key));
-    String duration = value.substring(0, value.length() - 1);
-    return Long.parseLong(duration);
-  }
-
   private TimeUnit parseTimeUnit(String key, String value) {
-    Preconditions.checkArgument((value != null) && !value.isEmpty(), String.format("value of key %s omitted", key));
+    Preconditions.checkArgument((value != null) && !value.isEmpty(),
+                                String.format("value of key %s omitted", key));
     char lastChar = Character.toLowerCase(value.charAt(value.length() - 1));
     switch (lastChar) {
       case 'd':

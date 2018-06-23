@@ -16,11 +16,24 @@ public class CacheProperties {
    */
   private List<String> spec = new ArrayList<>();
 
+  /**
+   * 动态生成缓存名称的定义
+   */
+  private List<String> dynamic = new ArrayList<>();
+
   public List<String> getSpec() {
     return spec;
   }
 
   public void setSpec(List<String> spec) {
     this.spec = spec;
+  }
+
+  public List<String> getDynamic() {
+    return dynamic;
+  }
+
+  public void setDynamic(List<String> dynamic) {
+    this.dynamic = dynamic;
   }
 }
