@@ -63,8 +63,7 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
     }
     ClientInfo clientInfo = clientFinder.get(appKey);
     if (clientInfo == null) {
-      throw SystemException.create(DefaultErrorCode.PERMISSION_DENIED)
-              .setDetails("undefined appKey");
+      throw SystemException.create(ClientError.NON_EXISTED_APP_KEY);
     }
     checkSign(request, clientInfo);
     ClientHolder.set(clientInfo);
@@ -75,8 +74,8 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
     String secret = clientInfo.getAppSecret();
     String signMethod = request.getParameter("signMethod");
     if (Strings.isNullOrEmpty(signMethod)) {
-      throw SystemException.create(DefaultErrorCode.INVALID_REQ)
-              .setDetails("signMethod required");
+      throw SystemException.create(DefaultErrorCode.MISSING_ARGS)
+              .setDetails("signMethod");
     }
     List<String> optionMethods = new ArrayList<>();
     optionMethods.add("HMACSHA256");
@@ -84,18 +83,17 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
     optionMethods.add("HMACMD5");
     optionMethods.add("MD5");
     if (!optionMethods.contains(signMethod)) {
-      throw SystemException.create(DefaultErrorCode.INVALID_REQ)
+      throw SystemException.create(ClientError.UNSUPPORTED_SING_METHOD)
               .setDetails("signMethod only support HMACSHA256 | HMACSHA512 | HMACMD5 | MD5");
     }
     String clientSignValue = request.getParameter("sign");
     if (Strings.isNullOrEmpty(clientSignValue)) {
-      throw SystemException.create(DefaultErrorCode.INVALID_REQ)
-              .setDetails("sign required");
+      throw SystemException.create(DefaultErrorCode.MISSING_ARGS)
+              .setDetails("sign");
     }
     String serverSignValue = signTopRequest(request, secret, signMethod);
     if (!clientSignValue.equalsIgnoreCase(serverSignValue)) {
-      throw SystemException.create(DefaultErrorCode.INVALID_REQ)
-              .set("details", "Incorrect sign");
+      throw SystemException.create(ClientError.INCORRECT_SIGN);
     }
   }
 
