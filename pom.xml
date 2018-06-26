@@ -39,8 +39,8 @@
 
         <junit.version>4.12</junit.version>
         <spring.version>5.0.5.RELEASE</spring.version>
-        <spring.cloud.version>Finchley.M9</spring.cloud.version>
-        <cloud.start.version>1.4.3.RELEASE</cloud.start.version>
+        <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
+        <cloud.start.version>2.0.0.RELEASE</cloud.start.version>
         <org.aspectj.version>1.7.2</org.aspectj.version>
         <aspectjweaver.version>1.8.6</aspectjweaver.version>
 
@@ -117,12 +117,12 @@
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-feign</artifactId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
                 <version>${cloud.start.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-hystrix</artifactId>
+                <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
                 <version>${cloud.start.version}</version>
             </dependency>
             <dependency>

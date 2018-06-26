@@ -16,7 +16,6 @@ import java.util.Map;
  *
  * @author Edgar  Date 2017/10/24
  */
-@Service
 public class SpringEventProducer implements EventProducer, ApplicationEventPublisherAware {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpringEventProducer.class);

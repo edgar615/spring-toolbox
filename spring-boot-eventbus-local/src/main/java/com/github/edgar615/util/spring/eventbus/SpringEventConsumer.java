@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 
-@Service
 public class SpringEventConsumer implements ApplicationListener<EventAdapter>, EventConsumer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(SpringEventConsumer.class);
