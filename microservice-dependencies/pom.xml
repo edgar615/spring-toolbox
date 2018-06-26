@@ -255,6 +255,7 @@
                                 <addClasspath>true</addClasspath>
                                 <classpathPrefix>lib/</classpathPrefix>
                                 <mainClass>com.github.edgar615.microservice.Application</mainClass>
+                                <useUniqueVersions>false</useUniqueVersions>
                             </manifest>
                         </archive>
                     </configuration>
