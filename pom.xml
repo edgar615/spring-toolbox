@@ -23,11 +23,12 @@
         <module>spring-boot-eventbus-kafka</module>
         <module>spring-boot-util-auth</module>
         <module>spring-boot-util-cache</module>
-        <module>spring-boot-startcache-binlog</module>
+        <module>spring-boot-util-binlog</module>
         <module>spring-boot-util-operatelog</module>
         <module>spring-cloud-util-feign</module>
         <module>spring-boot-util-appkey</module>
         <module>spring-boot-eventbus-local</module>
+        <module>spring-boot-binlog-startcache</module>
     </modules>
 
     <properties>

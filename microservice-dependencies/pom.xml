@@ -62,13 +62,19 @@
                 <version>${scaffold.release.version}</version>
             </dependency>
 
-            <!--binlog更新Start缓存-->
+            <!--binlog-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
-                <artifactId>spring-boot-startcache-binlog</artifactId>
+                <artifactId>spring-boot-util-binlog</artifactId>
                 <version>${scaffold.release.version}</version>
             </dependency>
 
+            <!--binlog更新startcache-->
+            <dependency>
+                <groupId>com.github.edgar615</groupId>
+                <artifactId>spring-boot-binlog-startcache</artifactId>
+                <version>${scaffold.release.version}</version>
+            </dependency>
             <!--jdbc支持-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>

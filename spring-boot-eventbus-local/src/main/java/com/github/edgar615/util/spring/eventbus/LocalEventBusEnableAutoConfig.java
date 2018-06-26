@@ -32,10 +32,10 @@ public class LocalEventBusEnableAutoConfig implements ImportSelector {
     return list.toArray(new String[list.size()]);
   }
 
-  private GenericBeanDefinition createBeanDefinition(Class<?> beanClass) {
-    GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
-    beanDefinition.setBeanClass(beanClass);
-    beanDefinition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_NO);
-    return beanDefinition;
-  }
+//  private GenericBeanDefinition createBeanDefinition(Class<?> beanClass) {
+//    GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
+//    beanDefinition.setBeanClass(beanClass);
+//    beanDefinition.setAutowireMode(GenericBeanDefinition.AUTOWIRE_NO);
+//    return beanDefinition;
+//  }
 }
