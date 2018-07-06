@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
  * @ConditionalOnWebApplication：当前项目是Web 项目的条件下。
  */
 @Configuration
-@ConditionalOnWebApplication
 @EnableConfigurationProperties({JwtProperty.class})
 public class JwtPropertyAutoConfiguration {
 

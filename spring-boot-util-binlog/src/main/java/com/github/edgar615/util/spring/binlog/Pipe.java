@@ -8,6 +8,7 @@ import com.github.shyiko.mysql.binlog.event.TableMapEventData;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 /**
@@ -27,7 +28,7 @@ public class Pipe {
 
   private LinkedList<DmlData> datas = new LinkedList<>();
 
-  private LinkedList<Event> events = new LinkedList<>();
+  private List<Event> events = new ArrayList<>();
 
   public Pipe(Consumer<List<DmlData>> consumer) {this.consumer = consumer;}
 
@@ -56,14 +57,14 @@ public class Pipe {
 //      rowEvent = true;
 //    }
     //新增
-    if (eventType == EventType.EXT_WRITE_ROWS) {
+    if (eventType == EventType.EXT_WRITE_ROWS || eventType == EventType.WRITE_ROWS) {
       composeInsert();
     }
-    if (eventType == EventType.EXT_DELETE_ROWS) {
+    if (eventType == EventType.EXT_DELETE_ROWS || eventType == EventType.DELETE_ROWS) {
       composeDelete();
     }
     //修改
-    if (eventType == EventType.EXT_UPDATE_ROWS) {
+    if (eventType == EventType.EXT_UPDATE_ROWS || eventType == EventType.UPDATE_ROWS) {
       composeUpdate();
     }
     if (transcationStart && transcationEnd) {
@@ -73,9 +74,19 @@ public class Pipe {
     }
   }
 
+  private Event findTableMap(List<Event> events) {
+    for (int i = events.size(); i >= 0; i --) {
+      Event event = events.get(i - 1);
+      if (event.getData() instanceof TableMapEventData) {
+        return event;
+      }
+    }
+    throw new NoSuchElementException("TableMapEventData");
+  }
+
   public void composeInsert() {
-    Event tableMap = events.get(events.size() - 2);
-    Event writeRow = events.getLast();
+    Event tableMap = findTableMap(events);
+    Event writeRow = events.get(events.size() - 1);
     TableMapEventData tableMapEventData = tableMap.getData();
     if (TableUtils.get(tableMapEventData.getTable()) != null) {
       InsertData insertData = new InsertData(tableMap, writeRow);
@@ -85,8 +96,8 @@ public class Pipe {
   }
 
   public void composeDelete() {
-    Event tableMap = events.get(events.size() - 2);
-    Event deleteRow = events.getLast();
+    Event tableMap = findTableMap(events);
+    Event deleteRow = events.get(events.size() - 1);
     TableMapEventData tableMapEventData = tableMap.getData();
     if (TableUtils.get(tableMapEventData.getTable()) != null) {
       DeleteData deleteData = new DeleteData(tableMap, deleteRow);
@@ -97,8 +108,8 @@ public class Pipe {
   }
 
   public void composeUpdate() {
-    Event tableMap = events.get(events.size() - 2);
-    Event updateRow = events.getLast();
+    Event tableMap = findTableMap(events);
+    Event updateRow = events.get(events.size() - 1);
     TableMapEventData tableMapEventData = tableMap.getData();
     if (TableUtils.get(tableMapEventData.getTable()) != null) {
       UpdateData updateData = new UpdateData(tableMap, updateRow);
@@ -111,7 +122,7 @@ public class Pipe {
   private void flush() {
     transcationStart = false;
     transcationEnd = false;
-    Event event = events.getLast();
+    Event event = events.get(events.size() - 1);
     //回滚不处理
     if (event.getHeader().getEventType() == EventType.QUERY) {
       QueryEventData queryEventData = event.getData();

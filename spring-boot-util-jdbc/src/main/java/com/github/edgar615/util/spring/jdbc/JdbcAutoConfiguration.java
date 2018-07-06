@@ -32,7 +32,6 @@ import javax.sql.DataSource;
  * @ConditionalOnWebApplication：当前项目是Web 项目的条件下。
  */
 @Configuration
-@ConditionalOnWebApplication
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class JdbcAutoConfiguration {
 
