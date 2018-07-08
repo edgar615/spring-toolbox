@@ -56,6 +56,9 @@ public class SimpleClientInterceptor extends HandlerInterceptorAdapter {
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> clientMap = mapper.readValue(appKeyString, Map.class);
       String companyCode = (String) clientMap.get("companyCode");
+      if (Strings.isNullOrEmpty(companyCode)) {
+        companyCode = (String) clientMap.get("clientCode");
+      }
       String appKey = (String) clientMap.get("appKey");
       String appName = (String) clientMap.get("appName");
       Objects.requireNonNull(companyCode);
