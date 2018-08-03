@@ -37,23 +37,19 @@
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
         <project.build.sourceEncoding>${java.encoding}</project.build.sourceEncoding>
-
         <junit.version>4.12</junit.version>
         <spring.version>5.0.5.RELEASE</spring.version>
         <spring.cloud.version>Finchley.RELEASE</spring.cloud.version>
         <cloud.start.version>2.0.0.RELEASE</cloud.start.version>
         <org.aspectj.version>1.7.2</org.aspectj.version>
         <aspectjweaver.version>1.8.6</aspectjweaver.version>
-
         <guava.version>21.0</guava.version>
         <slf4j.version>1.7.14</slf4j.version>
         <logback.version>1.2.3</logback.version>
-
         <util.version>1.0.19.BETA1</util.version>
-
         <caffeine.version>2.6.2</caffeine.version>
-
         <restassured.version>3.1.0</restassured.version>
+        <spring.admin.version>2.0.2</spring.admin.version>
 
     </properties>
 
@@ -136,6 +132,17 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-netflix-hystrix-dashboard</artifactId>
                 <version>${cloud.start.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${spring.admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${spring.admin.version}</version>
             </dependency>
 
             <dependency>
