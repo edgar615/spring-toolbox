@@ -5,34 +5,22 @@
     <parent>
         <artifactId>microservice-scaffold</artifactId>
         <groupId>com.github.edgar615</groupId>
-        <version>0.2.6-SNAPSHOT</version>
+        <version>0.2.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-util-appkey</artifactId>
-
+    <artifactId>spring-boot-binlog-startcache</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.github.edgar615</groupId>
+            <artifactId>spring-boot-util-binlog</artifactId>
+            <version>${scaffold.release.version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.edgar615</groupId>
-            <artifactId>spring-boot-util-web</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.edgar615</groupId>
-            <artifactId>util</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-util-cache</artifactId>
+            <version>${scaffold.release.version}</version>
         </dependency>
     </dependencies>
 </project>
