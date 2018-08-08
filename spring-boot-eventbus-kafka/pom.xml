@@ -13,7 +13,7 @@
 
 
     <properties>
-        <eventbus.version>1.0.10</eventbus.version>
+        <eventbus.version>1.0.11</eventbus.version>
     </properties>
     <dependencies>
         
