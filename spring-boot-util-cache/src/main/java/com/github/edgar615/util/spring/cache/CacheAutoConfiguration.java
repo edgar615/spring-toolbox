@@ -1,19 +1,22 @@
 package com.github.edgar615.util.spring.cache;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
 
+import org.springframework.boot.autoconfigure.cache.CacheConfigurations;
+import org.springframework.boot.autoconfigure.cache.CacheType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -48,77 +51,38 @@ public class CacheAutoConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(name = "cache.enabled", matchIfMissing = false, havingValue = "true")
+  @ConditionalOnProperty(name = "caching.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(CacheManager.class)
   public CacheManager cacheManager(CacheProperties properties) {
-    List<CacheConfig> cacheConfigs = properties.getSpec().stream().map(this::config)
+    List<Cache> caches = properties.getCaffeine().getSpec().entrySet().stream()
+            .map(spec -> CacheUtils.caffeine(spec.getKey(), spec.getValue()))
             .collect(Collectors.toList());
-    List<Cache> caches = cacheConfigs.stream()
-            .map(CacheUtils::createCache)
-            .filter(c -> c != null)
-            .collect(Collectors.toList());
-    SimpleCacheManager cacheManager = new SimpleCacheManager();
-    if (properties.getDynamic() != null
-        && !properties.getDynamic().isEmpty()) {
-      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
-              .collect(Collectors.toList());
-      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
-    }
-    cacheManager.setCaches(caches);
+    SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
+    simpleCacheManager.setCaches(caches);
+    simpleCacheManager.initializeCaches();
+
+    CompositeCacheManager cacheManager = new CompositeCacheManager(simpleCacheManager);
+//    if (properties.getDynamic() != null
+//        && !properties.getDynamic().isEmpty()) {
+//      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
+//              .collect(Collectors.toList());
+//      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
+//    }
     return cacheManager;
   }
 
-  public CacheConfig config(String spec) {
-    List<String> options = Splitter.on(SPLIT_OPTIONS)
-            .trimResults().omitEmptyStrings()
-            .splitToList(spec);
-    CacheConfig cacheConfig = new CacheConfig();
-    for (String option : options) {
-      String[] keyAndValue = option.split(SPLIT_KEY_VALUE);
-      Preconditions.checkArgument(keyAndValue.length <= 2,
-                                  "key-value pair %s with more than one equals sign", option);
-      String key = keyAndValue[0].trim();
-      String value = (keyAndValue.length == 1) ? null : keyAndValue[1].trim();
-      if (key.equalsIgnoreCase("type")) {
-        cacheConfig.setType(value);
-      } else if (key.equalsIgnoreCase("name")) {
-        cacheConfig.setName(value);
-      } else if (key.equalsIgnoreCase("maximumSize")) {
-        cacheConfig.setMaximumSize(Long.parseLong(value));
-      } else if (key.equalsIgnoreCase("expireAfterAccess")) {
-        TimeUnit timeUnit = parseTimeUnit(key, value);
-        long duration = parseDuration(key, value);
-        cacheConfig.setExpireAfterAccess(timeUnit.toSeconds(duration));
-      } else if (key.equalsIgnoreCase("expireAfterWrite")) {
-        TimeUnit timeUnit = parseTimeUnit(key, value);
-        long duration = parseDuration(key, value);
-        cacheConfig.setExpireAfterWrite(timeUnit.toSeconds(duration));
-      } else if (key.equalsIgnoreCase("refreshAfterWrite")) {
-        TimeUnit timeUnit = parseTimeUnit(key, value);
-        long duration = parseDuration(key, value);
-        cacheConfig.setRefreshAfterWrite(timeUnit.toSeconds(duration));
-      }
-    }
-    return cacheConfig;
-  }
+  static class CacheConfigurationImportSelector implements ImportSelector {
 
-  private TimeUnit parseTimeUnit(String key, String value) {
-    Preconditions.checkArgument((value != null) && !value.isEmpty(),
-                                String.format("value of key %s omitted", key));
-    char lastChar = Character.toLowerCase(value.charAt(value.length() - 1));
-    switch (lastChar) {
-      case 'd':
-        return TimeUnit.DAYS;
-      case 'h':
-        return TimeUnit.HOURS;
-      case 'm':
-        return TimeUnit.MINUTES;
-      case 's':
-        return TimeUnit.SECONDS;
-      default:
-        throw new IllegalArgumentException(String.format(
-                "key %s invalid format; was %s, must end with one of [dDhHmMsS]", key, value));
+    @Override
+    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+      CacheType[] types = CacheType.values();
+      String[] imports = new String[types.length];
+//      for (int i = 0; i < types.length; i++) {
+//        imports[i] = CacheConfigurations.getConfigurationClass(types[i]);
+//      }
+      return imports;
     }
+
   }
 
 }

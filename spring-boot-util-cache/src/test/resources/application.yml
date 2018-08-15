@@ -1,5 +1,19 @@
-cache:
+caching:
   enabled: true
-  spec:
-    - name=testCache1,type=caffeine,maximumSize=50,expireAfterWrite=5s
-    - name=testCache2,type=caffeine,maximumSize=5000,expireAfterWrite=30s
+  caffeine:
+    spec:
+        caffeineCache1: maximumSize=50,expireAfterWrite=5s
+        caffeineCache2: maximumSize=5000,expireAfterWrite=30s
+  redis:
+    spec:
+        redisCache1:
+            time-to-live: 20000
+            cache-null-values: true
+            use-key-prefix: true
+            key-prefix: "redisCache1:"
+        redisCache2:
+            time-to-live: 30000
+            cache-null-values: true
+            use-key-prefix: true
+            key-prefix: "redisCache2:"
+

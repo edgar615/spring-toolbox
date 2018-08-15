@@ -1,12 +1,6 @@
 package com.github.edgar615.util.spring.cache;
 
-public class CacheConfig {
-  private String type;
-
-  private String name;
-
-  private String spec;
-
+public class CaffeineCacheSpec {
   private Long maximumSize;
 
   private Long expireAfterAccess;
@@ -14,30 +8,6 @@ public class CacheConfig {
   private Long expireAfterWrite;
 
   private Long refreshAfterWrite;
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getSpec() {
-    return spec;
-  }
-
-  public void setSpec(String spec) {
-    this.spec = spec;
-  }
 
   public Long getMaximumSize() {
     return maximumSize;

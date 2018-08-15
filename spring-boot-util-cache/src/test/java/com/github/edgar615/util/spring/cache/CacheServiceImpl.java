@@ -8,14 +8,14 @@ import java.util.UUID;
 @Service
 public class CacheServiceImpl implements CacheService {
   @Override
-  @Cacheable(cacheNames = "testCache1", key = "#p0")
+  @Cacheable(cacheNames = "caffeineCache1", key = "#p0")
   public String getCache1(int id) {
     System.out.println("cache1");
     return UUID.randomUUID().toString();
   }
 
   @Override
-  @Cacheable(cacheNames = "testCache2", key = "#p0")
+  @Cacheable(cacheNames = "caffeineCache2", key = "#p0")
   public String getCache2(int id) {
     System.out.println("cache2");
     return UUID.randomUUID().toString();
