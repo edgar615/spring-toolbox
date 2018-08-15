@@ -16,4 +16,5 @@ caching:
             cache-null-values: true
             use-key-prefix: true
             key-prefix: "redisCache2:"
+  dynamic: caffeineCache1,redisCache1
 

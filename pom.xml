@@ -29,6 +29,7 @@
         <module>spring-boot-util-appkey</module>
         <module>spring-boot-eventbus-local</module>
         <module>spring-boot-binlog-startcache</module>
+        <module>spring-boot-util-cache-redis</module>
     </modules>
 
     <properties>

@@ -1,8 +1,5 @@
 package com.github.edgar615.util.spring.cache;
 
-import com.google.common.base.Preconditions;
-
-import org.springframework.boot.autoconfigure.cache.CacheConfigurations;
 import org.springframework.boot.autoconfigure.cache.CacheType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,17 +36,6 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties({CacheProperties.class})
 public class CacheAutoConfiguration {
 
-  private static final String SPLIT_OPTIONS = ",";
-
-  private static final String SPLIT_KEY_VALUE = "=";
-
-  private static long parseDuration(String key, String value) {
-    Preconditions.checkArgument((value != null) && !value.isEmpty(),
-                                String.format("value of key %s omitted", key));
-    String duration = value.substring(0, value.length() - 1);
-    return Long.parseLong(duration);
-  }
-
   @Bean
   @ConditionalOnProperty(name = "caching.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(CacheManager.class)
@@ -62,12 +48,12 @@ public class CacheAutoConfiguration {
     simpleCacheManager.initializeCaches();
 
     CompositeCacheManager cacheManager = new CompositeCacheManager(simpleCacheManager);
-//    if (properties.getDynamic() != null
-//        && !properties.getDynamic().isEmpty()) {
-//      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
-//              .collect(Collectors.toList());
-//      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
-//    }
+    if (properties.getDynamic() != null
+        && !properties.getDynamic().isEmpty()) {
+      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
+              .collect(Collectors.toList());
+      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
+    }
     return cacheManager;
   }
 
