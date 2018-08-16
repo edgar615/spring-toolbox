@@ -1,9 +1,13 @@
+spring:
+    application:
+        name: cache
+
 caching:
   enabled: true
   caffeine:
     spec:
         caffeineCache1: maximumSize=50,expireAfterWrite=5s
-        caffeineCache2: maximumSize=5000,expireAfterWrite=30s
+        caffeineCache2: maximumSize=5000,expireAfterWrite=10s
   redis:
     spec:
         redisCache1:
@@ -20,6 +24,6 @@ caching:
     spec:
         l2Cache:
             l1: caffeineCache1
-            l2: redisCache1
-  dynamic: caffeineCache1,redisCache1
+            l2: caffeineCache2
+#  dynamic: caffeineCache1,redisCache1
 

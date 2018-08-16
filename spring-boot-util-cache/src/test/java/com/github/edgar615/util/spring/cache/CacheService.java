@@ -5,4 +5,8 @@ public interface CacheService {
 
   String getCache2(int id);
 
+  String dynamic(int id);
+
+  String l2Cache(int id);
+
 }

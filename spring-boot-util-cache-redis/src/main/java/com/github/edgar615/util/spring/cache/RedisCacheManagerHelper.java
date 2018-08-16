@@ -9,9 +9,9 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RedisCacheManagerBuilder {
+public class RedisCacheManagerHelper {
 
-  public RedisCacheManager build(RedisConnectionFactory redisConnectionFactory,
+  public RedisCacheManager create(RedisConnectionFactory redisConnectionFactory,
                                  CacheProperties cacheProperties) {
     Map<String, RedisCacheConfiguration> initialCacheConfigurations = new HashMap<>();
     for (String cacheName : cacheProperties.getRedis().getSpec().keySet()) {

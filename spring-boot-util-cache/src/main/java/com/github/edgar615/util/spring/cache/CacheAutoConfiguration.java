@@ -1,7 +1,6 @@
 package com.github.edgar615.util.spring.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.springframework.boot.autoconfigure.cache.CacheType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -12,8 +11,6 @@ import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportSelector;
-import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,50 +45,41 @@ public class CacheAutoConfiguration {
     List<Cache> caffeine = properties.getCaffeine().getSpec().entrySet().stream()
             .map(spec -> new CaffeineCache(spec.getKey(), Caffeine.from(spec.getValue()).build()))
             .collect(Collectors.toList());
-    caches.addAll(caches);
-
+    caches.addAll(caffeine);
+    SimpleCacheManager caffeineManager = new SimpleCacheManager();
+    caffeineManager.setCaches(caches);
+    caffeineManager.initializeCaches();
+    List<CacheManager> cacheManagers = new ArrayList<>();
+    cacheManagers.add(caffeineManager);
 
     //要先定义好缓存，然后才能定义二级缓存
     List<Cache> l2Cache = properties.getL2Cache().getSpec().entrySet().stream()
             .map(spec -> new L2Cache(spec.getKey(), findByName(caches, spec.getValue().getL1()),
-                                     findByName(caches, spec.getValue().getL2()), true))
+                    findByName(caches, spec.getValue().getL2()), true))
             .collect(Collectors.toList());
-    caches.addAll(l2Cache);
-    SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
-    simpleCacheManager.setCaches(caches);
-    simpleCacheManager.initializeCaches();
-
-    CompositeCacheManager cacheManager = new CompositeCacheManager(simpleCacheManager);
+    if (!l2Cache.isEmpty()) {
+      SimpleCacheManager l2CacheManager = new SimpleCacheManager();
+      l2CacheManager.setCaches(l2Cache);
+      l2CacheManager.initializeCaches();
+      cacheManagers.add(l2CacheManager);
+    }
 //    if (properties.getDynamic() != null
-//        && !properties.getDynamic().isEmpty()) {
-//      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
-//              .collect(Collectors.toList());
-//      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
+//            && !properties.getDynamic().isEmpty()) {
+//      cacheManagers.add(new DynamicCacheManager(properties));
 //    }
-    return cacheManager;
+    CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
+    compositeCacheManager.setCacheManagers(cacheManagers);
+    compositeCacheManager.afterPropertiesSet();
+    return compositeCacheManager;
   }
 
   private Cache findByName(List<Cache> caches, String name) {
-   Optional<Cache> optional = caches.stream().filter(c -> name.equals(c.getName()))
+    Optional<Cache> optional = caches.stream().filter(c -> name.equals(c.getName()))
             .findFirst();
     if (optional.isPresent()) {
       return optional.get();
     }
     throw new NullPointerException("cache:" + name);
-  }
-
-  static class CacheConfigurationImportSelector implements ImportSelector {
-
-    @Override
-    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-      CacheType[] types = CacheType.values();
-      String[] imports = new String[types.length];
-//      for (int i = 0; i < types.length; i++) {
-//        imports[i] = CacheConfigurations.getConfigurationClass(types[i]);
-//      }
-      return imports;
-    }
-
   }
 
 }

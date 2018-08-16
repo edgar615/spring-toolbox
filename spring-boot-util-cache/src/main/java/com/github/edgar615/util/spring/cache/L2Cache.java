@@ -6,7 +6,8 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.PrimitiveSink;
 import com.google.common.util.concurrent.Striped;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.lang.Nullable;
@@ -21,6 +22,8 @@ import java.util.concurrent.locks.ReadWriteLock;
  * @author Edgar  Date 2018/8/15
  */
 public class L2Cache extends AbstractValueAdaptingCache {
+
+  private final Logger logger = LoggerFactory.getLogger(L2Cache.class);
 
   private final Cache level1;
 
@@ -124,7 +127,7 @@ public class L2Cache extends AbstractValueAdaptingCache {
   protected Object lookup(Object key) {
     Object value = level1.get(key);
     if (value != null) {
-      System.out.println("get cache from level1, the key is :" + key);
+      logger.debug("get cache from level1, the key is {}", key);
       if (value instanceof ValueWrapper) {
         return ((ValueWrapper) value).get();
       }
@@ -134,7 +137,7 @@ public class L2Cache extends AbstractValueAdaptingCache {
     value = level2.get(key);
 
     if (value != null) {
-      System.out.println("get cache from level2, the key is :" + key);
+      logger.debug("get cache from level2, the key is {}", key);
       if (value instanceof ValueWrapper) {
         level1.put(key, ((ValueWrapper) value).get());
         return ((ValueWrapper) value).get();

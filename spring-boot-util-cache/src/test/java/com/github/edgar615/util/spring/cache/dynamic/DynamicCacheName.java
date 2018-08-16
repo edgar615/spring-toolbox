@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.cache;
+package com.github.edgar615.util.spring.cache.dynamic;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
+@Deprecated
 public @interface DynamicCacheName {
   String[] value() default {};
 }

@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.cache;
+package com.github.edgar615.util.spring.cache.dynamic;
 
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperationInvocationContext;
@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Deprecated
+//@Service
 public class DynamicCacheResolver extends SimpleCacheResolver {
 
   public DynamicCacheResolver(CacheManager cacheManager) {

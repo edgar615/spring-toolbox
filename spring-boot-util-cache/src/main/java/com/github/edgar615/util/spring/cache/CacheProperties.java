@@ -12,11 +12,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "caching")
 public class CacheProperties {
 
-  /**
-   * 动态生成缓存名称的定义
-   */
-  private List<String> dynamic = new ArrayList<>();
-
   private Redis redis = new Redis();
 
   private Caffeine caffeine = new Caffeine();
@@ -37,14 +32,6 @@ public class CacheProperties {
 
   public void setCaffeine(Caffeine caffeine) {
     this.caffeine = caffeine;
-  }
-
-  public List<String> getDynamic() {
-    return dynamic;
-  }
-
-  public void setDynamic(List<String> dynamic) {
-    this.dynamic = dynamic;
   }
 
   public L2Cache getL2Cache() {
