@@ -1,11 +1,13 @@
 package com.github.edgar615.util.spring.cache;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.boot.autoconfigure.cache.CacheType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +15,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,21 +44,40 @@ public class CacheAutoConfiguration {
   @ConditionalOnProperty(name = "caching.enabled", matchIfMissing = false, havingValue = "true")
   @ConditionalOnMissingBean(CacheManager.class)
   public CacheManager cacheManager(CacheProperties properties) {
-    List<Cache> caches = properties.getCaffeine().getSpec().entrySet().stream()
-            .map(spec -> CacheUtils.caffeine(spec.getKey(), spec.getValue()))
+    List<Cache> caches = new ArrayList<>();
+    List<Cache> caffeine = properties.getCaffeine().getSpec().entrySet().stream()
+            .map(spec -> new CaffeineCache(spec.getKey(), Caffeine.from(spec.getValue()).build()))
             .collect(Collectors.toList());
+    caches.addAll(caches);
+
+
+    //要先定义好缓存，然后才能定义二级缓存
+    List<Cache> l2Cache = properties.getL2Cache().getSpec().entrySet().stream()
+            .map(spec -> new L2Cache(spec.getKey(), findByName(caches, spec.getValue().getL1()),
+                                     findByName(caches, spec.getValue().getL2()), true))
+            .collect(Collectors.toList());
+    caches.addAll(l2Cache);
     SimpleCacheManager simpleCacheManager = new SimpleCacheManager();
     simpleCacheManager.setCaches(caches);
     simpleCacheManager.initializeCaches();
 
     CompositeCacheManager cacheManager = new CompositeCacheManager(simpleCacheManager);
-    if (properties.getDynamic() != null
-        && !properties.getDynamic().isEmpty()) {
-      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
-              .collect(Collectors.toList());
-      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
-    }
+//    if (properties.getDynamic() != null
+//        && !properties.getDynamic().isEmpty()) {
+//      List<CacheConfig> dynamicCacheConfig = properties.getDynamic().stream().map(this::config)
+//              .collect(Collectors.toList());
+//      cacheManager = new DynamicCacheManager(dynamicCacheConfig);
+//    }
     return cacheManager;
+  }
+
+  private Cache findByName(List<Cache> caches, String name) {
+   Optional<Cache> optional = caches.stream().filter(c -> name.equals(c.getName()))
+            .findFirst();
+    if (optional.isPresent()) {
+      return optional.get();
+    }
+    throw new NullPointerException("cache:" + name);
   }
 
   static class CacheConfigurationImportSelector implements ImportSelector {

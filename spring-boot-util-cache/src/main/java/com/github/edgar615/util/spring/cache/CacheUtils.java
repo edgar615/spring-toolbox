@@ -14,4 +14,5 @@ public class CacheUtils {
   public static Cache caffeine(String name, String spec) {
     return new CaffeineCache(name, Caffeine.from(spec).build());
   }
+
 }

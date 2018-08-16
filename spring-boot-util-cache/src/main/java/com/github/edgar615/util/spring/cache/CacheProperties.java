@@ -21,6 +21,8 @@ public class CacheProperties {
 
   private Caffeine caffeine = new Caffeine();
 
+  private L2Cache l2Cache = new L2Cache();
+
   public Redis getRedis() {
     return redis;
   }
@@ -45,6 +47,14 @@ public class CacheProperties {
     this.dynamic = dynamic;
   }
 
+  public L2Cache getL2Cache() {
+    return l2Cache;
+  }
+
+  public void setL2Cache(L2Cache l2Cache) {
+    this.l2Cache = l2Cache;
+  }
+
   public static class Caffeine {
 
     private Map<String, String> spec;
@@ -67,6 +77,19 @@ public class CacheProperties {
 
     public void setSpec(
             Map<String, RedisCacheSpec> spec) {
+      this.spec = spec;
+    }
+  }
+
+  public static class L2Cache {
+    private Map<String, L2CacheSpec> spec;
+
+    public Map<String, L2CacheSpec> getSpec() {
+      return spec;
+    }
+
+    public void setSpec(
+            Map<String, L2CacheSpec> spec) {
       this.spec = spec;
     }
   }

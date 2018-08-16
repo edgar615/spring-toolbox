@@ -16,5 +16,10 @@ caching:
             cache-null-values: true
             use-key-prefix: true
             key-prefix: "redisCache2:"
+  l2Cache:
+    spec:
+        l2Cache:
+            l1: caffeineCache1
+            l2: redisCache1
   dynamic: caffeineCache1,redisCache1
 
