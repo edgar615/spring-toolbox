@@ -9,4 +9,7 @@ public interface CacheService {
 
   String l2Cache(int id);
 
+  String clearCache1();
+
+  String evict(int id);
 }

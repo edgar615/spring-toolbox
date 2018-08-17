@@ -1,6 +1,7 @@
 package com.github.edgar615.util.spring.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -55,7 +56,7 @@ public class CacheAutoConfiguration {
     //要先定义好缓存，然后才能定义二级缓存
     List<Cache> l2Cache = properties.getL2Cache().getSpec().entrySet().stream()
             .map(spec -> new L2Cache(spec.getKey(), findByName(caches, spec.getValue().getL1()),
-                    findByName(caches, spec.getValue().getL2()), true))
+                                     findByName(caches, spec.getValue().getL2()), true))
             .collect(Collectors.toList());
     if (!l2Cache.isEmpty()) {
       SimpleCacheManager l2CacheManager = new SimpleCacheManager();
@@ -63,14 +64,16 @@ public class CacheAutoConfiguration {
       l2CacheManager.initializeCaches();
       cacheManagers.add(l2CacheManager);
     }
-//    if (properties.getDynamic() != null
-//            && !properties.getDynamic().isEmpty()) {
-//      cacheManagers.add(new DynamicCacheManager(properties));
-//    }
     CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
     compositeCacheManager.setCacheManagers(cacheManagers);
     compositeCacheManager.afterPropertiesSet();
     return compositeCacheManager;
+  }
+
+  @Bean
+  @ConditionalOnBean(CacheManager.class)
+  public CacheEvictEventListener cacheEvictEventListener(CacheManager cacheManager) {
+    return new CacheEvictEventListener(cacheManager);
   }
 
   private Cache findByName(List<Cache> caches, String name) {
