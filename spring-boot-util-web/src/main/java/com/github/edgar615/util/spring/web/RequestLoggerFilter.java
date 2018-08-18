@@ -3,9 +3,6 @@ package com.github.edgar615.util.spring.web;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
-
-import com.github.edgar615.util.log.Log;
-import com.github.edgar615.util.log.LogType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -14,17 +11,13 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.UUID;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  * Doogies very cool HTTP request logging
@@ -47,6 +40,8 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
 
   private int maxPayloadLength = 1000;
 
+  private boolean logReqBody = true;
+
   /**
    * Log each request and respponse with full Request URI, content payload and duration of the
    * request in ms.
@@ -68,8 +63,8 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
       }
     }
 
-//    //从请求头中取出x-request-id，用于全局跟踪ID，如果未找到，自动生成一个新的跟踪ID
-    String traceId = request.getHeader("x-request-id");
+//    //从请求头中取出X-Request-Id，用于全局跟踪ID，如果未找到，自动生成一个新的跟踪ID
+    String traceId = request.getHeader("X-Request-Id");
     if (Strings.isNullOrEmpty(traceId)) {
       traceId = UUID.randomUUID().toString();
     }
@@ -88,34 +83,34 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     // I can only log the request's body AFTER the request has been made and
     // ContentCachingRequestWrapper did its work.
     String body = wrappedRequest.getRequestBody();
-    Log.create(LOGGER)
-            .setLogType(LogType.SR)
-            .setEvent("http.request.received")
-            .setMessage("[{} {}] [{}] [{}] [{}]")
-            .addArg(request.getMethod())
-            .addArg(request.getServletPath())
-            .addArg(headerString(request))
-            .addArg(paramString(request))
-            .addArg(Strings.isNullOrEmpty(body) ? "no body" : body)
-            .info();
+
+    LOGGER.info("===> [{}] [{} {}] [{}] [{}] [{}] [{}bytes]", getClientIp(request),
+            request.getMethod(), request.getServletPath(), headerString(request),
+            paramString(request), !logReqBody || Strings.isNullOrEmpty(body) ? "no body" : body,
+            Strings.isNullOrEmpty(body) ? 0 : body.getBytes().length);
     long startTime = System.currentTimeMillis();
     filterChain.doFilter(wrappedRequest,
-                         wrappedResponse);     // ======== This performs the actual request!
-    wrappedResponse.addHeader("x-request-id", traceId);
-    Log.create(LOGGER)
-            .setLogType(LogType.SS)
-            .setEvent("http.request.reply")
-            .setMessage(" [{}] [{}] [{}ms] [{} bytes]")
-            .addArg(response.getStatus())
-            .addArg(respHeaderString(response))
-            .addArg(System.currentTimeMillis() - startTime)
-            .addArg(wrappedResponse.getContentAsByteArray().length)
-            .info();
+            wrappedResponse);     // ======== This performs the actual request!
+    wrappedResponse.addHeader("X-Request-Id", traceId);
+
+    LOGGER.info("<=== [{}] [{}] [{}ms] [{} bytes]", response.getStatus(),
+            respHeaderString(response),
+            System.currentTimeMillis() - startTime,
+            wrappedResponse.getContentAsByteArray().length);
 
     wrappedResponse
-            .copyBodyToResponse();  // IMPORTANT: copy content of response back into original
-    // response
+            .copyBodyToResponse();
+    MDC.remove("x-request-id");
+    // IMPORTANT: copy content of response back into original response
 
+  }
+
+  public void addIgnorePrefix(String prefix) {
+    ignorePrefixes.add(prefix);
+  }
+
+  public void setLogReqBody(boolean logReqBody) {
+    this.logReqBody = logReqBody;
   }
 
   @Deprecated
@@ -130,8 +125,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
         String payload;
         try {
           payload = new String(buf, 0, buf.length, wrapper.getCharacterEncoding());
-        }
-        catch (UnsupportedEncodingException ex) {
+        } catch (UnsupportedEncodingException ex) {
           payload = "unknown";
         }
 
@@ -198,8 +192,22 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     return sb.toString();
   }
 
-  public void addIgnorePrefix(String prefix) {
-    ignorePrefixes.add(prefix);
+  private String getClientIp(HttpServletRequest request) {
+    String ip = request.getHeader("X-Forwarded-For");
+    if (!Strings.isNullOrEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+      //多次反向代理后会有多个ip值，第一个ip才是真实ip
+      int index = ip.indexOf(",");
+      if (index != -1) {
+        return ip.substring(0, index);
+      } else {
+        return ip;
+      }
+    }
+    ip = request.getHeader("X-Real-IP");
+    if (!Strings.isNullOrEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)) {
+      return ip;
+    }
+    return request.getRemoteHost();
   }
 
 }

@@ -1,15 +1,12 @@
 package com.github.edgar615.util.spring.eventbus;
 
 import com.github.edgar615.util.event.Event;
-import com.github.edgar615.util.eventbus.EventConsumer;
-import com.github.edgar615.util.eventbus.EventHandler;
-import com.github.edgar615.util.eventbus.HandlerRegistration;
-import com.github.edgar615.util.eventbus.Helper;
+import com.github.edgar615.util.eventbus.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -23,25 +20,29 @@ public class SpringEventConsumer implements ApplicationListener<EventAdapter>, E
   @Async
   public void onApplicationEvent(EventAdapter eventAdapter) {
     Event event = (Event) eventAdapter.getSource();
+    EventIdTracing eventIdTracing = new EventIdTracing(event.head().id());
+    EventIdTracingHolder.set(eventIdTracing);
+    MDC.put("x-request-id", event.head().id());
     try {
-      LOGGER.info("<====== [{}] [{}] [{}] [{}] [{}]",
+      LOGGER.info("<=== [local] [{}] [{}] [{}]",
                   event.head().id(),
-                  event.head().to(),
-                  event.head().action(),
                   Helper.toHeadString(event),
                   Helper.toActionString(event));
       List<EventHandler> handlers =
               HandlerRegistration.instance()
                       .getHandlers(event);
       if (handlers == null || handlers.isEmpty()) {
-        LOGGER.info("---| [{}] [NO HANDLER]", event.head().id());
+        LOGGER.info("[{}] [NO HANDLER]", event.head().id());
       } else {
         for (EventHandler handler : handlers) {
           handler.handle(event);
         }
       }
     } catch (Exception e) {
-      LOGGER.error("---| [{}] [Failed]", event.head().id(), e);
+      LOGGER.error("[{}] [Failed]", event.head().id(), e);
+    } finally {
+      EventIdTracingHolder.clear();
+      MDC.remove("x-request-id");
     }
   }
 
@@ -89,5 +90,15 @@ public class SpringEventConsumer implements ApplicationListener<EventAdapter>, E
   @Override
   public long waitForHandle() {
     return 0;
+  }
+
+  @Override
+  public boolean paused() {
+    return false;
+  }
+
+  @Override
+  public boolean isRunning() {
+    return true;
   }
 }

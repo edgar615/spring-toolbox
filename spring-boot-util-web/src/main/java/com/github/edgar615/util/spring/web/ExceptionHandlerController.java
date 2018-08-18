@@ -1,13 +1,12 @@
 package com.github.edgar615.util.spring.web;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.ErrorCode;
 import com.github.edgar615.util.exception.StatusBind;
 import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.validation.ValidationException;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
@@ -27,9 +26,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Spring MVC的异常处理类.
@@ -68,7 +67,7 @@ public class ExceptionHandlerController {
                                                 HttpServletRequest request,
                                                 HttpServletResponse response) {
     ErrorCode errorCode = createError(999, ex.getMessage(),
-                                      HttpStatus.SERVICE_UNAVAILABLE);
+            HttpStatus.SERVICE_UNAVAILABLE);
     SystemException systemException = SystemException.wrap(errorCode, ex)
             .set("details", request.getServletPath());
     return handleSystemException(systemException, request, response);
@@ -86,7 +85,7 @@ public class ExceptionHandlerController {
   public ModelAndView handleException(Exception ex, HttpServletRequest request,
                                       HttpServletResponse response) {
     ErrorCode errorCode = createError(999, ex.getMessage(),
-                                      HttpStatus.SERVICE_UNAVAILABLE);
+            HttpStatus.SERVICE_UNAVAILABLE);
     SystemException systemException = SystemException.wrap(errorCode, ex)
             .set("details", request.getServletPath());
     return handleSystemException(systemException, request, response);
@@ -234,12 +233,11 @@ public class ExceptionHandlerController {
       return mav;
     } else {
       int statusCode = StatusBind.instance().statusCode(ex.getErrorCode().getNumber());
-      if (systemProperty.getPages().containsKey(statusCode + "")) {
+      if (systemProperty.getErrorPage().containsKey(statusCode + "")) {
         ModelAndView mav = new ModelAndView();
-        mav.setViewName(systemProperty.getPages().get(statusCode + ""));
+        mav.setViewName(systemProperty.getErrorPage().get(statusCode + ""));
         mav.addObject("code", ex.getErrorCode().getNumber());
         mav.addObject("message", ex.getErrorCode().getMessage());
-        mav.addObject("systemInfo", systemProperty);
         return mav;
       } else {
         ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());

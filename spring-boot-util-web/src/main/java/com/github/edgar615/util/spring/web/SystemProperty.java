@@ -11,54 +11,13 @@ import java.util.Map;
 @ConfigurationProperties(prefix="system")
 public class SystemProperty {
 
-  private Map<String, String> pages = new HashMap<>();
+  private Map<String, String> errorPage = new HashMap<>();
 
-  private String name;
-
-  private String copyright;
-
-  private String poweredBy;
-
-  private boolean sideBarShowSystem;
-
-  public boolean isSideBarShowSystem() {
-    return sideBarShowSystem;
+  public Map<String, String> getErrorPage() {
+    return errorPage;
   }
 
-  public void setSideBarShowSystem(boolean sideBarShowSystem) {
-    this.sideBarShowSystem = sideBarShowSystem;
-  }
-
-
-  public String getCopyright() {
-    return copyright;
-  }
-
-  public void setCopyright(String copyright) {
-    this.copyright = copyright;
-  }
-
-  public String getPoweredBy() {
-    return poweredBy;
-  }
-
-  public void setPoweredBy(String poweredBy) {
-    this.poweredBy = poweredBy;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Map<String, String> getPages() {
-    return pages;
-  }
-
-  public void setPages(Map<String, String> pages) {
-    this.pages = pages;
+  public void setErrorPage(Map<String, String> errorPage) {
+    this.errorPage = errorPage;
   }
 }
