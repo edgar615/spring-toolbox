@@ -83,20 +83,22 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     // I can only log the request's body AFTER the request has been made and
     // ContentCachingRequestWrapper did its work.
     String body = wrappedRequest.getRequestBody();
-
-    LOGGER.info("===> [{}] [{} {}] [{}] [{}] [{}] [{}bytes]", getClientIp(request),
-            request.getMethod(), request.getServletPath(), headerString(request),
-            paramString(request), !logReqBody || Strings.isNullOrEmpty(body) ? "no body" : body,
-            Strings.isNullOrEmpty(body) ? 0 : body.getBytes().length);
+//     [跟踪ID] [SR] [类型] [接口] [入参]...[入参] [调用方]
+    LOGGER.info("[{}] [SR] [HTTP] [{} {}] [{}] [{}] [{}] [{}]", traceId, request.getMethod(), request.getServletPath(),
+            headerString(request), paramString(request),
+            !logReqBody || Strings.isNullOrEmpty(body) ? "no body" : body,
+            getClientIp(request));
     long startTime = System.currentTimeMillis();
     filterChain.doFilter(wrappedRequest,
             wrappedResponse);     // ======== This performs the actual request!
     wrappedResponse.addHeader("X-Request-Id", traceId);
 
-    LOGGER.info("<=== [{}] [{}] [{}ms] [{} bytes]", response.getStatus(),
+    //[跟踪ID] [SS] [类型] [结果] ... [结果] [耗时]
+    LOGGER.info("[{}] [SS] [HTTP] [{}] [{}] [{}bytes] [{}ms]", traceId,
+            response.getStatus(),
             respHeaderString(response),
-            System.currentTimeMillis() - startTime,
-            wrappedResponse.getContentAsByteArray().length);
+            wrappedResponse.getContentAsByteArray().length,
+            System.currentTimeMillis() - startTime);
 
     wrappedResponse
             .copyBodyToResponse();

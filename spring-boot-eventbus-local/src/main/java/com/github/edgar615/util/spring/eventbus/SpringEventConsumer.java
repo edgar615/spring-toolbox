@@ -23,23 +23,24 @@ public class SpringEventConsumer implements ApplicationListener<EventAdapter>, E
     EventIdTracing eventIdTracing = new EventIdTracing(event.head().id());
     EventIdTracingHolder.set(eventIdTracing);
     MDC.put("x-request-id", event.head().id());
+    long start = System.currentTimeMillis();
     try {
-      LOGGER.info("<=== [local] [{}] [{}] [{}]",
-                  event.head().id(),
-                  Helper.toHeadString(event),
-                  Helper.toActionString(event));
+      LOGGER.info("[{}] [MR] [LOCAL] [{}] [{}] [{}]", event.head().id(), event.head().to(),
+              Helper.toHeadString(event),
+              Helper.toActionString(event));
       List<EventHandler> handlers =
               HandlerRegistration.instance()
                       .getHandlers(event);
       if (handlers == null || handlers.isEmpty()) {
-        LOGGER.info("[{}] [NO HANDLER]", event.head().id());
+        LOGGER.warn("[{}] [EC] [no handler]", event.head().id());
       } else {
         for (EventHandler handler : handlers) {
           handler.handle(event);
         }
+        LOGGER.info("[{}] [EC] [OK] [{}ms]", event.head().id(), System.currentTimeMillis() - start);
       }
     } catch (Exception e) {
-      LOGGER.error("[{}] [Failed]", event.head().id(), e);
+      LOGGER.error("[{}] [EC] [failed]", event.head().id(), e);
     } finally {
       EventIdTracingHolder.clear();
       MDC.remove("x-request-id");

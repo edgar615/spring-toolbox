@@ -31,15 +31,15 @@ public class SpringEventProducer implements EventProducer, ApplicationEventPubli
   public void send(Event event) {
     try {
       publisher.publishEvent(EventAdapter.create(event));
-      LOGGER.info("===> [local] [{}] [OK] [{}] [{}]",
-                  event.head().id(),
-                  Helper.toHeadString(event),
-                  Helper.toActionString(event));
+      LOGGER.info("[{}] [MS] [LOCAL] [OK] [{}] [{}] [{}]", event.head().id(),
+              event.head().to(),
+              Helper.toHeadString(event),
+              Helper.toActionString(event));
     } catch (Exception e) {
-      LOGGER.info("===> [local] [{}] [FAILED] [{}] [{}]",
-                  event.head().id(),
-                  Helper.toHeadString(event),
-                  Helper.toActionString(event));
+      LOGGER.warn("[{}] [MS] [LOCAL] [FAILED] [{}] [{}] [{}]", event.head().id(),
+              event.head().to(),
+              Helper.toHeadString(event),
+              Helper.toActionString(event));
     }
 
   }
