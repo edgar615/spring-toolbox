@@ -21,7 +21,7 @@ public class Application {
   }
 
   @RequestMapping(value = "/test", method = RequestMethod.GET)
-  public String test(@RequestParam("id") int id) {
+  public String test(@RequestParam("id") Integer id) {
     return UUID.randomUUID().toString();
   }
 

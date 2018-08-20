@@ -50,7 +50,8 @@ public class ExceptionHandlerController {
                                           HttpServletRequest request,
                                           HttpServletResponse response) {
     SystemException systemException = SystemException.create(DefaultErrorCode.RESOURCE_NOT_FOUND)
-            .set("details", request.getServletPath());
+            .set("method", ex.getHttpMethod())
+            .set("url", ex.getRequestURL());
     return handleSystemException(systemException, request, response);
   }
 
@@ -146,7 +147,7 @@ public class ExceptionHandlerController {
           MissingServletRequestParameterException ex, HttpServletRequest request,
           HttpServletResponse response) {
     SystemException systemException = SystemException.create(DefaultErrorCode.MISSING_ARGS)
-            .set("details", ex.getMessage());
+            .set("parameter", ex.getParameterName());
     return handleSystemException(systemException, request, response);
   }
 
@@ -180,7 +181,7 @@ public class ExceptionHandlerController {
           TypeMismatchException ex, HttpServletRequest request,
           HttpServletResponse response) {
     SystemException systemException = SystemException.create(DefaultErrorCode.INVALID_TYPE)
-            .set("details", ex.getMessage());
+            .set("expected", ex.getRequiredType());
     return handleSystemException(systemException, request, response);
   }
 
