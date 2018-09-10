@@ -1,0 +1,1 @@
+Hibernate Validator很好用，但是业务上为了公用Model，不想为不同的业务场景定义不同的Model，所以就使用了在网关中用到的校验类.

@@ -30,6 +30,7 @@
         <module>spring-boot-eventbus-local</module>
         <module>spring-boot-binlog-startcache</module>
         <module>spring-boot-util-cache-redis</module>
+        <module>spring-boot-util-validator</module>
     </modules>
 
     <properties>
@@ -47,7 +48,7 @@
         <guava.version>21.0</guava.version>
         <slf4j.version>1.7.14</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <util.version>1.0.19.BETA1</util.version>
+        <util.version>1.0.19.BETA3</util.version>
         <caffeine.version>2.6.2</caffeine.version>
         <restassured.version>3.1.0</restassured.version>
         <spring.admin.version>2.0.2</spring.admin.version>
