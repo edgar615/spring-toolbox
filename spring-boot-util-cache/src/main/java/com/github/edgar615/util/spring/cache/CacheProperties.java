@@ -1,5 +1,6 @@
 package com.github.edgar615.util.spring.cache;
 
+import java.util.HashMap;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class CacheProperties {
 
   public static class Caffeine {
 
-    private Map<String, String> spec;
+    private Map<String, String> spec = new HashMap<>();
 
     public Map<String, String> getSpec() {
       return spec;
@@ -56,7 +57,7 @@ public class CacheProperties {
   }
 
   public static class Redis {
-    private Map<String, RedisCacheSpec> spec;
+    private Map<String, RedisCacheSpec> spec = new HashMap<>();
 
     public Map<String, RedisCacheSpec> getSpec() {
       return spec;
@@ -69,7 +70,7 @@ public class CacheProperties {
   }
 
   public static class L2Cache {
-    private Map<String, L2CacheSpec> spec;
+    private Map<String, L2CacheSpec> spec = new HashMap<>();
 
     public Map<String, L2CacheSpec> getSpec() {
       return spec;
