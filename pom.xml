@@ -78,7 +78,7 @@
         </repository>
     </repositories>
 
-    <!--<distributionManagement>
+    <distributionManagement>
         <snapshotRepository>
             <id>sonatype-nexus-snapshots</id>
             <name>Sonatype Nexus Snapshots</name>
@@ -90,8 +90,8 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-    -->
-    <distributionManagement>
+
+    <!--<distributionManagement>
         <repository>
             <id>edgar615-releases</id>
             <name>maven releases</name>
@@ -103,7 +103,8 @@
             <url>http://www.edgar615.com:32771/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
+    -->
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
