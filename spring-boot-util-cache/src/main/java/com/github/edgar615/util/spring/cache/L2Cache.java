@@ -6,15 +6,16 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.Hashing;
 import com.google.common.hash.PrimitiveSink;
 import com.google.common.util.concurrent.Striped;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.lang.Nullable;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * 二级缓存.
@@ -32,6 +33,10 @@ public class L2Cache extends AbstractValueAdaptingCache {
   private final String name;
 
   private final Striped<ReadWriteLock> striped;
+
+  private final AtomicInteger l1Missed = new AtomicInteger();
+
+  private final AtomicInteger l2Missed = new AtomicInteger();
 
   public L2Cache(String name, Cache level1, Cache level2, boolean allowNullValues) {
     super(allowNullValues);
@@ -54,14 +59,9 @@ public class L2Cache extends AbstractValueAdaptingCache {
 
   @Override
   public <T> T get(Object key, Callable<T> valueLoader) {
-    //因为sharedData内部保存lock的map无法删除lock，如果key比较多，对内存的占用会一直得不到释放。因此这里使用hash来限制lock的数量.
-    HashCode hashCode = Hashing.md5().newHasher().putObject(key, new Funnel<Object>() {
-      @Override
-      public void funnel(Object from, PrimitiveSink into) {
-        into.putString(from.toString(), Charsets.UTF_8);
-      }
-    }).hash();
-    int hash = Hashing.consistentHash(hashCode, 64);
+    HashCode hashCode = Hashing.md5().newHasher().putObject(key,
+        (Funnel<Object>) (from, into) -> into.putString(from.toString(), Charsets.UTF_8)).hash();
+    int hash = Hashing.consistentHash(hashCode, 128);
     ReadWriteLock lock = striped.get(hash);
     Lock rl = lock.readLock();
     Lock wl = lock.writeLock();
@@ -123,6 +123,22 @@ public class L2Cache extends AbstractValueAdaptingCache {
     level1.clear();
   }
 
+  /**
+   * 只驱逐L1中的缓存
+   *
+   * @param key 缓存KEY
+   */
+  public void evictL1(Object key) {
+    level1.evict(key);
+  }
+
+  /**
+   * 只清除L1中的缓存
+   */
+  public void clearL1() {
+    level1.clear();
+  }
+
   @Override
   protected Object lookup(Object key) {
     Object value = level1.get(key);
@@ -133,7 +149,7 @@ public class L2Cache extends AbstractValueAdaptingCache {
       }
       return value;
     }
-
+    l1Missed.incrementAndGet();
     value = level2.get(key);
 
     if (value != null) {
@@ -143,8 +159,16 @@ public class L2Cache extends AbstractValueAdaptingCache {
         return ((ValueWrapper) value).get();
       }
       return value;
-
     }
+    l2Missed.incrementAndGet();
     return value;
+  }
+
+  public int l1Missed() {
+    return l1Missed.get();
+  }
+
+  public int l2Missed() {
+    return l2Missed.get();
   }
 }

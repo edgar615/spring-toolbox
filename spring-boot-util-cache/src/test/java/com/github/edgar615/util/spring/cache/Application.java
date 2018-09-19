@@ -23,28 +23,4 @@ public class Application {
     SpringApplication.run(Application.class, args);
   }
 
-  @RequestMapping(value = "/cache1", method = RequestMethod.GET)
-  public String cache1(@RequestParam("id") int id) {
-    return cacheService.getCache1(id);
-  }
-
-  @RequestMapping(value = "/cache1/clear", method = RequestMethod.GET)
-  public String cache1() {
-    return cacheService.clearCache1();
-  }
-
-  @RequestMapping(value = "/cache1/evict", method = RequestMethod.GET)
-  public String evict(@RequestParam("id") int id) {
-    return cacheService.evict(id);
-  }
-
-  @RequestMapping(value = "/cache2", method = RequestMethod.GET)
-  public String cache2(@RequestParam("id") int id) {
-    return cacheService.getCache2(id);
-  }
-
-  @RequestMapping(value = "/l2cache", method = RequestMethod.GET)
-  public String dynamic(@RequestParam("id") int id) {
-    return cacheService.l2Cache(id);
-  }
 }

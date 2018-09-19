@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/device?verifyServerCertificate=false&useSSL=true&requireSSL=true
+    username : device
+    password: 123456
+    connectionTimeout: 60000 #连接的超时时间，毫秒
+    dataSourceProperties: # hikari的属性
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+      useLocalSessionState: true
+      useLocalTransactionState: true
+      rewriteBatchedStatements: true
+      cacheResultSetMetadata: true
+      cacheServerConfiguration: true
+      elideSetAutoCommits: true
+      maintainTimeStats: false
+
+caching:
+  enabled: true
+  caffeine:
+    spec:
+      DeviceJdbcCache: maximumSize=10000,expireAfterWrite=1h
+
+jdbc:
+  cache:
+    enabled: true
+
+log4jdbc: #jdbc日志配置
+  trim:
+    sql: true
+  sqltiming:
+    warn:
+      threshold: 1000
+    error:

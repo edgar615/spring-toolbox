@@ -27,6 +27,15 @@ public class CacheEvictEventListener implements ApplicationListener<CacheEvictEv
       logger.debug("no cache can be evict : {}", message.cacheName());
       return;
     }
+    if (cache instanceof L2Cache) {
+      evictL2Cache(message, (L2Cache) cache);
+    } else {
+      evictCache(message, cache);
+    }
+
+  }
+
+  private void evictCache(CacheEvictMessage message, Cache cache) {
     if (message.allEntries()) {
       logger.debug("clear cache: {}", message.cacheName());
       cache.clear();
@@ -34,6 +43,18 @@ public class CacheEvictEventListener implements ApplicationListener<CacheEvictEv
     if (message.key() != null) {
       logger.debug("evict cache: {}, {}", message.cacheName(), message.key());
       cache.evict(message.key());
+    }
+  }
+
+  private void evictL2Cache(CacheEvictMessage message, L2Cache cache) {
+    L2Cache l2Cache = cache;
+    if (message.allEntries()) {
+      logger.debug("clear cache: {}", message.cacheName());
+      l2Cache.clearL1();
+    }
+    if (message.key() != null) {
+      logger.debug("evict cache: {}, {}", message.cacheName(), message.key());
+      l2Cache.evictL1(message.key());
     }
   }
 }

@@ -5,11 +5,13 @@ import com.google.common.collect.Lists;
 import com.github.edgar615.util.db.Jdbc;
 import com.github.edgar615.util.db.Persistent;
 import com.github.edgar615.util.search.Example;
+import java.util.HashMap;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.cache.support.NullValue;
 
 /**
  * Created by Edgar on 2018/5/24.
@@ -76,10 +78,15 @@ public class CacheWrappedJdbc implements Jdbc {
     T persistent = null;
     Cache.ValueWrapper valueWrapper = cache.get(id);
     if (valueWrapper != null) {
-      persistent = (T) valueWrapper.get();
+      Object value = valueWrapper.get();
+      if (NullValue.INSTANCE == value) {
+        return null;
+      }
+      persistent = (T) value;
     } else {
       persistent = jdbc.findById(elementType, id, Lists.newArrayList());
       if (persistent == null) {
+        cache.put(id, NullValue.INSTANCE);
         return null;
       }
       cache.put(id, persistent);
@@ -88,9 +95,10 @@ public class CacheWrappedJdbc implements Jdbc {
       return persistent;
     }
     Map<String, Object> map = persistent.toMap();
-    fields.stream().forEach(f -> map.remove(f));
-    Persistent<ID> newPersistent = newDomain(elementType);
-    newPersistent.fromMap(map);
+    Map<String, Object> newMap = new HashMap<>();
+    fields.stream().forEach(f -> newMap.put(f, map.get(f)));
+    Persistent<ID> newPersistent = Persistent.create(elementType);
+    newPersistent.fromMap(newMap);
     return (T) newPersistent;
   }
 
