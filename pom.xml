@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <scaffold.release.version>0.2.6-SNAPSHOT</scaffold.release.version>
+        <scaffold.release.version>0.2.6</scaffold.release.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
