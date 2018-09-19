@@ -102,6 +102,9 @@ public class CacheTest {
 
   @Test
   public void testEvictL2Cache() throws InterruptedException {
+    L2Cache l2Cache = (L2Cache) cacheManager.getCache("l2Cache");
+    int l1Missed = l2Cache.l1Missed();
+    int l2Missed = l2Cache.l2Missed();
     cacheService.l2Cache(1);
     cacheService.l2Cache(1);
     cacheService.l2Cache(2);
@@ -114,13 +117,15 @@ public class CacheTest {
     int count = cacheService.count("l2Cache");
     Assert.assertEquals(2, count);
 
-    L2Cache l2Cache = (L2Cache) cacheManager.getCache("l2Cache");
-    Assert.assertEquals(3, l2Cache.l1Missed());
-    Assert.assertEquals(2, l2Cache.l2Missed());
+    Assert.assertEquals(3, l2Cache.l1Missed() - l1Missed);
+    Assert.assertEquals(2, l2Cache.l2Missed() - l2Missed);
   }
 
   @Test
   public void testClearL2Cache() throws InterruptedException {
+    L2Cache l2Cache = (L2Cache) cacheManager.getCache("l2Cache");
+    int l1Missed = l2Cache.l1Missed();
+    int l2Missed = l2Cache.l2Missed();
     cacheService.l2Cache(1);
     cacheService.l2Cache(1);
     cacheService.l2Cache(2);
@@ -132,8 +137,7 @@ public class CacheTest {
 
     int count = cacheService.count("l2Cache");
     Assert.assertEquals(2, count);
-    L2Cache l2Cache = (L2Cache) cacheManager.getCache("l2Cache");
-    Assert.assertEquals(4, l2Cache.l1Missed());
-    Assert.assertEquals(2, l2Cache.l2Missed());
+    Assert.assertEquals(4, l2Cache.l1Missed() - l1Missed);
+    Assert.assertEquals(2, l2Cache.l2Missed() - l2Missed);
   }
 }

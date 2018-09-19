@@ -1,9 +1,9 @@
 eventbus:
     consumer:
         group: test
-        servers:  120.76.158.7:9092
+        servers:  localhost:9092
         topics:
           - DeviceControlEvent_1_3
     producer:
         retries: 1
-        servers:  120.76.158.7:9092 #多个用逗号,分隔
+        servers:  localhost:9092 #多个用逗号,分隔
