@@ -74,7 +74,7 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   public <ID> int updateById(Persistent<ID> persistent,
-      Map<String, Integer> addOrSub,
+      Map<String, Number> addOrSub,
       List<String> nullFields, ID id) {
     SQLBindings sqlBindings = SqlBuilder.updateById(persistent, addOrSub, nullFields, id);
     if (sqlBindings == null) {
@@ -86,7 +86,7 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   public <ID> int updateByExample(Persistent<ID> persistent,
-      Map<String, Integer> addOrSub,
+      Map<String, Number> addOrSub,
       List<String> nullFields,
       Example example) {
     SQLBindings sqlBindings = SqlBuilder.updateByExample(persistent, addOrSub, nullFields, example);

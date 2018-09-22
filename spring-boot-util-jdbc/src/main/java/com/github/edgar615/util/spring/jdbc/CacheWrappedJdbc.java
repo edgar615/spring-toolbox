@@ -53,7 +53,7 @@ public class CacheWrappedJdbc implements Jdbc {
   }
 
   @Override
-  public <ID> int updateById(Persistent<ID> persistent, Map<String, Integer> addOrSub,
+  public <ID> int updateById(Persistent<ID> persistent, Map<String, Number> addOrSub,
                              List<String> nullFields, ID id) {
     int result = jdbc.updateById(persistent, addOrSub, nullFields, id);
     evictCache(persistent.getClass(), id);
@@ -61,7 +61,7 @@ public class CacheWrappedJdbc implements Jdbc {
   }
 
   @Override
-  public <ID> int updateByExample(Persistent<ID> persistent, Map<String, Integer> addOrSub,
+  public <ID> int updateByExample(Persistent<ID> persistent, Map<String, Number> addOrSub,
                                   List<String> nullFields, Example example) {
     int result = jdbc.updateByExample(persistent, addOrSub, nullFields, example);
     clearCache(persistent.getClass());
