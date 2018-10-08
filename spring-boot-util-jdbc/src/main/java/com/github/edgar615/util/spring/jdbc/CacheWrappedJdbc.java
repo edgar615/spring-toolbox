@@ -39,6 +39,11 @@ public class CacheWrappedJdbc implements Jdbc {
   }
 
   @Override
+  public <ID, T extends Persistent<ID>> void batchInsert(List<T> persistentList) {
+    jdbc.batchInsert(persistentList);
+  }
+
+  @Override
   public <ID, T extends Persistent<ID>> int deleteById(Class<T> elementType, ID id) {
     int result = jdbc.deleteById(elementType, id);
     evictCache(elementType, id);

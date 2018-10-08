@@ -1,5 +1,6 @@
 package com.github.edgar615.util.spring.appkey;
 
+import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -10,20 +11,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClientFixProperties {
 
+  private Long companyId;
+
   private String companyCode;
 
   private String appKey;
 
   private String appSecret;
 
-  private String name;
+  private String appName;
 
-  public String getName() {
-    return name;
+  private Map<String, Object> ext;
+
+  public Long getCompanyId() {
+    return companyId;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setCompanyId(Long companyId) {
+    this.companyId = companyId;
+  }
+
+  public String getAppName() {
+    return appName;
+  }
+
+  public void setAppName(String appName) {
+    this.appName = appName;
   }
 
   public String getCompanyCode() {
@@ -48,5 +61,13 @@ public class ClientFixProperties {
 
   public void setAppSecret(String appSecret) {
     this.appSecret = appSecret;
+  }
+
+  public Map<String, Object> getExt() {
+    return ext;
+  }
+
+  public void setExt(Map<String, Object> ext) {
+    this.ext = ext;
   }
 }

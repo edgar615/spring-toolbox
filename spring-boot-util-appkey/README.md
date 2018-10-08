@@ -7,7 +7,7 @@ client:
         companyCode: '000001000001' #需要用引号包括，不然spring会将000001000001转换为数字
         appKey: abc
         appSecret: 12345678
-        name: infant-api
+        appName: infant-api
 ```
 
 SimpleClientInterceptor

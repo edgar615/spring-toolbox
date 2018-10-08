@@ -23,6 +23,8 @@ public class PrincipalImpl implements Principal {
 
   private String jti;
 
+  private Long companyId;
+
   private final Map<String, Object> ext = new HashMap<>();
 
   @Override
@@ -78,6 +80,15 @@ public class PrincipalImpl implements Principal {
   @Override
   public String getMail() {
     return mail;
+  }
+
+  @Override
+  public Long getCompanyId() {
+    return companyId;
+  }
+
+  public void setCompanyId(Long companyId) {
+    this.companyId = companyId;
   }
 
   public void setMail(String mail) {

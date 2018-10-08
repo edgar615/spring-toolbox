@@ -60,7 +60,7 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
       String appKeyString = new String(Base64.getDecoder().decode(principalHeader));
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> principalMap = mapper.readValue(appKeyString, Map.class);
-      String companyCode = (String) principalMap.get("companyCode");
+
       Number number = (Number) principalMap.get("userId");
       Long userId;
       if (number instanceof Long) {
@@ -68,35 +68,42 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
       } else {
         userId = number.longValue();
       }
-      String username = (String) principalMap.get("username");
-      String fullname = (String) principalMap.get("fullname");
-      String tel = (String) principalMap.get("tel");
-      String mail = (String) principalMap.get("mail");
-      String jti = (String) principalMap.get("jti");
-      Objects.requireNonNull(companyCode);
       Objects.requireNonNull(userId);
       PrincipalImpl principal = new PrincipalImpl();
       principal.setUserId(userId);
       principalMap.remove("userId");
-      principal.setCompanyCode(companyCode);
-      principalMap.remove("companyCode");
-      if (!Strings.isNullOrEmpty(username)) {
+      if (principalMap.get("companyId") instanceof Long) {
+        Long companyId = (Long) principalMap.get("companyId");
+        principal.setCompanyId(companyId);
+        principalMap.remove("companyId");
+      }
+      if (principalMap.get("companyCode") instanceof String) {
+        String companyCode = (String) principalMap.get("companyCode");
+        principal.setCompanyCode(companyCode);
+        principalMap.remove("companyCode");
+      }
+      if (principalMap.get("username") instanceof String) {
+        String username = (String) principalMap.get("username");
         principal.setUsername(username);
         principalMap.remove("username");
       }
-      if (!Strings.isNullOrEmpty(fullname)) {
+      if (principalMap.get("fullname") instanceof String) {
+        String fullname = (String) principalMap.get("fullname");
         principal.setFullname(fullname);
         principalMap.remove("fullname");
       }
-      if (!Strings.isNullOrEmpty(mail)) {
-        principal.setMail(mail);
-        principalMap.remove("mail");
-      }
-      if (!Strings.isNullOrEmpty(tel)) {
+      if (principalMap.get("tel") instanceof String) {
+        String tel = (String) principalMap.get("tel");
         principal.setTel(tel);
         principalMap.remove("tel");
       }
-      if (!Strings.isNullOrEmpty(jti)) {
+      if (principalMap.get("mail") instanceof String) {
+        String mail = (String) principalMap.get("mail");
+        principal.setMail(mail);
+        principalMap.remove("mail");
+      }
+      if (principalMap.get("jti") instanceof String) {
+        String jti = (String) principalMap.get("jti");
         principal.setJti(jti);
         principalMap.remove("jti");
       }

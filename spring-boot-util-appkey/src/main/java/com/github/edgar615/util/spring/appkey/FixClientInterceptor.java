@@ -23,10 +23,14 @@ public class FixClientInterceptor extends HandlerInterceptorAdapter {
                            HttpServletResponse response, Object handler) throws Exception {
     ClientInfo clientInfo = new ClientInfo();
 //    对于单机版应用，不需要关注appKey和appSecret，只需要记录平台分配的companyCode，所以我们这里使用了一个随机的字符串
+    clientInfo.setCompanyId(clientFixProperties.getCompanyId());
     clientInfo.setAppKey(clientFixProperties.getAppKey());
     clientInfo.setAppSecret(clientFixProperties.getAppSecret());
     clientInfo.setCompanyCode(clientFixProperties.getCompanyCode());
-    clientInfo.setName(clientFixProperties.getName());
+    clientInfo.setAppName(clientFixProperties.getAppName());
+    if (clientFixProperties != null) {
+      clientFixProperties.getExt().forEach((k, v) -> clientInfo.addExt(k, v));
+    }
     ClientHolder.set(clientInfo);
     return super.preHandle(request, response, handler);
   }

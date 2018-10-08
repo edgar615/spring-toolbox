@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 从请求头中解析对应的Client.
@@ -55,19 +54,28 @@ public class SimpleClientInterceptor extends HandlerInterceptorAdapter {
       String appKeyString = new String(Base64.getDecoder().decode(appKeyHeader));
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> clientMap = mapper.readValue(appKeyString, Map.class);
-      String companyCode = (String) clientMap.get("companyCode");
-      if (Strings.isNullOrEmpty(companyCode)) {
-        companyCode = (String) clientMap.get("clientCode");
-      }
-      String appKey = (String) clientMap.get("appKey");
-      String appName = (String) clientMap.get("appName");
-      Objects.requireNonNull(companyCode);
-      Objects.requireNonNull(appKey);
-      Objects.requireNonNull(appName);
       ClientInfo clientInfo = new ClientInfo();
-      clientInfo.setAppKey(appKey);
-      clientInfo.setCompanyCode(companyCode);
-      clientInfo.setName(appName);
+      if (clientMap.get("companyCode") instanceof String) {
+        String companyCode = (String) clientMap.get("companyCode");
+        clientInfo.setCompanyCode(companyCode);
+      }
+      if (clientMap.get("companyId") instanceof Long) {
+        Long companyId = (Long) clientMap.get("companyId");
+        clientInfo.setCompanyId(companyId);
+      }
+      if (clientMap.get("appKey") instanceof String) {
+        String appKey = (String) clientMap.get("appKey");
+        clientInfo.setAppKey(appKey);
+      }
+      if (clientMap.get("appName") instanceof String) {
+        String appName = (String) clientMap.get("appName");
+        clientInfo.setAppName(appName);
+      }
+      clientMap.remove("appKey");
+      clientMap.remove("appName");
+      clientMap.remove("companyId");
+      clientMap.remove("companyCode");
+      clientMap.forEach((k, v) -> clientInfo.addExt(k, v));
       return clientInfo;
     } catch (Exception e) {
       return null;

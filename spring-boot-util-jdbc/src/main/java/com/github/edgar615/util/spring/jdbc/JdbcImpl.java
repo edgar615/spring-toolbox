@@ -7,9 +7,12 @@ import com.github.edgar615.util.db.SQLBindings;
 import com.github.edgar615.util.db.SqlBuilder;
 import com.github.edgar615.util.search.Example;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.sql.DataSource;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -55,6 +58,26 @@ public class JdbcImpl implements Jdbc {
         },
         keyHolder);
     persistent.setGeneratedKey(keyHolder.getKey());
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> void batchInsert(List<T> persistentList) {
+    if (persistentList == null || persistentList.isEmpty()) {
+      return;
+    }
+    if (persistentList.size() == 1) {
+      insert(persistentList.get(0));
+      return;
+    }
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    List<SQLBindings> sqlBindingsList = persistentList.stream()
+        .map(p -> SqlBuilder.fullInsertSql(p))
+        .collect(Collectors.toList());
+    String sql = sqlBindingsList.get(0).sql();
+    List<Object[]> args = sqlBindingsList.stream()
+        .map(sqlBindings -> sqlBindings.bindings().toArray())
+        .collect(Collectors.toList());
+    jdbcTemplate.batchUpdate(sql, args);
   }
 
   @Override

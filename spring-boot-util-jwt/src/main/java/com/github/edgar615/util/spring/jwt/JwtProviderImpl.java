@@ -43,6 +43,9 @@ public class JwtProviderImpl implements JwtProvider {
       builder.withExpiresAt(new Date(System.currentTimeMillis() + jwtProperty.getExpired()));
     }
     builder.withClaim("userId", principal.getUserId());
+    if (principal.getCompanyId() != null) {
+      builder.withClaim("companyId", principal.getCompanyId());
+    }
     if (principal.getCompanyCode() != null) {
       builder.withClaim("companyCode", principal.getCompanyCode());
     }
@@ -100,6 +103,10 @@ public class JwtProviderImpl implements JwtProvider {
     PrincipalImpl principal = new PrincipalImpl();
     Long userId = jwt.getClaims().get("userId").asLong();
     principal.setUserId(userId);
+    if (jwt.getClaims().containsKey("companyId")) {
+      Long companyId = jwt.getClaims().get("companyId").asLong();
+      principal.setCompanyId(companyId);
+    }
     if (jwt.getClaims().containsKey("companyCode")) {
       String companyCode = jwt.getClaims().get("companyCode").asString();
       principal.setCompanyCode(companyCode);
