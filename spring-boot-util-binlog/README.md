@@ -11,3 +11,11 @@ spring.datasource.url=jdbcurl
 spring.datasource.username=数据库用户名
 spring.datasource.password=数据库密码
 ```
+
+server-id = 1
+log_bin = /path/to/mysql-bin.log
+binlog_format = ROW
+
+CREATE USER binlog_reader IDENTIFIED BY 'binlog_reader';  
+GRANT SELECT, REPLICATION SLAVE, REPLICATION CLIENT ON *.* TO 'binlog_reader'@'%';
+FLUSH PRIVILEGES;

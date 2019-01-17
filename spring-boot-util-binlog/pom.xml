@@ -13,7 +13,7 @@
 
     <properties>
         <binlog.version>0.13.0</binlog.version>
-        <mysql.mapping.version>0.0.1</mysql.mapping.version>
+        <mysql.mapping.version>0.0.2</mysql.mapping.version>
     </properties>
 
     <dependencies>

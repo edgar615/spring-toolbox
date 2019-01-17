@@ -45,10 +45,10 @@
         <cloud.start.version>2.0.0.RELEASE</cloud.start.version>
         <org.aspectj.version>1.7.2</org.aspectj.version>
         <aspectjweaver.version>1.8.6</aspectjweaver.version>
-        <guava.version>21.0</guava.version>
+        <guava.version>26.0-jre</guava.version>
         <slf4j.version>1.7.14</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <util.version>1.1.1.BETA3</util.version>
+        <util.version>1.1.1.BETA6</util.version>
         <caffeine.version>2.6.2</caffeine.version>
         <restassured.version>3.1.0</restassured.version>
         <spring.admin.version>2.0.2</spring.admin.version>
