@@ -7,12 +7,14 @@ import com.github.edgar615.util.db.SQLBindings;
 import com.github.edgar615.util.db.SqlBuilder;
 import com.github.edgar615.util.search.Example;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -23,15 +25,21 @@ import org.springframework.jdbc.support.KeyHolder;
  *
  * @author Edgar  Date 2017/8/8
  */
+@CacheConfig(cacheResolver = "jdbcCacheResolver")
 public class JdbcImpl implements Jdbc {
 
   private final DataSource dataSource;
 
-  public JdbcImpl(DataSource dataSource) {
+  private final FindByIdAction findByIdAction;
+
+  public JdbcImpl(DataSource dataSource, FindByIdAction findByIdAction) {
     this.dataSource = dataSource;
+    this.findByIdAction = findByIdAction;
   }
 
   @Override
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.id")
+  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> void insert(Persistent<ID> persistent) {
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -39,7 +47,9 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  public <ID> void insertAndGeneratedKey(Persistent<ID> persistent) {
+  @CacheEvict(cacheNames = "JdbcCache", key = "#result")
+  @JdbcCache("#p0.getClass().getSimpleName()")
+  public <ID> ID insertAndGeneratedKey(Persistent<ID> persistent) {
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -58,9 +68,12 @@ public class JdbcImpl implements Jdbc {
         },
         keyHolder);
     persistent.setGeneratedKey(keyHolder.getKey());
+    return persistent.id();
   }
 
   @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @JdbcCache("#p0.get(0).getClass().getSimpleName()")
   public <ID, T extends Persistent<ID>> void batchInsert(List<T> persistentList) {
     if (persistentList == null || persistentList.isEmpty()) {
       return;
@@ -81,6 +94,8 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p1")
+  @JdbcCache("#p0.getSimpleName()")
   public <ID, T extends Persistent<ID>> int deleteById(Class<T> elementType, ID id) {
     SQLBindings sqlBindings = SqlBuilder.deleteById(elementType, id);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -88,6 +103,8 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @JdbcCache("#p0.getSimpleName()")
   public <ID, T extends Persistent<ID>> int deleteByExample(Class<T> elementType,
       Example example) {
     SQLBindings sqlBindings = SqlBuilder.deleteByExample(elementType, example);
@@ -96,6 +113,8 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p3")
+  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateById(Persistent<ID> persistent,
       Map<String, Number> addOrSub,
       List<String> nullFields, ID id) {
@@ -108,6 +127,8 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateByExample(Persistent<ID> persistent,
       Map<String, Number> addOrSub,
       List<String> nullFields,
@@ -123,16 +144,52 @@ public class JdbcImpl implements Jdbc {
   @Override
   public <ID, T extends Persistent<ID>> T findById(Class<T> elementType, ID id,
       List<String> fields) {
-    SQLBindings sqlBindings = SqlBuilder.findById(elementType, id, fields);
-    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-    List<T> result =
-        jdbcTemplate.query(sqlBindings.sql(), sqlBindings.bindings().toArray(),
-            BeanPropertyRowMapper.newInstance(elementType));
-    if (result.isEmpty()) {
-      return null;
+    T result = findByIdAction.findById(elementType, id);
+    if (fields == null || fields.isEmpty()) {
+      return result;
     }
-    return result.get(0);
+    Map<String, Object> map = result.toMap();
+    Map<String, Object> newMap = new HashMap<>();
+    fields.stream().forEach(f -> newMap.put(f, map.get(f)));
+    Persistent<ID> newResult = Persistent.create(elementType);
+    newResult.fromMap(newMap);
+    return (T) newResult;
 
+  }
+
+  /**
+   * 根据主键更新，忽略实体中的null.
+   *
+   * @param persistent 持久化对象
+   * @param id 主键
+   * @param <ID> 主键类型
+   * @return 修改记录数
+   */
+  @Override
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p1")
+  @JdbcCache("#p0.getClass().getSimpleName()")
+  public <ID> int updateById(Persistent<ID> persistent, ID id) {
+    return updateById(persistent, new HashMap<>(), new ArrayList<>(), id);
+  }
+
+  /**
+   * 根据条件更新，忽略实体中的null.
+   *
+   * @param persistent 持久化对象
+   * @param example 查询条件
+   * @param <ID> 条件集合
+   * @return 修改记录数
+   */
+  @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @JdbcCache("#p0.getClass().getSimpleName()")
+  public <ID> int updateByExample(Persistent<ID> persistent, Example example) {
+    return updateByExample(persistent, new HashMap<>(), new ArrayList<>(), example);
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> T findById(Class<T> elementType, ID id) {
+    return findByIdAction.findById(elementType, id);
   }
 
   @Override

@@ -14,10 +14,11 @@ import java.util.Map;
 import org.springframework.cache.support.NullValue;
 
 /**
- * Created by Edgar on 2018/5/24.
+ * 改为直接在jdbcImpl上实现.
  *
  * @author Edgar  Date 2018/5/24
  */
+@Deprecated
 public class CacheWrappedJdbc implements Jdbc {
   private final Jdbc jdbc;
 
@@ -34,8 +35,8 @@ public class CacheWrappedJdbc implements Jdbc {
   }
 
   @Override
-  public <ID> void insertAndGeneratedKey(Persistent<ID> persistent) {
-    jdbc.insertAndGeneratedKey(persistent);
+  public <ID> ID insertAndGeneratedKey(Persistent<ID> persistent) {
+   return jdbc.insertAndGeneratedKey(persistent);
   }
 
   @Override

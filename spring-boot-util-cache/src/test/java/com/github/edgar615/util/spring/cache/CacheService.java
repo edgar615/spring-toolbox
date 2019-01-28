@@ -17,5 +17,7 @@ public interface CacheService {
 
   int count(String method);
 
+  String noOp(int id);
+
   void clearStat();
 }

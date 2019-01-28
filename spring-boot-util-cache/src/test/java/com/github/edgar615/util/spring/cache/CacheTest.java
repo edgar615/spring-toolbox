@@ -140,4 +140,18 @@ public class CacheTest {
     Assert.assertEquals(4, l2Cache.l1Missed() - l1Missed);
     Assert.assertEquals(2, l2Cache.l2Missed() - l2Missed);
   }
+
+  @Test
+  public void testNoOpCache() throws InterruptedException {
+    cacheService.noOp(1);
+    cacheService.noOp(1);
+    TimeUnit.SECONDS.sleep(3);
+    cacheService.noOp(2);
+    TimeUnit.SECONDS.sleep(3);
+    cacheService.noOp(1);
+    cacheService.noOp(2);
+
+    int count = cacheService.count("noOpCache");
+    Assert.assertEquals(5, count);
+  }
 }

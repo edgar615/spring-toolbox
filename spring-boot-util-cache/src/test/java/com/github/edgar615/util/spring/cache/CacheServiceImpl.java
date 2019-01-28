@@ -84,6 +84,14 @@ public class CacheServiceImpl implements CacheService, ApplicationEventPublisher
   }
 
   @Override
+  @Cacheable(cacheNames = "noOpCache", key = "#p0")
+  public String noOp(int id) {
+    System.out.println("noOpCache");
+    stat("noOpCache");
+    return UUID.randomUUID().toString();
+  }
+
+  @Override
   public void clearStat() {
     stat.clear();
   }

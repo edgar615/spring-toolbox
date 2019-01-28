@@ -69,6 +69,7 @@ public class CacheAutoConfiguration {
     CompositeCacheManager compositeCacheManager = new CompositeCacheManager();
     compositeCacheManager.setCacheManagers(cacheManagers);
     compositeCacheManager.afterPropertiesSet();
+    compositeCacheManager.setFallbackToNoOpCache(true);
     return compositeCacheManager;
   }
 

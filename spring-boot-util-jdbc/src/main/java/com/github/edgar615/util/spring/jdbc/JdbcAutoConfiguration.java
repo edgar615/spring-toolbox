@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.JdbcProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,22 +35,26 @@ import javax.sql.DataSource;
  */
 @Configuration
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
+@EnableConfigurationProperties({JdbcCacheProperties.class})
 public class JdbcAutoConfiguration {
 
   @Bean
-  @ConditionalOnProperty(name = "jdbc.cache.enabled", matchIfMissing = true, havingValue = "false")
   @ConditionalOnMissingBean({Jdbc.class})
   @ConditionalOnBean(DataSource.class)
-  public Jdbc jdbc(@Autowired DataSource dataSource) {
-    return new JdbcImpl(dataSource);
+  public Jdbc jdbc(@Autowired DataSource dataSource, @Autowired FindByIdAction findByIdAction) {
+    return new JdbcImpl(dataSource, findByIdAction);
   }
 
   @Bean
-  @ConditionalOnProperty(name = "jdbc.cache.enabled", matchIfMissing = false, havingValue = "true")
-  @ConditionalOnMissingBean({Jdbc.class})
-  @ConditionalOnBean({DataSource.class, CacheManager.class})
-  public Jdbc cachedJdbc(@Autowired DataSource dataSource, @Autowired CacheManager cacheManager) {
-    return new CacheWrappedJdbc(new JdbcImpl(dataSource), cacheManager);
+  @ConditionalOnBean(DataSource.class)
+  public FindByIdAction findByIdAction(@Autowired DataSource dataSource) {
+    return new FindByIdActionImpl(dataSource);
+  }
+
+  @Bean
+  @ConditionalOnBean(CacheManager.class)
+  public JdbcCacheResolver jdbcCacheResolver(@Autowired CacheManager cacheManager, JdbcCacheProperties jdbcCacheProperties) {
+    return new JdbcCacheResolver(cacheManager, jdbcCacheProperties);
   }
 
 }

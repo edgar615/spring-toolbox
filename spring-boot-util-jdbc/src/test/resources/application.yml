@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/device?verifyServerCertificate=false&useSSL=true&requireSSL=true
-    username : device
-    password: 123456
+    url: jdbc:mysql://test.ihorn.com.cn:3306/device
+    username : admin
+    password: csst
     connectionTimeout: 60000 #连接的超时时间，毫秒
     dataSourceProperties: # hikari的属性
       cachePrepStmts: true
@@ -18,9 +18,20 @@ spring:
       elideSetAutoCommits: true
       maintainTimeStats: false
 
+caching:
+  enabled: true
+  caffeine:
+    spec:
+      DeviceJdbcCache: maximumSize=10000,expireAfterWrite=1h
+
 jdbc:
-  cache:
-    enabled: false
+  caching:
+    config:
+      - Default:
+          Device:
+            keyPrefix: Device
+          DevicePart:
+            keyPrefix: DevicePart
 
 log4jdbc: #jdbc日志配置
   trim:
