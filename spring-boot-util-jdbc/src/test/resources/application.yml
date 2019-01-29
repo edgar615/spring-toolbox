@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://test.ihorn.com.cn:3306/device
-    username : admin
-    password: csst
+    url: jdbc:mysql://localhost:3306/device
+    username : root
+    password: 123456
     connectionTimeout: 60000 #连接的超时时间，毫秒
     dataSourceProperties: # hikari的属性
       cachePrepStmts: true
@@ -27,11 +27,11 @@ caching:
 jdbc:
   caching:
     config:
-      - Default:
-          Device:
-            keyPrefix: Device
-          DevicePart:
-            keyPrefix: DevicePart
+      custom-spec:
+        Device:
+          cache-name-prefix: "Device"
+        DevicePart:
+          cache-name-prefix: "test"
 
 log4jdbc: #jdbc日志配置
   trim:

@@ -48,4 +48,38 @@ public class CachedJdbcTest {
 
     jdbc.findById(Device.class, 3);
   }
+
+  @Test
+  public void testInsert() {
+    Device device = jdbc.findById(Device.class, 1);
+    System.out.println(device);
+
+    device = jdbc.findById(Device.class, 1);
+    System.out.println(device);
+
+    device = new Device();
+    device.setDeviceId(1);
+    device.setCompanyCode(0);
+    device.setBarcode("0");
+    device.setEncryptKey("000000000000000");
+    jdbc.insert(device);
+
+    device = jdbc.findById(Device.class, 1);
+    System.out.println(device);
+  }
+
+  @Test
+  public void testDelete() {
+    Device device = jdbc.findById(Device.class, 1);
+    System.out.println(device);
+
+    device = jdbc.findById(Device.class, 1);
+    System.out.println(device);
+
+    jdbc.deleteById(Device.class, 1);
+
+    device = jdbc.findById(Device.class, 1);
+    System.out.println(device);
+  }
+
 }

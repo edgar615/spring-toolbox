@@ -12,5 +12,10 @@ import java.lang.annotation.Target;
 @Inherited
 @Documented
 public @interface JdbcCache {
+
+  /**
+   * 表名
+   * @return
+   */
   String value();
 }

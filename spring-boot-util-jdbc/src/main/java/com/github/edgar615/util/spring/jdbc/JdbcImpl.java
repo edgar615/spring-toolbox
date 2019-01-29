@@ -38,7 +38,7 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.id")
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p0.id()")
   @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> void insert(Persistent<ID> persistent) {
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
@@ -47,7 +47,7 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", key = "#result")
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #result")
   @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> ID insertAndGeneratedKey(Persistent<ID> persistent) {
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
@@ -94,7 +94,7 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p1")
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getSimpleName() + ':' + #p1")
   @JdbcCache("#p0.getSimpleName()")
   public <ID, T extends Persistent<ID>> int deleteById(Class<T> elementType, ID id) {
     SQLBindings sqlBindings = SqlBuilder.deleteById(elementType, id);
@@ -113,7 +113,7 @@ public class JdbcImpl implements Jdbc {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p3")
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p3")
   @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateById(Persistent<ID> persistent,
       Map<String, Number> addOrSub,
@@ -166,7 +166,7 @@ public class JdbcImpl implements Jdbc {
    * @return 修改记录数
    */
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p1")
+  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p1")
   @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateById(Persistent<ID> persistent, ID id) {
     return updateById(persistent, new HashMap<>(), new ArrayList<>(), id);

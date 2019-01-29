@@ -1,11 +1,10 @@
 package com.github.edgar615.util.spring.jdbc;
 
+import com.github.edgar615.util.spring.jdbc.JdbcCacheProperties.JdbcCacheConfigSpec;
 import com.google.common.base.Strings;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 import org.springframework.cache.interceptor.SimpleCacheResolver;
@@ -40,17 +39,14 @@ public class JdbcCacheResolver extends SimpleCacheResolver {
     }
     String prefixCacheName = parser.parseExpression(jdbcCache.value()).getValue
         (evaluationContext, String.class);
-    if (jdbcCacheProperties.getConfig() != null) {
-      Set<String> cacheNames = jdbcCacheProperties.getConfig().keySet();
-      for (String cacheName : cacheNames) {
-        Set<String> tables = jdbcCacheProperties.getConfig().get(cacheName)
-            .keySet();
-        if (tables.contains(prefixCacheName)) {
-          return cacheName;
-        }
-      }
+    if (jdbcCacheProperties.getConfig().getCustomSpec() == null) {
+      return prefixCacheName;
     }
-    return prefixCacheName;
+    JdbcCacheConfigSpec spec = jdbcCacheProperties.getConfig().getCustomSpec().get(prefixCacheName);
+    if (spec == null) {
+      return prefixCacheName;
+    }
+    return spec.getCacheNamePrefix();
   }
 
   private Collection<String> determineCacheName(CacheOperationInvocationContext<?> context) {
