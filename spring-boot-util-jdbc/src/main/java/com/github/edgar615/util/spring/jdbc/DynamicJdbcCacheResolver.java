@@ -1,8 +1,5 @@
 package com.github.edgar615.util.spring.jdbc;
 
-import com.github.edgar615.util.db.Persistent;
-import com.github.edgar615.util.exception.DefaultErrorCode;
-import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.spring.jdbc.JdbcCacheProperties.JdbcCacheConfigSpec;
 import com.google.common.base.Strings;
 import java.util.ArrayList;
@@ -11,24 +8,38 @@ import java.util.List;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperationInvocationContext;
 import org.springframework.cache.interceptor.SimpleCacheResolver;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-public class JdbcCacheResolver extends SimpleCacheResolver {
+@Deprecated
+public class DynamicJdbcCacheResolver extends SimpleCacheResolver {
 
   private final JdbcCacheProperties jdbcCacheProperties;
 
-  protected JdbcCacheResolver(CacheManager cacheManager,
-      JdbcCacheProperties jdbcCacheProperties) {
+  public DynamicJdbcCacheResolver(CacheManager cacheManager, JdbcCacheProperties jdbcCacheProperties) {
     super(cacheManager);
     this.jdbcCacheProperties = jdbcCacheProperties;
   }
 
   @Override
   protected Collection<String> getCacheNames(CacheOperationInvocationContext<?> context) {
-    return determineCacheName(context);
+      return determineCacheName(context);
   }
 
   private String determinePrefixCacheName(CacheOperationInvocationContext<?> context) {
-    String prefixCacheName = tableName(context);
+    JdbcCache jdbcCache = context.getMethod().getAnnotation(JdbcCache.class);
+    if (jdbcCache == null || Strings.isNullOrEmpty(jdbcCache.value())) {
+      return null;
+    }
+    ExpressionParser parser = new SpelExpressionParser();
+    StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+    evaluationContext.setVariable("methodName", context.getMethod().getName());
+    for (int i = 0; i < context.getArgs().length; i++) {
+      evaluationContext.setVariable("p" + i, context.getArgs()[i]);
+    }
+    String prefixCacheName = parser.parseExpression(jdbcCache.value()).getValue
+        (evaluationContext, String.class);
     if (jdbcCacheProperties.getConfig().getCustomSpec() == null) {
       return prefixCacheName;
     }
@@ -50,24 +61,6 @@ public class JdbcCacheResolver extends SimpleCacheResolver {
       resolvedCacheNames.add(prefixKey + unresolvedCacheNames.get(i));
     }
     return resolvedCacheNames;
-  }
-
-  public String tableName(CacheOperationInvocationContext<?> context) {
-    Object obj = context.getArgs()[0];
-    if (obj instanceof Class) {
-      return ((Class) obj).getSimpleName();
-    }
-    if (obj instanceof Persistent) {
-      return obj.getClass().getSimpleName();
-    }
-    if (obj instanceof List) {
-      List list = (List) obj;
-      if (list.isEmpty() || list == null) {
-        throw SystemException.create(DefaultErrorCode.INVALID_ARGS);
-      }
-      return list.get(0).getClass().getSimpleName();
-    }
-    throw new UnsupportedOperationException("JdbcCacheResolver");
   }
 
 }

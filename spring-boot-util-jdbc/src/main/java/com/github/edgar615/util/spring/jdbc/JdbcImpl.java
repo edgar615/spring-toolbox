@@ -44,7 +44,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p0.id()")
-  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> void insert(Persistent<ID> persistent) {
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -53,7 +52,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #result")
-  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> ID insertAndGeneratedKey(Persistent<ID> persistent) {
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -78,7 +76,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
-  @JdbcCache("#p0.get(0).getClass().getSimpleName()")
   public <ID, T extends Persistent<ID>> void batchInsert(List<T> persistentList) {
     if (persistentList == null || persistentList.isEmpty()) {
       return;
@@ -100,7 +97,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getSimpleName() + ':' + #p1")
-  @JdbcCache("#p0.getSimpleName()")
   public <ID, T extends Persistent<ID>> int deleteById(Class<T> elementType, ID id) {
     SQLBindings sqlBindings = SqlBuilder.deleteById(elementType, id);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
@@ -109,7 +105,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
-  @JdbcCache("#p0.getSimpleName()")
   public <ID, T extends Persistent<ID>> int deleteByExample(Class<T> elementType,
       Example example) {
     SQLBindings sqlBindings = SqlBuilder.deleteByExample(elementType, example);
@@ -119,7 +114,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p3")
-  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateById(Persistent<ID> persistent,
       Map<String, Number> addOrSub,
       List<String> nullFields, ID id) {
@@ -133,7 +127,6 @@ public class JdbcImpl implements Jdbc {
 
   @Override
   @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
-  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateByExample(Persistent<ID> persistent,
       Map<String, Number> addOrSub,
       List<String> nullFields,
@@ -172,7 +165,6 @@ public class JdbcImpl implements Jdbc {
    */
   @Override
   @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p1")
-  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateById(Persistent<ID> persistent, ID id) {
     return updateById(persistent, new HashMap<>(), new ArrayList<>(), id);
   }
@@ -187,7 +179,6 @@ public class JdbcImpl implements Jdbc {
    */
   @Override
   @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
-  @JdbcCache("#p0.getClass().getSimpleName()")
   public <ID> int updateByExample(Persistent<ID> persistent, Example example) {
     return updateByExample(persistent, new HashMap<>(), new ArrayList<>(), example);
   }

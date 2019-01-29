@@ -22,7 +22,6 @@ public class FindByIdActionImpl implements FindByIdAction {
 
   @Override
   @Cacheable(cacheNames = "JdbcCache", key = "#p0.getSimpleName() + ':' + #p1")
-  @JdbcCache("#p0.getSimpleName()")
   public <ID, T extends Persistent<ID>> T findById(Class<T> elementType, ID id) {
     SQLBindings sqlBindings = SqlBuilder.findById(elementType, id, Lists.newArrayList());
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
