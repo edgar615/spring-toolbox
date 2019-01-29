@@ -3,6 +3,7 @@ package com.github.edgar615.util.spring.jdbc;
 import com.github.edgar615.util.db.Jdbc;
 import com.github.edgar615.util.search.Example;
 import com.google.common.collect.Lists;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,14 @@ public class CachedJdbcTest {
 
     device = jdbc.findById(Device.class, 1);
     System.out.println(device);
+
+    device.setDeviceId(2);
+    jdbc.batchInsert(Lists.newArrayList(device));;
+    device = jdbc.findById(Device.class, 2);
+    System.out.println(device);
+    device = jdbc.findById(Device.class, 2);
+    System.out.println(device);
+
   }
 
   @Test

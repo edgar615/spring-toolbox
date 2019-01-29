@@ -1,7 +1,11 @@
 package com.github.edgar615.util.spring.jdbc;
 
+import com.github.edgar615.util.exception.DefaultErrorCode;
+import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.spring.jdbc.JdbcCacheProperties.JdbcCacheConfigSpec;
 import com.google.common.base.Strings;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +32,7 @@ public class DynamicJdbcCacheResolver extends SimpleCacheResolver {
   }
 
   private String determinePrefixCacheName(CacheOperationInvocationContext<?> context) {
-    JdbcCache jdbcCache = context.getMethod().getAnnotation(JdbcCache.class);
+    JdbcCache jdbcCache = getAnnotation(context, JdbcCache.class);
     if (jdbcCache == null || Strings.isNullOrEmpty(jdbcCache.value())) {
       return null;
     }
@@ -61,6 +65,26 @@ public class DynamicJdbcCacheResolver extends SimpleCacheResolver {
       resolvedCacheNames.add(prefixKey + unresolvedCacheNames.get(i));
     }
     return resolvedCacheNames;
+  }
+
+  private <T extends Annotation> T getAnnotation(CacheOperationInvocationContext<?> context, Class<T> clazz) {
+    try {
+      // due to some cache proxy behaviour we can get method of superinterface instead of annotated method from target class
+      // but sometime annotation has been appear on interface therefore we need check both cases
+      Method proxiedMethod = context.getMethod();
+      Class<?> targetClazz = context.getTarget().getClass();
+      T annotation = null;
+      if(!targetClazz.equals(proxiedMethod.getDeclaringClass())) {
+        Method origMethod = targetClazz.getMethod(proxiedMethod.getName(), proxiedMethod.getParameterTypes());
+        annotation = origMethod.getAnnotation(clazz);
+      }
+      if(annotation == null) {
+        annotation = proxiedMethod.getAnnotation(clazz);
+      }
+      return annotation;
+    } catch (NoSuchMethodException e) {
+      throw SystemException.wrap(DefaultErrorCode.INVALID_ARGS, e);
+    }
   }
 
 }
