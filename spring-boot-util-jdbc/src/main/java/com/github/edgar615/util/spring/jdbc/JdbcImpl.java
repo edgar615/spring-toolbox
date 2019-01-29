@@ -32,6 +32,11 @@ public class JdbcImpl implements Jdbc {
 
   private final FindByIdAction findByIdAction;
 
+  public JdbcImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
+    this.findByIdAction = new FindByIdActionImpl(dataSource);
+  }
+
   public JdbcImpl(DataSource dataSource, FindByIdAction findByIdAction) {
     this.dataSource = dataSource;
     this.findByIdAction = findByIdAction;
