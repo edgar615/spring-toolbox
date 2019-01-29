@@ -14,7 +14,10 @@ import org.springframework.cache.interceptor.SimpleCacheResolver;
 
 public class JdbcCacheResolver extends SimpleCacheResolver {
 
+  private static final String DEFAULT_NAME = "Default";
+
   private final JdbcCacheProperties jdbcCacheProperties;
+
 
   protected JdbcCacheResolver(CacheManager cacheManager,
       JdbcCacheProperties jdbcCacheProperties) {
@@ -34,9 +37,19 @@ public class JdbcCacheResolver extends SimpleCacheResolver {
     }
     JdbcCacheConfigSpec spec = jdbcCacheProperties.getConfig().getCustomSpec().get(prefixCacheName);
     if (spec == null) {
+      if (matchDefault(prefixCacheName)) {
+        return DEFAULT_NAME;
+      }
       return prefixCacheName;
     }
     return spec.getCacheNamePrefix();
+  }
+
+  private boolean matchDefault(String tableName) {
+    if (jdbcCacheProperties.getDefaultCacheTables() == null) {
+      return false;
+    }
+    return jdbcCacheProperties.getDefaultCacheTables().contains(tableName);
   }
 
   private Collection<String> determineCacheName(CacheOperationInvocationContext<?> context) {

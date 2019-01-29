@@ -22,14 +22,17 @@ caching:
   enabled: true
   caffeine:
     spec:
+#      DefaultJdbcCache: maximumSize=10000,expireAfterWrite=1h
       DeviceJdbcCache: maximumSize=10000,expireAfterWrite=1h
 
 jdbc:
   caching:
+#    defaultCacheTables:
+#      - Device
     config:
       custom-spec:
-        Device:
-          cache-name-prefix: "Device"
+#        Device:
+#          cache-name-prefix: "Device"
         DevicePart:
           cache-name-prefix: "test"
 

@@ -1,11 +1,14 @@
 package com.github.edgar615.util.spring.jdbc;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "jdbc.caching")
 public class JdbcCacheProperties {
+
+  private List<String> defaultCacheTables;
 
   private JdbcCacheConfig config = new JdbcCacheConfig();
 
@@ -15,6 +18,14 @@ public class JdbcCacheProperties {
 
   public void setConfig(JdbcCacheConfig config) {
     this.config = config;
+  }
+
+  public List<String> getDefaultCacheTables() {
+    return defaultCacheTables;
+  }
+
+  public void setDefaultCacheTables(List<String> defaultCacheTables) {
+    this.defaultCacheTables = defaultCacheTables;
   }
 
   public static class JdbcCacheConfig {
