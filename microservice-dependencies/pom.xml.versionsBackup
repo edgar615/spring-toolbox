@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.github.edgar615</groupId>
-        <artifactId>microservice-scaffold</artifactId>
+        <artifactId>spring-scaffold</artifactId>
         <version>0.2.3</version>
     </parent>
 
@@ -28,40 +28,40 @@
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-util-web</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
             <!--jwt-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-util-jwt</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-simple-auth</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
 
             <!--缓存-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-util-cache</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
 
             <!--binlog更新Start缓存-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-startcache-binlog</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
 
             <!--jdbc支持-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-util-jdbc</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.zaxxer</groupId>
@@ -87,7 +87,7 @@
             <dependency>
                 <groupId>com.github.edgar615</groupId>
                 <artifactId>spring-boot-eventbus-kafka</artifactId>
-                <version>${scaffold.release.version}</version>
+                <version>${spring.scaffold.release.version}</version>
             </dependency>
 
             <!--持久层生成-->

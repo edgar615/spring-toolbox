@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.github.edgar615</groupId>
-        <artifactId>microservice-scaffold</artifactId>
+        <artifactId>spring-scaffold</artifactId>
         <version>0.2.8</version>
     </parent>
 
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>com.github.edgar615</groupId>
             <artifactId>spring-boot-util-cache</artifactId>
-            <version>${scaffold.release.version}</version>
+            <version>${spring.scaffold.release.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

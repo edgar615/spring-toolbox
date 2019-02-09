@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.github.edgar615</groupId>
-        <artifactId>microservice-scaffold</artifactId>
+        <artifactId>spring-scaffold</artifactId>
         <version>0.2.8</version>
     </parent>
     <artifactId>spring-boot-eventbus-kafka</artifactId>
@@ -16,7 +16,7 @@
         <eventbus.version>1.0.11</eventbus.version>
     </properties>
     <dependencies>
-        
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>

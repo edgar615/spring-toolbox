@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.github.edgar615</groupId>
-    <artifactId>microservice-scaffold</artifactId>
+    <artifactId>spring-scaffold</artifactId>
     <version>0.2.8</version>
 
     <packaging>pom</packaging>
@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <scaffold.release.version>0.2.8</scaffold.release.version>
+        <spring.scaffold.release.version>0.2.8</spring.scaffold.release.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
