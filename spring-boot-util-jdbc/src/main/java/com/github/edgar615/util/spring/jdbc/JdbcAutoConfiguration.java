@@ -1,17 +1,17 @@
 package com.github.edgar615.util.spring.jdbc;
 
 import com.github.edgar615.util.db.Jdbc;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
 
 /**
  * Created by Administrator on 2017/10/7.
@@ -37,13 +37,30 @@ public class JdbcAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean({Jdbc.class})
   @ConditionalOnBean(DataSource.class)
-  public Jdbc jdbc(@Autowired DataSource dataSource, @Autowired FindByIdAction findByIdAction) {
-    return new JdbcImpl(dataSource, findByIdAction);
+  public Jdbc jdbc(@Autowired JdbcOperation jdbcOperation) {
+    return new JdbcImpl(jdbcOperation);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean({JdbcOperation.class})
+  @ConditionalOnBean(DataSource.class)
+  @ConditionalOnProperty(name = "jdbc.caching.enabled", matchIfMissing = true, havingValue = "false")
+  public JdbcOperation jdbcOperation(@Autowired DataSource dataSource) {
+    return new JdbcOperationImpl(dataSource);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean({JdbcOperation.class})
+  @ConditionalOnBean({DataSource.class, CacheManager.class})
+  @ConditionalOnProperty(name = "jdbc.caching.enabled", matchIfMissing = false, havingValue = "true")
+  public JdbcOperation cachedJdbcOperation(@Autowired DataSource dataSource, @Autowired FindByIdAction findByIdAction) {
+    return new CachedJdbcOperationImpl(dataSource, findByIdAction);
   }
 
   @Bean
   @ConditionalOnMissingBean({FindByIdAction.class})
-  @ConditionalOnBean(DataSource.class)
+  @ConditionalOnBean({DataSource.class, CacheManager.class})
+  @ConditionalOnProperty(name = "jdbc.caching.enabled", matchIfMissing = false, havingValue = "true")
   public FindByIdAction findByIdAction(@Autowired DataSource dataSource) {
     return new FindByIdActionImpl(dataSource);
   }

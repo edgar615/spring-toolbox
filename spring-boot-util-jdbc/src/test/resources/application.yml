@@ -27,6 +27,7 @@ caching:
 
 jdbc:
   caching:
+    enabled: true
 #    defaultCacheTables:
 #      - Device
     config:
