@@ -16,6 +16,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -52,6 +53,17 @@ public class ExceptionHandlerController {
     SystemException systemException = SystemException.create(DefaultErrorCode.RESOURCE_NOT_FOUND)
             .set("method", ex.getHttpMethod())
             .set("url", ex.getRequestURL());
+    return handleSystemException(systemException, request, response);
+  }
+
+  @ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ModelAndView methodNotSupportedException(HttpRequestMethodNotSupportedException ex,
+      HttpServletRequest request,
+      HttpServletResponse response) {
+    SystemException systemException = SystemException.create(DefaultErrorCode.INVALID_REQ)
+        .set("method", ex.getMethod())
+        .set("supportedMethods", ex.getSupportedHttpMethods());
     return handleSystemException(systemException, request, response);
   }
 
