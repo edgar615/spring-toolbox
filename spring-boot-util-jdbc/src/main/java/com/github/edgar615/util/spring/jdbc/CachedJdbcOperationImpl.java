@@ -2,6 +2,7 @@ package com.github.edgar615.util.spring.jdbc;
 
 import com.github.edgar615.util.db.Persistent;
 import com.github.edgar615.util.search.Example;
+import com.github.edgar615.util.search.MoreExample;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +122,44 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
   @Override
   public <ID, T extends Persistent<ID>> T findById(Class<T> elementType, ID id) {
     return findByIdAction.findById(elementType, id);
+  }
+
+  @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  public <ID, T extends Persistent<ID>> int deleteByMoreExample(Class<T> elementType,
+      MoreExample example) {
+    return jdbcOperation.deleteByMoreExample(elementType, example);
+  }
+
+  @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  public <ID> int updateByMoreExample(Persistent<ID> persistent, MoreExample example) {
+    return jdbcOperation.updateByMoreExample(persistent, example);
+  }
+
+  @Override
+  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  public <ID> int updateByMoreExample(Persistent<ID> persistent, Map<String, Number> addOrSub,
+      List<String> nullFields, MoreExample example) {
+    return jdbcOperation.updateByMoreExample(persistent, addOrSub, nullFields, example);
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> List<T> findByMoreExample(Class<T> elementType,
+      MoreExample example) {
+    return jdbcOperation.findByMoreExample(elementType, example);
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> List<T> findByMoreExample(Class<T> elementType,
+      MoreExample example, int start, int limit) {
+    return jdbcOperation.findByMoreExample(elementType, example, start, limit);
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> int countByMoreExample(Class<T> elementType,
+      MoreExample example) {
+    return jdbcOperation.countByMoreExample(elementType, example);
   }
 
   @Override

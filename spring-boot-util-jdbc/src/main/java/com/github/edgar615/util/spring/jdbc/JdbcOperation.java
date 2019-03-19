@@ -2,10 +2,12 @@ package com.github.edgar615.util.spring.jdbc;
 
 import com.github.edgar615.util.db.Persistent;
 import com.github.edgar615.util.search.Example;
+import com.github.edgar615.util.search.MoreExample;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.cache.annotation.CacheEvict;
 
 /**
  * JDBC的操作
@@ -147,6 +149,23 @@ public interface JdbcOperation {
    * @return 持久化对象，如果未找到任何数据，返回null
    */
   <ID, T extends Persistent<ID>> T findById(Class<T> elementType, ID id);
+
+  <ID, T extends Persistent<ID>> int deleteByMoreExample(Class<T> elementType,
+      MoreExample example);
+
+  <ID> int updateByMoreExample(Persistent<ID> persistent, MoreExample example);
+
+  <ID> int updateByMoreExample(Persistent<ID> persistent, Map<String, Number> addOrSub,
+      List<String> nullFields, MoreExample example);
+
+  <ID, T extends Persistent<ID>> List<T> findByMoreExample(Class<T> elementType,
+      MoreExample example);
+
+  <ID, T extends Persistent<ID>> List<T> findByMoreExample(Class<T> elementType,
+      MoreExample example, int start, int limit);
+
+  <ID, T extends Persistent<ID>> int countByMoreExample(Class<T> elementType,
+      MoreExample example);
 
   /**
    * 根据主键更新，忽略实体中的null.

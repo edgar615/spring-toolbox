@@ -5,6 +5,7 @@ import com.github.edgar615.util.db.Persistent;
 import com.github.edgar615.util.db.SQLBindings;
 import com.github.edgar615.util.db.SqlBuilder;
 import com.github.edgar615.util.search.Example;
+import com.github.edgar615.util.search.MoreExample;
 import com.google.common.collect.Lists;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -188,6 +189,57 @@ public class JdbcOperationImpl implements JdbcOperation {
   public <ID, T extends Persistent<ID>> int countByExample(Class<T> elementType,
       Example example) {
     SQLBindings sqlBindings = SqlBuilder.countByExample(elementType, example);
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    return jdbcTemplate
+        .queryForObject(sqlBindings.sql(), Integer.class, sqlBindings.bindings().toArray());
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> int deleteByMoreExample(Class<T> elementType,
+      MoreExample example) {
+    SQLBindings sqlBindings = SqlBuilder.deleteByMoreExample(elementType, example);
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    return jdbcTemplate.update(sqlBindings.sql(), sqlBindings.bindings().toArray());
+  }
+
+  @Override
+  public <ID> int updateByMoreExample(Persistent<ID> persistent, MoreExample example) {
+    return updateByMoreExample(persistent, new HashMap<>(), new ArrayList<>(), example);
+  }
+
+  @Override
+  public <ID> int updateByMoreExample(Persistent<ID> persistent, Map<String, Number> addOrSub,
+      List<String> nullFields, MoreExample example) {
+    SQLBindings sqlBindings = SqlBuilder.updateByMoreExample(persistent, addOrSub, nullFields, example);
+    if (sqlBindings == null) {
+      return 0;
+    }
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    return jdbcTemplate.update(sqlBindings.sql(), sqlBindings.bindings().toArray());
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> List<T> findByMoreExample(Class<T> elementType,
+      MoreExample example) {
+    SQLBindings sqlBindings = SqlBuilder.findByMoreExample(elementType, example);
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    return jdbcTemplate.query(sqlBindings.sql(), sqlBindings.bindings().toArray(),
+        BeanPropertyRowMapper.newInstance(elementType));
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> List<T> findByMoreExample(Class<T> elementType,
+      MoreExample example, int start, int limit) {
+    SQLBindings sqlBindings = SqlBuilder.findByMoreExample(elementType, example, start, limit);
+    JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+    return jdbcTemplate.query(sqlBindings.sql(), sqlBindings.bindings().toArray(),
+        BeanPropertyRowMapper.newInstance(elementType));
+  }
+
+  @Override
+  public <ID, T extends Persistent<ID>> int countByMoreExample(Class<T> elementType,
+      MoreExample example) {
+    SQLBindings sqlBindings = SqlBuilder.countByMoreExample(elementType, example);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     return jdbcTemplate
         .queryForObject(sqlBindings.sql(), Integer.class, sqlBindings.bindings().toArray());

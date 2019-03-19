@@ -85,6 +85,12 @@
                 <artifactId>spring-boot-binlog-startcache</artifactId>
                 <version>${spring.scaffold.release.version}</version>
             </dependency>
+            <!--mybatis-->
+            <dependency>
+                <groupId>com.github.edgar615</groupId>
+                <artifactId>spring-boot-util-mybatis</artifactId>
+                <version>${spring.scaffold.release.version}</version>
+            </dependency>
             <!--jdbc支持-->
             <dependency>
                 <groupId>com.github.edgar615</groupId>
