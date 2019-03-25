@@ -9,11 +9,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 
-@CacheConfig(cacheResolver = "jdbcCacheResolver")
 public interface BaseMapper<ID, T extends Persistent<ID>> {
 
   /**
@@ -21,7 +17,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    *
    * @param persistent 持久化对象
    */
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p0.id()")
   void insert(T persistent);
 
   /**
@@ -29,7 +24,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    *
    * @param persistent 持久化对象
    */
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #result")
   ID insertAndGeneratedKey(T persistent);
 
   /**
@@ -38,7 +32,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param id 主键
    * @return 删除记录数
    */
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getSimpleName() + ':' + #p1")
   int deleteById(ID id);
 
   /**
@@ -47,7 +40,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param example 查询条件
    * @return 删除记录数
    */
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
   int deleteByExample(@Param("example") Example example);
 
   /**
@@ -57,7 +49,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param id 主键
    * @return 修改记录数
    */
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p1")
   int updateById(@Param("persistent") T persistent, @Param("id") ID id);
 
   /**
@@ -67,7 +58,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param example 查询条件
    * @return 修改记录数
    */
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
   int updateByExample(@Param("persistent") T persistent, @Param("example") Example example);
 
   /**
@@ -79,8 +69,8 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param id 主键ID
    * @return 修改记录数
    */
-  @CacheEvict(cacheNames = "JdbcCache", key = "#p0.getClass().getSimpleName() + ':' + #p3")
-  int updateByIdWithNull(@Param("persistent") T persistent, @Param("addOrSub") Map<String, Number> addOrSub,
+  int updateByIdWithNull(@Param("persistent") T persistent,
+      @Param("addOrSub") Map<String, Number> addOrSub,
       @Param("nullFields") List<String> nullFields,
       @Param("id") ID id);
 
@@ -93,8 +83,8 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param example 查询条件
    * @return 修改记录数
    */
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
-  int updateByExampleWithNull(@Param("persistent") T persistent, @Param("addOrSub") Map<String, Number> addOrSub,
+  int updateByExampleWithNull(@Param("persistent") T persistent,
+      @Param("addOrSub") Map<String, Number> addOrSub,
       @Param("nullFields") List<String> nullFields, @Param("example") Example example);
 
 
@@ -104,7 +94,6 @@ public interface BaseMapper<ID, T extends Persistent<ID>> {
    * @param id 主键
    * @return 持久化对象，如果未找到任何数据，返回null
    */
-  @Cacheable(cacheNames = "JdbcCache", key = "#p0.getSimpleName() + ':' + #p1")
   T findById(ID id);
 
   /**

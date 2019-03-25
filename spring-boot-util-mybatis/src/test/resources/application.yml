@@ -31,3 +31,9 @@ caching:
   caffeine:
     spec:
       SysUserJdbcCache: maximumSize=50,expireAfterWrite=5s
+
+jdbc:
+  caching:
+    enabled: true
+    defaultCacheTables:
+    - Commodity

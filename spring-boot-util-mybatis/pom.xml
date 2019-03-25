@@ -64,6 +64,12 @@
 
     <dependency>
       <groupId>com.github.edgar615</groupId>
+      <artifactId>spring-boot-util-jdbc</artifactId>
+      <version>${spring.scaffold.release.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.edgar615</groupId>
       <artifactId>spring-boot-util-cache</artifactId>
       <version>${spring.scaffold.release.version}</version>
       <scope>test</scope>
