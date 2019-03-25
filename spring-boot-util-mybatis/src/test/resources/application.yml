@@ -1,9 +1,9 @@
 spring:
     datasource:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.1.202:3306/tabao?verifyServerCertificate=false&useSSL=true&requireSSL=true&rewriteBatchedStatements=true
-      username : tabao
-      password: Nq2KB@Wcywy
+      url: jdbc:mysql://localhost:3306/tabao?verifyServerCertificate=false&useSSL=true&requireSSL=true&rewriteBatchedStatements=true
+      username : root
+      password: 123456
       #url: jdbc:mysql://47.92.126.53:3306/tabao?verifyServerCertificate=false&useSSL=true&requireSSL=true&rewriteBatchedStatements=true
       #username : root
       #password: G4xEViQUhs@B2SAf8tqxDL
