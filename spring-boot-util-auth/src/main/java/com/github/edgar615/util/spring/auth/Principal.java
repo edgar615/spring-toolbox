@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.jwt;
+package com.github.edgar615.util.spring.auth;
 
 import java.util.Map;
 
@@ -18,8 +18,6 @@ public interface Principal {
   String getMail();
 
   Long getCompanyId();
-
-  String getCompanyCode();
 
   String getJti();
 

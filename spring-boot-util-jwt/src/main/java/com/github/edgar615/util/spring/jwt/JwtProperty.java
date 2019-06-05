@@ -8,13 +8,30 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperty {
 
+  /**
+   * jwt的加密密钥
+   */
   private String secret;
 
+  /**
+   * 签发者
+   */
   private String issuer;
 
+  /**
+   * 过期时间，单位毫秒
+   */
   private long expired;
 
+  /**
+   * 面向用户
+   */
   private String subject;
+
+  /**
+   * 敏感信息的加密密钥
+   */
+  private String sensitiveSecret;
 
   public String getSubject() {
     return subject;
@@ -48,4 +65,11 @@ public class JwtProperty {
     this.expired = expired;
   }
 
+  public String getSensitiveSecret() {
+    return sensitiveSecret;
+  }
+
+  public void setSensitiveSecret(String sensitiveSecret) {
+    this.sensitiveSecret = sensitiveSecret;
+  }
 }

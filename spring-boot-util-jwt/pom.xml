@@ -30,11 +30,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.edgar615</groupId>
-            <artifactId>util</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>

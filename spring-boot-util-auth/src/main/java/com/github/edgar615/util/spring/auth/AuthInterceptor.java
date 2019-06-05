@@ -2,11 +2,7 @@ package com.github.edgar615.util.spring.auth;
 
 import com.google.common.base.Strings;
 
-import com.github.edgar615.util.exception.DefaultErrorCode;
-import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.spring.jwt.JwtProvider;
-import com.github.edgar615.util.spring.jwt.Principal;
-import com.github.edgar615.util.spring.jwt.PrincipalHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;

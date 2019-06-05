@@ -3,13 +3,9 @@ package com.github.edgar615.util.spring.auth;
 import com.google.common.base.Strings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.edgar615.util.spring.jwt.Principal;
-import com.github.edgar615.util.spring.jwt.PrincipalHolder;
-import com.github.edgar615.util.spring.jwt.PrincipalImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 

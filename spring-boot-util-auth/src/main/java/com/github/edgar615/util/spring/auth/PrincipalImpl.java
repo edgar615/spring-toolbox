@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.jwt;
+package com.github.edgar615.util.spring.auth;
 
 import com.google.common.collect.ImmutableMap;
 

@@ -1,4 +1,4 @@
-package com.github.edgar615.util.spring.jwt;
+package com.github.edgar615.util.spring.auth;
 
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;
