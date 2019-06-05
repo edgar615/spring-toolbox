@@ -55,13 +55,9 @@ public class SimpleClientInterceptor extends HandlerInterceptorAdapter {
       ObjectMapper mapper = new ObjectMapper();
       Map<String, Object> clientMap = mapper.readValue(appKeyString, Map.class);
       ClientInfo clientInfo = new ClientInfo();
-      if (clientMap.get("companyCode") instanceof String) {
-        String companyCode = (String) clientMap.get("companyCode");
-        clientInfo.setCompanyCode(companyCode);
-      }
-      if (clientMap.get("companyId") instanceof Long) {
-        Long companyId = (Long) clientMap.get("companyId");
-        clientInfo.setCompanyId(companyId);
+      if (clientMap.get("appId") instanceof Long) {
+        Long appId = (Long) clientMap.get("appId");
+        clientInfo.setAppId(appId);
       }
       if (clientMap.get("appKey") instanceof String) {
         String appKey = (String) clientMap.get("appKey");

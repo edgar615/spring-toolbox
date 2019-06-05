@@ -9,9 +9,7 @@ import java.util.Map;
  */
 public class ClientInfo {
 
-  private Long companyId;
-
-  private String companyCode;
+  private Long appId;
 
   private String appKey;
 
@@ -21,12 +19,12 @@ public class ClientInfo {
 
   private final Map<String, Object> ext = new HashMap<>();
 
-  public Long getCompanyId() {
-    return companyId;
+  public Long getAppId() {
+    return appId;
   }
 
-  public void setCompanyId(Long companyId) {
-    this.companyId = companyId;
+  public void setAppId(Long appId) {
+    this.appId = appId;
   }
 
   public String getAppName() {
@@ -35,14 +33,6 @@ public class ClientInfo {
 
   public void setAppName(String appName) {
     this.appName = appName;
-  }
-
-  public String getCompanyCode() {
-    return companyCode;
-  }
-
-  public void setCompanyCode(String companyCode) {
-    this.companyCode = companyCode;
   }
 
   public String getAppKey() {

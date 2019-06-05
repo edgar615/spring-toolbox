@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClientFixProperties {
 
-  private Long companyId;
-
-  private String companyCode;
+  private Long appId;
 
   private String appKey;
 
@@ -23,12 +21,12 @@ public class ClientFixProperties {
 
   private Map<String, Object> ext;
 
-  public Long getCompanyId() {
-    return companyId;
+  public Long getAppId() {
+    return appId;
   }
 
-  public void setCompanyId(Long companyId) {
-    this.companyId = companyId;
+  public void setAppId(Long appId) {
+    this.appId = appId;
   }
 
   public String getAppName() {
@@ -37,14 +35,6 @@ public class ClientFixProperties {
 
   public void setAppName(String appName) {
     this.appName = appName;
-  }
-
-  public String getCompanyCode() {
-    return companyCode;
-  }
-
-  public void setCompanyCode(String companyCode) {
-    this.companyCode = companyCode;
   }
 
   public String getAppKey() {

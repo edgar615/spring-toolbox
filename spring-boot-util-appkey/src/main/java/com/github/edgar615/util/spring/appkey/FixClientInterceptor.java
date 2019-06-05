@@ -1,10 +1,9 @@
 package com.github.edgar615.util.spring.appkey;
 
-import org.springframework.lang.Nullable;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.lang.Nullable;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
  * ou
@@ -23,10 +22,9 @@ public class FixClientInterceptor extends HandlerInterceptorAdapter {
                            HttpServletResponse response, Object handler) throws Exception {
     ClientInfo clientInfo = new ClientInfo();
 //    对于单机版应用，不需要关注appKey和appSecret，只需要记录平台分配的companyCode，所以我们这里使用了一个随机的字符串
-    clientInfo.setCompanyId(clientFixProperties.getCompanyId());
+    clientInfo.setAppId(clientFixProperties.getAppId());
     clientInfo.setAppKey(clientFixProperties.getAppKey());
     clientInfo.setAppSecret(clientFixProperties.getAppSecret());
-    clientInfo.setCompanyCode(clientFixProperties.getCompanyCode());
     clientInfo.setAppName(clientFixProperties.getAppName());
     if (clientFixProperties != null) {
       clientFixProperties.getExt().forEach((k, v) -> clientInfo.addExt(k, v));
