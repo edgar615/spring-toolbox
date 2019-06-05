@@ -38,7 +38,7 @@
 
         <dependency>
             <groupId>com.github.edgar615</groupId>
-            <artifactId>spring-boot-util-jwt</artifactId>
+            <artifactId>spring-boot-util-auth</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
     </dependencies>

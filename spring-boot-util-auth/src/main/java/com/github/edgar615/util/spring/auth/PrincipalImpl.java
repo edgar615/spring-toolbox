@@ -95,15 +95,6 @@ public class PrincipalImpl implements Principal {
     this.mail = mail;
   }
 
-  @Override
-  public String getCompanyCode() {
-    return companyCode;
-  }
-
-  public void setCompanyCode(String companyCode) {
-    this.companyCode = companyCode;
-  }
-
   public void addExt(String name, Object value) {
     this.ext.put(name, value);
   }

@@ -16,11 +16,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * jwt的拦截器.
+ * 建议用户的拦截器.
  */
-public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
+public class SimpleFillUserInterceptor extends HandlerInterceptorAdapter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleAuthInterceptor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SimpleFillUserInterceptor.class);
 
   @Override
   public boolean preHandle(HttpServletRequest request,
@@ -72,11 +72,6 @@ public class SimpleAuthInterceptor extends HandlerInterceptorAdapter {
         Long companyId = (Long) principalMap.get("companyId");
         principal.setCompanyId(companyId);
         principalMap.remove("companyId");
-      }
-      if (principalMap.get("companyCode") instanceof String) {
-        String companyCode = (String) principalMap.get("companyCode");
-        principal.setCompanyCode(companyCode);
-        principalMap.remove("companyCode");
       }
       if (principalMap.get("username") instanceof String) {
         String username = (String) principalMap.get("username");

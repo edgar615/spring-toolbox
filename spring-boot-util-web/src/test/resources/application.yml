@@ -5,3 +5,16 @@ spring:
 system:
   log:
     enabled: true
+
+web:
+  interceptors:
+    SimpleAuthInterceptor:
+      exclude:
+      - /auth/login
+      - /static/*
+      - /images/*
+    AuthInterceptor:
+      exclude:
+      - /auth/login
+      - /static/*
+      - /images/*

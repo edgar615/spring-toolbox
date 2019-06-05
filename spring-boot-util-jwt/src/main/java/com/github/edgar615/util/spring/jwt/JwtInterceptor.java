@@ -1,33 +1,31 @@
-package com.github.edgar615.util.spring.auth;
+package com.github.edgar615.util.spring.jwt;
 
 import com.google.common.base.Strings;
-
-import com.github.edgar615.util.spring.jwt.JwtProvider;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
- * ou
- * 权限拦截。
+ * JWT拦截。
  */
-public class AuthInterceptor extends HandlerInterceptorAdapter {
+public class JwtInterceptor extends HandlerInterceptorAdapter {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AuthInterceptor.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JwtInterceptor.class);
 
   private final JwtProvider jwtProvider;
 
-  public AuthInterceptor(JwtProvider jwtProvider) {this.jwtProvider = jwtProvider;}
+  public JwtInterceptor(JwtProvider jwtProvider) {
+    this.jwtProvider = jwtProvider;
+  }
 
   @Override
   public boolean preHandle(HttpServletRequest request,
-                           HttpServletResponse response, Object handler) throws Exception {
+      HttpServletResponse response, Object handler) throws Exception {
     if ("options".equalsIgnoreCase(request.getMethod())) {
       return super.preHandle(request, response, handler);
     }
@@ -35,25 +33,22 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     if (handler instanceof ResourceHttpRequestHandler) {
       return super.preHandle(request, response, handler);
     }
-    Principal principal = null;
     try {
       String token = extractToken(request);
       if (!Strings.isNullOrEmpty(token)) {
-        principal = jwtProvider.decodeUser(token);
+        String identifier = jwtProvider.decodeToken(token);
+        JwtHolder.set(identifier);
       }
     } catch (Exception e) {
       throw e;
-    }
-    if (principal != null) {
-      PrincipalHolder.set(principal);
     }
     return super.preHandle(request, response, handler);
   }
 
   @Override
   public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
-                              Object handler, @Nullable Exception ex) throws Exception {
-    PrincipalHolder.clear();
+      Object handler, @Nullable Exception ex) throws Exception {
+    JwtHolder.clear();
     super.afterCompletion(request, response, handler, ex);
   }
 

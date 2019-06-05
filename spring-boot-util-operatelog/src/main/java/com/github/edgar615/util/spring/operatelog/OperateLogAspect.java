@@ -3,8 +3,9 @@ package com.github.edgar615.util.spring.operatelog;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.edgar615.util.spring.jwt.Principal;
-import com.github.edgar615.util.spring.jwt.PrincipalHolder;
+import com.github.edgar615.util.spring.auth.Principal;
+import com.github.edgar615.util.spring.auth.PrincipalHolder;
+import com.github.edgar615.util.spring.jwt.JwtHolder;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -123,4 +124,4 @@ public class OperateLogAspect {
     return ip;
   }
 
-}  
+}
