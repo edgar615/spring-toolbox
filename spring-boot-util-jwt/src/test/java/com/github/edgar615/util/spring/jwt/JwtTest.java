@@ -22,9 +22,9 @@ public class JwtTest {
     jwtProperty.setSensitiveSecret(Randoms.randomAlphabet(10));
     String identifier = Randoms.randomAlphabetAndNum(6);
     JwtProvider jwtProvider = new JwtProviderImpl(jwtProperty);
-    String token = jwtProvider.generateToken(identifier);
+    Token token = jwtProvider.generateToken(identifier);
     System.out.println(token);
-    String decodeIdentifier = jwtProvider.decodeToken(token);
+    String decodeIdentifier = jwtProvider.decodeToken(token.getToken());
     Assert.assertEquals(identifier, decodeIdentifier);
   }
 
@@ -36,7 +36,7 @@ public class JwtTest {
     jwtProperty.setSensitiveSecret(Randoms.randomAlphabet(10));
     String identifier = Randoms.randomAlphabetAndNum(6);
     JwtProvider jwtProvider = new JwtProviderImpl(jwtProperty);
-    String token = jwtProvider.generateToken(identifier);
+    Token token = jwtProvider.generateToken(identifier);
     System.out.println(token);
     try {
       TimeUnit.SECONDS.sleep(1);
@@ -44,7 +44,7 @@ public class JwtTest {
       e.printStackTrace();
     }
     try {
-      jwtProvider.decodeToken(token);
+      jwtProvider.decodeToken(token.getToken());
     } catch (Exception e) {
       SystemException se = (SystemException) e;
       Assert.assertEquals(DefaultErrorCode.EXPIRE_TOKEN, se.getErrorCode());
@@ -61,10 +61,10 @@ public class JwtTest {
     jwtProperty.setSensitiveSecret(Randoms.randomAlphabet(10));
     String identifier = Randoms.randomAlphabetAndNum(6);
     JwtProvider jwtProvider = new JwtProviderImpl(jwtProperty);
-    String token = jwtProvider.generateToken(identifier);
+    Token token = jwtProvider.generateToken(identifier);
     System.out.println(token);
     try {
-      jwtProvider.decodeToken(token + 1);
+      jwtProvider.decodeToken(token.getToken() + 1);
     } catch (Exception e) {
       SystemException se = (SystemException) e;
       Assert.assertEquals(DefaultErrorCode.INVALID_TOKEN, se.getErrorCode());
@@ -82,12 +82,12 @@ public class JwtTest {
     jwtProperty.setSensitiveSecret(Randoms.randomAlphabet(10));
     String identifier = Randoms.randomAlphabetAndNum(6);
     JwtProvider jwtProvider = new JwtProviderImpl(jwtProperty);
-    String token = jwtProvider.generateToken(identifier);
+    Token token = jwtProvider.generateToken(identifier);
     System.out.println(token);
     jwtProperty.setIssuer("haha");
     jwtProvider = new JwtProviderImpl(jwtProperty);
     try {
-      jwtProvider.decodeToken(token);
+      jwtProvider.decodeToken(token.getToken());
     } catch (Exception e) {
       SystemException se = (SystemException) e;
       Assert.assertEquals(DefaultErrorCode.INVALID_TOKEN, se.getErrorCode());

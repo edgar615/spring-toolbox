@@ -25,7 +25,7 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
   @Override
-  public String generateToken(String identifier) {
+  public Token generateToken(String identifier) {
     JWTCreator.Builder builder = JWT.create();
     if (jwtProperty.getIssuer() != null) {
       builder.withIssuer(jwtProperty.getIssuer());
@@ -44,8 +44,11 @@ public class JwtProviderImpl implements JwtProvider {
     } catch (Exception e) {
       throw throwSystemException(e);
     }
-    String token = builder
+    String jwt = builder
         .sign(algorithm);
+    Token token = new Token();
+    token.setExpire(jwtProperty.getExpired());
+    token.setToken(jwt);
     return token;
   }
 

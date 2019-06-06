@@ -10,7 +10,7 @@ public interface JwtProvider {
    * @param identifier 身份信息
    * @return token
    */
-  String generateToken(String identifier);
+  Token generateToken(String identifier);
 
   /**
    * 将token解析成身份信息，这个方法会做AES解密得到身份信息
