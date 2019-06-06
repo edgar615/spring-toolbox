@@ -4,11 +4,11 @@ import com.github.edgar615.util.exception.ErrorCode;
 
 public enum ClientError implements ErrorCode {
 
-    NON_EXISTED_APP_KEY(9001,"Non-existed appKey"),
+    NON_EXISTED_APP_KEY(8001,"Non-existed appKey"),
 
-    UNSUPPORTED_SING_METHOD(9002,"Unsupported signMethod"),
+    UNSUPPORTED_SING_METHOD(8002,"Unsupported signMethod"),
 
-    INCORRECT_SIGN(9003,"Incorrect sign");
+    INCORRECT_SIGN(8003,"Incorrect sign");
 
     private final int code;
 
