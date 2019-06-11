@@ -15,7 +15,7 @@ public class PrincipalImpl implements Principal {
 
   private String fullname;
 
-  private String tel;
+  private String mobile;
 
   private String mail;
 
@@ -69,12 +69,8 @@ public class PrincipalImpl implements Principal {
   }
 
   @Override
-  public String getTel() {
-    return tel;
-  }
-
-  public void setTel(String tel) {
-    this.tel = tel;
+  public String getMobile() {
+    return mobile;
   }
 
   @Override
@@ -90,6 +86,10 @@ public class PrincipalImpl implements Principal {
   @Override
   public String getCompanyName() {
     return companyName;
+  }
+
+  public void setMobile(String mobile) {
+    this.mobile = mobile;
   }
 
   public void setCompanyName(String companyName) {

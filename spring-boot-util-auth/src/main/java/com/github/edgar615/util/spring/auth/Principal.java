@@ -13,7 +13,7 @@ public interface Principal {
 
   String getFullname();
 
-  String getTel();
+  String getMobile();
 
   String getMail();
 
