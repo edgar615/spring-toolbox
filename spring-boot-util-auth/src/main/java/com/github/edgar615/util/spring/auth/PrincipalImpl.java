@@ -1,7 +1,6 @@
 package com.github.edgar615.util.spring.auth;
 
 import com.google.common.collect.ImmutableMap;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +8,7 @@ import java.util.Map;
  * Created by Administrator on 2017/11/13.
  */
 public class PrincipalImpl implements Principal {
+
   private Long userId;
 
   private String username;
@@ -19,11 +19,11 @@ public class PrincipalImpl implements Principal {
 
   private String mail;
 
-  private String companyCode;
-
   private String jti;
 
   private Long companyId;
+
+  private String companyName;
 
   private final Map<String, Object> ext = new HashMap<>();
 
@@ -85,6 +85,15 @@ public class PrincipalImpl implements Principal {
   @Override
   public Long getCompanyId() {
     return companyId;
+  }
+
+  @Override
+  public String getCompanyName() {
+    return companyName;
+  }
+
+  public void setCompanyName(String companyName) {
+    this.companyName = companyName;
   }
 
   public void setCompanyId(Long companyId) {

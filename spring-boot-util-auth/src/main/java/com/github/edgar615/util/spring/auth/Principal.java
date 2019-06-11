@@ -19,6 +19,8 @@ public interface Principal {
 
   Long getCompanyId();
 
+  String getCompanyName();
+
   String getJti();
 
   Map<String, Object> ext();
