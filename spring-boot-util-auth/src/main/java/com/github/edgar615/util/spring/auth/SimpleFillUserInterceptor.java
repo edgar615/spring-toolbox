@@ -83,10 +83,10 @@ public class SimpleFillUserInterceptor extends HandlerInterceptorAdapter {
         principal.setFullname(fullname);
         principalMap.remove("fullname");
       }
-      if (principalMap.get("tel") instanceof String) {
-        String tel = (String) principalMap.get("tel");
-        principal.setTel(tel);
-        principalMap.remove("tel");
+      if (principalMap.get("mobile") instanceof String) {
+        String mobile = (String) principalMap.get("mobile");
+        principal.setMobile(mobile);
+        principalMap.remove("mobile");
       }
       if (principalMap.get("mail") instanceof String) {
         String mail = (String) principalMap.get("mail");
