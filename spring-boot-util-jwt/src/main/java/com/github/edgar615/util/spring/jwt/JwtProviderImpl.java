@@ -18,14 +18,24 @@ import java.util.Date;
  */
 public class JwtProviderImpl implements JwtProvider {
 
-  private final JwtProperty jwtProperty;
+  private final JwtProperty defaultJwtProperty;
 
   public JwtProviderImpl(JwtProperty jwtProperty) {
-    this.jwtProperty = jwtProperty;
+    this.defaultJwtProperty = jwtProperty;
   }
 
   @Override
   public Token generateToken(String identifier) {
+    return generateToken(identifier, defaultJwtProperty);
+  }
+
+  @Override
+  public String decodeToken(String token) {
+    return decodeToken(token, defaultJwtProperty);
+  }
+
+  @Override
+  public Token generateToken(String identifier, JwtProperty jwtProperty) {
     JWTCreator.Builder builder = JWT.create();
     if (jwtProperty.getIssuer() != null) {
       builder.withIssuer(jwtProperty.getIssuer());
@@ -53,8 +63,7 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
   @Override
-  public String decodeToken(String token) {
-
+  public String decodeToken(String token, JwtProperty jwtProperty) {
     DecodedJWT jwt;
     Verification verification = null;
     try {

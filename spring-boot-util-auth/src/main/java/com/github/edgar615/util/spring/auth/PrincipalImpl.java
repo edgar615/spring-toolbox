@@ -21,10 +21,6 @@ public class PrincipalImpl implements Principal {
 
   private String jti;
 
-  private Long companyId;
-
-  private String companyName;
-
   private final Map<String, Object> ext = new HashMap<>();
 
   @Override
@@ -78,26 +74,8 @@ public class PrincipalImpl implements Principal {
     return mail;
   }
 
-  @Override
-  public Long getCompanyId() {
-    return companyId;
-  }
-
-  @Override
-  public String getCompanyName() {
-    return companyName;
-  }
-
   public void setMobile(String mobile) {
     this.mobile = mobile;
-  }
-
-  public void setCompanyName(String companyName) {
-    this.companyName = companyName;
-  }
-
-  public void setCompanyId(Long companyId) {
-    this.companyId = companyId;
   }
 
   public void setMail(String mail) {

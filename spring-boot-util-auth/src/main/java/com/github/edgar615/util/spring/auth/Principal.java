@@ -17,10 +17,6 @@ public interface Principal {
 
   String getMail();
 
-  Long getCompanyId();
-
-  String getCompanyName();
-
   String getJti();
 
   Map<String, Object> ext();

@@ -68,11 +68,6 @@ public class SimpleFillUserInterceptor extends HandlerInterceptorAdapter {
       PrincipalImpl principal = new PrincipalImpl();
       principal.setUserId(userId);
       principalMap.remove("userId");
-      if (principalMap.get("companyId") instanceof Long) {
-        Long companyId = (Long) principalMap.get("companyId");
-        principal.setCompanyId(companyId);
-        principalMap.remove("companyId");
-      }
       if (principalMap.get("username") instanceof String) {
         String username = (String) principalMap.get("username");
         principal.setUsername(username);

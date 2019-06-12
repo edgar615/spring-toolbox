@@ -1,15 +1,15 @@
 自动注入KAFKA的EventbusProducer和EventConsumer
 
 如果设置了
-`eventbus.consumer.group`和`eventbus.consumer.servers`这两个属性，会自动注入EventConsumer
+`eventbus.consumer.groupInfo`和`eventbus.consumer.servers`这两个属性，会自动注入EventConsumer
 
 ```
-  @ConditionalOnProperty(prefix = "eventbus.consumer", name = {"servers", "group"},
+  @ConditionalOnProperty(prefix = "eventbus.consumer", name = {"servers", "groupInfo"},
           matchIfMissing = false)
   @ConditionalOnMissingBean(EventConsumer.class)
 ```
 
-- eventbus.consumer.group`消费者组
+- eventbus.consumer.groupInfo`消费者组
 - eventbus.consumer.servers kafka的地址
 - eventbus.consumer.pattern 使用正则表达式匹配主题，只要设置了topics属性，正则将不起作用
 - eventbus.consumer.topics 订阅的主题列表 
