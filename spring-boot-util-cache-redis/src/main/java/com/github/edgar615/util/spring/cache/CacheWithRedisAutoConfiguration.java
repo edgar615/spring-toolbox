@@ -107,7 +107,7 @@ public class CacheWithRedisAutoConfiguration {
       RedisCacheConfiguration configuration = redisCacheConfiguration(cacheProperties.getRedis().getSpec().get(cacheName));
       initialCacheConfigurations.put(cacheName, configuration);
     }
-    RedisCacheManager redisCacheManager = new RedisCacheManager(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),
+    WildcardEvictRedisCacheManager redisCacheManager = new WildcardEvictRedisCacheManager(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory),
         RedisCacheConfiguration.defaultCacheConfig(), initialCacheConfigurations, false);
     redisCacheManager.initializeCaches();
     return redisCacheManager;

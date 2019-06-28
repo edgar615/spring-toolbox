@@ -46,7 +46,7 @@ public class CacheAutoConfiguration {
   public CacheManager cacheManager(CacheProperties properties) {
     List<Cache> caches = new ArrayList<>();
     List<Cache> caffeine = properties.getCaffeine().getSpec().entrySet().stream()
-            .map(spec -> new CaffeineCache(spec.getKey(), Caffeine.from(spec.getValue()).build()))
+            .map(spec -> new WildcardCaffeineCache(spec.getKey(), Caffeine.from(spec.getValue()).build(), true))
             .collect(Collectors.toList());
     caches.addAll(caffeine);
     SimpleCacheManager caffeineManager = new SimpleCacheManager();

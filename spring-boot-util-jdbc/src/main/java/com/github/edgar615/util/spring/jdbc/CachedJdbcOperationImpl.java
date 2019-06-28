@@ -41,7 +41,7 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID, T extends Persistent<ID>> void batchInsert(List<T> persistentList) {
     jdbcOperation.batchInsert(persistentList);
   }
@@ -53,7 +53,7 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID, T extends Persistent<ID>> int deleteByExample(Class<T> elementType,
       Example example) {
     return jdbcOperation.deleteByExample(elementType, example);
@@ -68,7 +68,7 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID> int updateByExample(Persistent<ID> persistent,
       Map<String, Number> addOrSub,
       List<String> nullFields,
@@ -114,7 +114,7 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
    * @return 修改记录数
    */
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID> int updateByExample(Persistent<ID> persistent, Example example) {
     return updateByExample(persistent, new HashMap<>(), new ArrayList<>(), example);
   }
@@ -125,20 +125,20 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID, T extends Persistent<ID>> int deleteByMoreExample(Class<T> elementType,
       MoreExample example) {
     return jdbcOperation.deleteByMoreExample(elementType, example);
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID> int updateByMoreExample(Persistent<ID> persistent, MoreExample example) {
     return jdbcOperation.updateByMoreExample(persistent, example);
   }
 
   @Override
-  @CacheEvict(cacheNames = "JdbcCache", allEntries = true)
+  @CacheEvict(cacheNames = "JdbcCache", key = "'wildcard:' + #p0.getClass().getSimpleName() + ':*'")
   public <ID> int updateByMoreExample(Persistent<ID> persistent, Map<String, Number> addOrSub,
       List<String> nullFields, MoreExample example) {
     return jdbcOperation.updateByMoreExample(persistent, addOrSub, nullFields, example);
