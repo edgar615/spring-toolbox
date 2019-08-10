@@ -1,7 +1,6 @@
 package com.github.edgar615.util.spring.appkey;
 
 
-import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;
 
 public class ClientHolder {
@@ -23,7 +22,7 @@ public class ClientHolder {
   public static ClientInfo getAndCheck() {
     ClientInfo clientInfo = CLIENT_HOLDER.get();
     if (clientInfo == null) {
-      throw SystemException.create(DefaultErrorCode.UNKOWN_ACCOUNT);
+      throw SystemException.create(ClientError.UNKOWN_APP);
     }
     return clientInfo;
   }

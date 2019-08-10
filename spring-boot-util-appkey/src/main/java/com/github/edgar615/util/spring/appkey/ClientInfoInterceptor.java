@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 从请求头中解析对应的Client.
+ * 完整的APPKEY的签名校验.
  */
 public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
 
@@ -61,7 +61,7 @@ public class ClientInfoInterceptor extends HandlerInterceptorAdapter {
       throw SystemException.create(DefaultErrorCode.MISSING_ARGS)
               .setDetails("appKey");
     }
-    ClientInfo clientInfo = clientFinder.get(appKey);
+    ClientInfo clientInfo = clientFinder.findByKey(appKey);
     if (clientInfo == null) {
       throw SystemException.create(ClientError.NON_EXISTED_APP_KEY);
     }

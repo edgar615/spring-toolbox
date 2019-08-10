@@ -8,7 +8,9 @@ public enum ClientError implements ErrorCode {
 
     UNSUPPORTED_SING_METHOD(8002,"Unsupported signMethod"),
 
-    INCORRECT_SIGN(8003,"Incorrect sign");
+    INCORRECT_SIGN(8003,"Incorrect sign"),
+
+    UNKOWN_APP(8004,"Unkonwn Application"),;
 
     private final int code;
 
