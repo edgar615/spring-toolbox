@@ -1,5 +1,7 @@
 package com.github.edgar615.util.spring.auth;
 
+import com.github.edgar615.util.exception.DefaultErrorCode;
+import com.github.edgar615.util.exception.SystemException;
 import com.github.edgar615.util.spring.jwt.AESUtils;
 import com.github.edgar615.util.spring.jwt.JwtHolder;
 import com.google.common.base.Strings;
@@ -37,7 +39,13 @@ public class SimpleGroupInterceptor extends HandlerInterceptorAdapter {
     if (Strings.isNullOrEmpty(userIdentifier)) {
       return super.preHandle(request, response, handler);
     }
-    String groupIdStr = AESUtils.decrypt(groupKey, userIdentifier);
+    String groupIdStr = null;
+    try {
+      groupIdStr = AESUtils.decrypt(groupKey, userIdentifier);
+    } catch (Exception e) {
+      throw SystemException.create(DefaultErrorCode.INVALID_ARGS)
+          .setDetails("invalid groupKey");
+    }
     GroupInfoImpl groupInfo = new GroupInfoImpl();
     groupInfo.setGroupId(Long.parseLong(groupIdStr));
     GroupHolder.set(groupInfo);
