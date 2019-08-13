@@ -41,6 +41,10 @@ public class JdbcOperationImpl implements JdbcOperation {
 
   @Override
   public <ID> ID insertAndGeneratedKey(Persistent<ID> persistent) {
+    if (persistent.id() != null) {
+      insert(persistent);
+      return persistent.id();
+    }
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     KeyHolder keyHolder = new GeneratedKeyHolder();
