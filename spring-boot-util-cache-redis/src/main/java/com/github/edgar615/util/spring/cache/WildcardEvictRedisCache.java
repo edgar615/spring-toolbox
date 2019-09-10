@@ -38,7 +38,7 @@ public class WildcardEvictRedisCache extends RedisCache {
   public void evict(Object key) {
     if ((key instanceof String) && key.toString().startsWith(WILDCARD)) {
       String cacheKey = key.toString().substring(WILDCARD.length());
-      byte[] pattern = conversionService.convert(cacheKey, byte[].class);
+      byte[] pattern = createAndConvertCacheKey(cacheKey);
       cacheWriter.clean(name, pattern);
     } else {
       cacheWriter.remove(name, createAndConvertCacheKey(key));
