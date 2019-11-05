@@ -32,6 +32,7 @@
         <module>spring-boot-util-cache-redis</module>
         <module>spring-boot-util-validator</module>
       <module>spring-boot-util-mybatis</module>
+        <module>spring-boot-util-distributed-lock</module>
     </modules>
 
     <properties>
