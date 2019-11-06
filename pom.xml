@@ -11,32 +11,32 @@
     </parent>
 
     <groupId>com.github.edgar615</groupId>
-    <artifactId>spring-scaffold</artifactId>
-    <version>0.2.12</version>
+    <artifactId>spring-toolbox</artifactId>
+    <version>0.3.0</version>
 
     <packaging>pom</packaging>
     <modules>
-        <module>microservice-dependencies</module>
-        <module>spring-boot-util-jwt</module>
-        <module>spring-boot-util-web</module>
-        <module>spring-boot-util-jdbc</module>
-        <module>spring-boot-eventbus-kafka</module>
-        <module>spring-boot-util-auth</module>
-        <module>spring-boot-util-cache</module>
-        <module>spring-boot-util-binlog</module>
-        <module>spring-boot-util-operatelog</module>
-        <module>spring-cloud-util-feign</module>
-        <module>spring-boot-util-appkey</module>
-        <module>spring-boot-eventbus-local</module>
-        <module>spring-boot-binlog-startcache</module>
-        <module>spring-boot-util-cache-redis</module>
-        <module>spring-boot-util-validator</module>
-      <module>spring-boot-util-mybatis</module>
-        <module>spring-boot-util-distributed-lock</module>
+        <module>spring-toolbox-dependencies</module>
+        <module>spring-toolbox-jwt</module>
+        <module>spring-toolbox-web</module>
+        <module>spring-toolbox-jdbc</module>
+        <module>spring-toolbox-eventbus-kafka</module>
+        <module>spring-toolbox-auth</module>
+        <module>spring-toolbox-cache</module>
+        <module>spring-toolbox-binlog</module>
+        <module>spring-toolbox-operatelog</module>
+        <module>spring-toolbox-feign</module>
+        <module>spring-toolbox-appkey</module>
+        <module>spring-toolbox-eventbus-local</module>
+        <module>spring-toolbox-binlog-startcache</module>
+        <module>spring-toolbox-cache-redis</module>
+        <module>spring-toolbox-validator</module>
+        <module>spring-toolbox-mybatis</module>
+        <module>spring-toolbox-distributedlock</module>
     </modules>
 
     <properties>
-        <spring.scaffold.release.version>0.2.12</spring.scaffold.release.version>
+        <spring.toolbox.release.version>0.3.0</spring.toolbox.release.version>
         <argLine>-Dfile.encoding=UTF-8</argLine>
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
