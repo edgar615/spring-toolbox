@@ -1,5 +1,7 @@
-package com.github.edgar615.spring.lock;
+package com.github.edgar615.spring.distributedlock.redis;
 
+import com.github.edgar615.spring.distributedlock.DistributedLock;
+import com.github.edgar615.spring.distributedlock.DistributedLockProvider;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -31,7 +33,7 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
   }
 
   @Override
-  public boolean acquire(AbstractDistributedLock distributedLock) {
+  public boolean acquire(DistributedLock distributedLock) {
     boolean result = doAcquire(distributedLock);
     int retryTimes = distributedLock.retryTimes();
     // 如果获取锁失败，按照传入的重试次数进行重试
@@ -45,11 +47,19 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
       }
       result = doAcquire(distributedLock);
     }
+    if (result) {
+      LOGGER
+          .debug("Acquire. lockKey={}, lockValue={}, expireInMillis={}", distributedLock.lockKey(),
+              distributedLock.lockValue(), distributedLock.expireMills());
+    } else {
+      LOGGER.debug("Acquire failed. lockKey={}, lockValue={}", distributedLock.lockKey(),
+          distributedLock.lockValue());
+    }
     return result;
   }
 
   @Override
-  public void hold(AbstractDistributedLock distributedLock) {
+  public void hold(DistributedLock distributedLock) {
 //        long expireInMillis;
 //        if (TimeUnit.MILLISECONDS == timeUnit) {
 //            expireInMillis = expire;
@@ -69,15 +79,15 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
   }
 
   @Override
-  public boolean release(AbstractDistributedLock distributedLock) {
+  public boolean release(String storeName, String lockKey, String lockValue) {
     return redisTemplate
         .execute((RedisCallback<Boolean>) connection -> connection.scriptingCommands()
             .eval(
                 LettuceConverters.toBytes(releaseScript.getScriptAsString()),
                 ReturnType.BOOLEAN,
                 1,
-                LettuceConverters.toBytes(distributedLock.lockKey()),
-                LettuceConverters.toBytes(distributedLock.lockValue())
+                LettuceConverters.toBytes(lockKey),
+                LettuceConverters.toBytes(lockValue)
             ));
   }
 
@@ -91,7 +101,7 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
     releaseScript.setResultType(Boolean.class);
   }
 
-  private boolean doAcquire(AbstractDistributedLock distributedLock) {
+  private boolean doAcquire(DistributedLock distributedLock) {
     return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
       //序列化key
       byte[] serializeKey = LettuceConverters.toBytes(distributedLock.lockKey());
@@ -100,8 +110,6 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
       boolean result = connection.stringCommands().set(serializeKey, serializeVal,
           Expiration.from(distributedLock.expireMills(), TimeUnit.MILLISECONDS),
           SetOption.SET_IF_ABSENT);
-      LOGGER.debug("Acquire. lockKey={}, lockValue={}", distributedLock.lockKey(),
-          distributedLock.lockValue());
       return result;
     });
   }

@@ -33,6 +33,8 @@
         <module>spring-toolbox-validator</module>
         <module>spring-toolbox-mybatis</module>
         <module>spring-toolbox-distributedlock</module>
+      <module>spring-toolbox-distributedlock-jdbc</module>
+        <module>spring-toolbox-distributedlock-redis</module>
     </modules>
 
     <properties>
@@ -50,7 +52,7 @@
         <guava.version>26.0-jre</guava.version>
         <slf4j.version>1.7.14</slf4j.version>
         <logback.version>1.2.3</logback.version>
-        <util.version>1.1.1.BETA8</util.version>
+        <util.version>1.1.3.BETA1</util.version>
         <caffeine.version>2.6.2</caffeine.version>
         <restassured.version>3.1.0</restassured.version>
         <spring.admin.version>2.0.2</spring.admin.version>

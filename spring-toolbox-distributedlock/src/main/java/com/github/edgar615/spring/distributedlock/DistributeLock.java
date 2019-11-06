@@ -1,4 +1,4 @@
-package com.github.edgar615.spring.lock;
+package com.github.edgar615.spring.distributedlock;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -13,6 +13,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DistributeLock {
+
+    /**
+     * 锁的存储空间，对于redis来说，这个就是redis key的前缀，对于数据库来说这个值是数据库表名
+     * @return
+     */
+    String storeName() default "distributed_lock";
 
     /**
      * 锁的资源。例如锁定某个订单:order:#orderno，锁定整个任务表job

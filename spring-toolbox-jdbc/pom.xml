@@ -14,6 +14,7 @@
 
     <properties>
         <mysql.version>8.0.11</mysql.version>
+        <HikariCP.version>2.4.1</HikariCP.version>
     </properties>
 
     <dependencies>
@@ -49,7 +50,7 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <scope>test</scope>
-            <version>2.4.1</version>
+            <version>${HikariCP.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

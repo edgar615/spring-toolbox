@@ -1,0 +1,24 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.1.202:3306/tabao?verifyServerCertificate=false&useSSL=true&requireSSL=true&rewriteBatchedStatements=true
+    username : tabao
+    password: Nq2KB@Wcywy
+#    url: jdbc:mysql://47.92.126.53:3306/tabao?verifyServerCertificate=false&useSSL=true&requireSSL=true&rewriteBatchedStatements=true
+#    username : root
+#    password: G4xEViQUhs@B2SAf8tqxDL
+    type: com.zaxxer.hikari.HikariDataSource
+    maximumPoolSize: 500
+    connectionTimeout: 60000 #连接的超时时间，毫秒
+    dataSourceProperties: # hikari的属性
+      cachePrepStmts: true
+      prepStmtCacheSize: 250
+      prepStmtCacheSqlLimit: 2048
+      useServerPrepStmts: true
+      useLocalSessionState: true
+      useLocalTransactionState: true
+      rewriteBatchedStatements: true
+      cacheResultSetMetadata: true
+      cacheServerConfiguration: true
+      elideSetAutoCommits: true
+      maintainTimeStats: false
