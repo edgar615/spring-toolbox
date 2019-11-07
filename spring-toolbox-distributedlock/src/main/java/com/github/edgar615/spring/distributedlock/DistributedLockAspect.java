@@ -53,12 +53,14 @@ public class DistributedLockAspect {
       context.setVariable(params[i], args[i]);
       context.setVariable("p" + i, args[i]);
     }
+    Expression storeExpression = parser.parseExpression(distributeLock.storeName());
+    String stortName = storeExpression.getValue(context, String.class);
     Expression keyExpression = parser.parseExpression(distributeLock.lockKey());
     String lockKey = keyExpression.getValue(context, String.class);
     Expression valueExpression = parser.parseExpression(distributeLock.lockValue());
     String lockValue = valueExpression.getValue(context, String.class);
 
-    DistributedLockImpl distributedLock = new DistributedLockImpl(distributeLock.storeName(),
+    DistributedLockImpl distributedLock = new DistributedLockImpl(stortName,
         lockKey, lockValue, distributeLock.expireMills());
     distributedLock.setRetryIntervalMills(distributeLock.retryIntervalMills());
     distributedLock.setRetryTimes(distributeLock.retryTimes());

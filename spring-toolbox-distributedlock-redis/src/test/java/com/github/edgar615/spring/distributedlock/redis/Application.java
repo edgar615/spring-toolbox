@@ -1,12 +1,8 @@
-package com.github.edgar615.spring.distributedlock.jdbc;
+package com.github.edgar615.spring.distributedlock.redis;
 
-import com.github.edgar615.spring.distributedlock.DistributedLockProvider;
-import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication

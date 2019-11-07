@@ -2,7 +2,6 @@ package com.github.edgar615.spring.distributedlock.redis;
 
 import com.github.edgar615.spring.distributedlock.DistributedLock;
 import com.github.edgar615.spring.distributedlock.DistributedLockProvider;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,19 +15,18 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.types.Expiration;
 
 /**
- * Created on Sep 18, 2018
- *
- * @author Chuan Qin
+ * 简易版的redis分布式锁实现，redis是单点
  */
-public class RedistDistributedLockProvider implements DistributedLockProvider {
+public class SimpleRedistDistributedLockProvider implements DistributedLockProvider {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(RedistDistributedLockProvider.class);
+  private static final Logger LOGGER = LoggerFactory
+      .getLogger(SimpleRedistDistributedLockProvider.class);
 
   private RedisTemplate<String, String> redisTemplate;
   private DefaultRedisScript<Boolean> holdScript;
   private DefaultRedisScript<Boolean> releaseScript;
 
-  public RedistDistributedLockProvider(RedisTemplate<String, String> redisTemplate) {
+  public SimpleRedistDistributedLockProvider(RedisTemplate<String, String> redisTemplate) {
     this.redisTemplate = redisTemplate;
   }
 
@@ -60,22 +58,8 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
 
   @Override
   public void hold(DistributedLock distributedLock) {
-//        long expireInMillis;
-//        if (TimeUnit.MILLISECONDS == timeUnit) {
-//            expireInMillis = expire;
-//        } else {
-//            expireInMillis = timeUnit.toMillis(expire);
-//        }
-//        long delay = expireInMillis / 3;
-//        final String lockValue = value.get();
-//        ScheduledThreadPoolExecutor exec = new ScheduledThreadPoolExecutor(1);
-//        exec.scheduleWithFixedDelay(() -> {
-//            boolean result = refreshExpire(lockKey, lockValue, expireInMillis);
-//            if (!result) {
-//                LOGGER.debug("Failed to refresh expiration of lockKey, shutdown!");
-//                exec.shutdown();
-//            }
-//        }, delay, delay, TimeUnit.MILLISECONDS);
+    refreshExpire(distributedLock.lockKey(), distributedLock.lockValue(),
+        distributedLock.expireMills());
   }
 
   @Override
@@ -108,8 +92,7 @@ public class RedistDistributedLockProvider implements DistributedLockProvider {
       //序列化value
       byte[] serializeVal = LettuceConverters.toBytes(distributedLock.lockValue());
       boolean result = connection.stringCommands().set(serializeKey, serializeVal,
-          Expiration.from(distributedLock.expireMills(), TimeUnit.MILLISECONDS),
-          SetOption.SET_IF_ABSENT);
+          Expiration.milliseconds(distributedLock.expireMills()), SetOption.SET_IF_ABSENT);
       return result;
     });
   }

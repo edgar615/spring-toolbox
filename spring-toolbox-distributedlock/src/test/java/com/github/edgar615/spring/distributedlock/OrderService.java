@@ -1,4 +1,4 @@
-package com.github.edgar615.spring.distributedlock.jdbc;
+package com.github.edgar615.spring.distributedlock;
 
 public interface OrderService {
 

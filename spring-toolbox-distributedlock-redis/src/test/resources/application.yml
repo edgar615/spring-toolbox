@@ -1,0 +1,14 @@
+spring:
+  redis:
+    database: 0
+    host: 192.168.1.204
+    password: tabao
+    port: 6379
+    ssl : false
+    timeout: 10000ms
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1ms #负数表示不限制

@@ -1,6 +1,5 @@
-package com.github.edgar615.spring.distributedlock.jdbc;
+package com.github.edgar615.spring.distributedlock;
 
-import com.github.edgar615.spring.distributedlock.DistributeLock;
 import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 

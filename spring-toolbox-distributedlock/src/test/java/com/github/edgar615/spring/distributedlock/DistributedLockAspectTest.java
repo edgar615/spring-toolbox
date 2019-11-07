@@ -1,21 +1,16 @@
-package com.github.edgar615.spring.distributedlock.jdbc;
+package com.github.edgar615.spring.distributedlock;
 
-import com.github.edgar615.spring.distributedlock.DistributedLock;
-import com.github.edgar615.spring.distributedlock.DistributedLockImpl;
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.ErrorCode;
 import com.github.edgar615.util.exception.SystemException;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import javax.sql.DataSource;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
@@ -26,13 +21,18 @@ public class DistributedLockAspectTest {
   private OrderService orderService;
 
   @Autowired
-  private LockService lockService;
+  private DistributedLockProvider distributedLockProvider;
+
+  @After
+  public void tearDown() {
+    ((MockLocalLockProvier) distributedLockProvider).clear();
+  }
 
   @Test
   public void testLock() {
     // 锁
     String orderNo = UUID.randomUUID().toString().replace("-", "");
-    Thread thread = new Thread(() ->  {
+    Thread thread = new Thread(() -> {
       orderService.pay(orderNo, 3);
     });
     thread.start();
@@ -41,7 +41,7 @@ public class DistributedLockAspectTest {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    int count = lockService.count();
+    int count = ((MockLocalLockProvier) distributedLockProvider).count();
     Assert.assertEquals(1, count);
     try {
       orderService.pay(orderNo, 0);
@@ -52,6 +52,24 @@ public class DistributedLockAspectTest {
       return;
     }
     Assert.fail();
+  }
+
+  @Test
+  public void testRelease() {
+    // 锁
+    String orderNo = UUID.randomUUID().toString().replace("-", "");
+    Thread thread = new Thread(() -> {
+      orderService.pay(orderNo, 1);
+    });
+    thread.start();
+    try {
+      TimeUnit.MILLISECONDS.sleep(3000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    int count = ((MockLocalLockProvier) distributedLockProvider).count();
+    Assert.assertEquals(0, count);
+    orderService.pay(orderNo, 0);
   }
 
 }

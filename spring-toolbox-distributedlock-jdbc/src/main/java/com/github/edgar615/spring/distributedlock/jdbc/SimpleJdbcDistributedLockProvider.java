@@ -2,6 +2,8 @@ package com.github.edgar615.spring.distributedlock.jdbc;
 
 import com.github.edgar615.spring.distributedlock.DistributedLock;
 import com.github.edgar615.spring.distributedlock.DistributedLockProvider;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -12,6 +14,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ *
+ * 简易版数据库分布式锁实现，数据库是单点
+ *
  * 事务的隔离级别设置为读已提交，避免其他事务看不到已经提交的锁
  *
  * 这个锁并未解决锁重入问题，锁重入虽然可以增加lock_num来实现，但是实现更麻烦，如果有这种需求，建议时间用redis或者zk实现。
@@ -32,13 +37,13 @@ import org.springframework.transaction.annotation.Transactional;
  * </pre>
  *
  */
-@Service
 public class SimpleJdbcDistributedLockProvider implements DistributedLockProvider {
 
   public static final String ACQUIRE_FORMATTED_QUERY = "INSERT INTO %s (lock_key, lock_value, locked_at, expire_at) VALUES (?, ?, ?, ?);";
   public static final String RELEASE_FORMATTED_QUERY = "DELETE FROM %s WHERE lock_key = ? AND lock_value = ?;";
   public static final String DELETE_EXPIRED_FORMATTED_QUERY = "DELETE FROM %s WHERE expire_at < ?;";
   public static final String REFRESH_FORMATTED_QUERY = "UPDATE %s SET expire_at = ? WHERE lock_key = ? AND lock_value = ?;";
+  public static final String QUERY_FORMATTED_QUERY = "SELECT * FROM %s WHERE lock_key = ?;";
   private static final Logger LOGGER = LoggerFactory
       .getLogger(SimpleJdbcDistributedLockProvider.class);
   private final JdbcTemplate jdbcTemplate;
@@ -122,6 +127,11 @@ public class SimpleJdbcDistributedLockProvider implements DistributedLockProvide
     LOGGER.debug("Expired {} locks", expired);
 
     try {
+      // 先查询一下有没有锁，如果有直接返回，避免做一次insert
+      List<Map<String, Object>> result = jdbcTemplate.queryForList(String.format(QUERY_FORMATTED_QUERY, distributedLock.storeName()), distributedLock.lockKey());
+      if (!result.isEmpty()) {
+        return false;
+      }
       now = System.currentTimeMillis();
       final long expireAt = now + distributedLock.expireMills();
       final int created = jdbcTemplate
