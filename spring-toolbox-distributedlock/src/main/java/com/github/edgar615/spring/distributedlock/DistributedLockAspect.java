@@ -17,11 +17,6 @@ import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-/**
- * Created on Sep 18, 2018
- *
- * @author Chuan Qin
- */
 @Aspect
 public class DistributedLockAspect {
 

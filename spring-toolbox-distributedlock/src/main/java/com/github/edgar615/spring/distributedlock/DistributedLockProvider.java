@@ -1,10 +1,5 @@
 package com.github.edgar615.spring.distributedlock;
 
-/**
- * Created on Sep 18, 2018
- *
- * @author Chuan Qin
- */
 public interface DistributedLockProvider {
 
   /**

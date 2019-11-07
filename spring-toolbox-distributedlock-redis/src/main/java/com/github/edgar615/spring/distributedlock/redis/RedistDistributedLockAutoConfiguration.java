@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedistDistributedLockAutoConfiguration {
 
   @Bean(name = "simpleRedistDistributedLockProvider")
-  @ConditionalOnMissingBean
+  @ConditionalOnMissingBean(name = "simpleRedistDistributedLockProvider")
   public DistributedLockProvider distributedLockProvider(
       RedisTemplate<String, String> redisTemplate) {
     return new SimpleRedistDistributedLockProvider(redisTemplate);
