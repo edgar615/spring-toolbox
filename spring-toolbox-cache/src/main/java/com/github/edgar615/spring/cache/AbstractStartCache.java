@@ -18,9 +18,9 @@ public abstract class AbstractStartCache<ID, T extends Persistent<ID>>
   private final List<T> elements = new CopyOnWriteArrayList<>();
 
   @Override
-  public synchronized void add(List<T> datas) {
-    Objects.requireNonNull(datas);
-    elements.addAll(datas);
+  public synchronized void add(List<T> data) {
+    Objects.requireNonNull(data);
+    elements.addAll(data);
   }
 
   @Override
@@ -30,9 +30,9 @@ public abstract class AbstractStartCache<ID, T extends Persistent<ID>>
   }
 
   @Override
-  public synchronized void update(List<T> datas) {
-    delete(datas);
-    add(datas);
+  public synchronized void update(List<T> data) {
+    delete(data);
+    add(data);
   }
 
   @Override
@@ -42,9 +42,9 @@ public abstract class AbstractStartCache<ID, T extends Persistent<ID>>
   }
 
   @Override
-  public synchronized void delete(List<T> datas) {
-    Objects.requireNonNull(datas);
-    List<ID> ids = datas.stream()
+  public synchronized void delete(List<T> data) {
+    Objects.requireNonNull(data);
+    List<ID> ids = data.stream()
             .map(cs -> cs.id())
             .collect(Collectors.toList());
     elements.removeIf(e -> ids.contains(e.id()));
@@ -56,10 +56,12 @@ public abstract class AbstractStartCache<ID, T extends Persistent<ID>>
     elements.removeIf(e -> data.id().equals(e.id()));
   }
 
+  @Override
   public List<T> elements() {
     return new ArrayList<>(elements);
   }
 
+  @Override
   public T get(ID id) {
     return elements.stream().filter(e -> e.id().equals(id))
             .findFirst().orElse(null);

@@ -50,9 +50,9 @@ public interface StartCache<ID, T extends Persistent<ID>> {
   /**
    * 增加数据
    *
-   * @param datas
+   * @param data
    */
-  void add(List<T> datas);
+  void add(List<T> data);
 
   /**
    * 增加数据
@@ -64,9 +64,9 @@ public interface StartCache<ID, T extends Persistent<ID>> {
   /**
    * 修改数据
    *
-   * @param datas
+   * @param data
    */
-  void update(List<T> datas);
+  void update(List<T> data);
 
   /**
    * 修改数据
@@ -78,9 +78,9 @@ public interface StartCache<ID, T extends Persistent<ID>> {
   /**
    * 删除数据
    *
-   * @param datas
+   * @param data
    */
-  void delete(List<T> datas);
+  void delete(List<T> data);
 
   /**
    * 删除数据
