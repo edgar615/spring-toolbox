@@ -30,17 +30,17 @@ public class SystemPropertyAutoConfiguration {
   @Bean
   public RequestLoggerFilter loggerFilter(WebProperties webProperties) {
     RequestLoggerFilter filter = new RequestLoggerFilter();
-    if (webProperties.getWebLogConfig() == null) {
+    if (webProperties.getLogConfig() == null) {
       return filter;
     }
-    WebLogConfig webLogConfig = webProperties.getWebLogConfig();
+    WebLogConfig webLogConfig = webProperties.getLogConfig();
     webLogConfig.setShowTrace(webLogConfig.isShowTrace());
     webLogConfig.setShowReqBody(webLogConfig.isShowReqBody());
 
     if (webLogConfig.getIgnoreLogPath() == null) {
       return filter;
     }
-    List<String> ignoreList = webProperties.getWebLogConfig().getIgnoreLogPath();
+    List<String> ignoreList = webProperties.getLogConfig().getIgnoreLogPath();
     for (String ignore : ignoreList) {
       filter.addIgnorePrefix(ignore);
     }

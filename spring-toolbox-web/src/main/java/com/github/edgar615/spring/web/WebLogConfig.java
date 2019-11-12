@@ -8,6 +8,8 @@ public class WebLogConfig {
 
   private boolean showReqBody;
 
+  private boolean showErrorStackTrace;
+
   private List<String> ignoreLogPath;
 
   public boolean isShowTrace() {
@@ -32,5 +34,13 @@ public class WebLogConfig {
 
   public void setShowReqBody(boolean showReqBody) {
     this.showReqBody = showReqBody;
+  }
+
+  public boolean isShowErrorStackTrace() {
+    return showErrorStackTrace;
+  }
+
+  public void setShowErrorStackTrace(boolean showErrorStackTrace) {
+    this.showErrorStackTrace = showErrorStackTrace;
   }
 }

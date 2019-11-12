@@ -40,6 +40,9 @@ import java.util.List;
 @ControllerAdvice
 public class ExceptionHandlerController {
 
+  @Autowired
+  private WebProperties webProperties;
+
   private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
   @ExceptionHandler(value = NoHandlerFoundException.class)
@@ -232,7 +235,15 @@ public class ExceptionHandlerController {
   @ExceptionHandler(SystemException.class)
   public ModelAndView handleSystemException(
           SystemException ex, HttpServletRequest request, HttpServletResponse response) {
-    LOGGER.warn("Handling SystemException: {}", ex.getErrorCode().getNumber(), ex);
+    ErrorCode errorCode = ex.getErrorCode();
+    if (errorCode == DefaultErrorCode.UNKOWN) {
+      LOGGER.warn("ex:::{}::{}", ex.getErrorCode().getNumber(), ex.getErrorCode().getMessage(), ex);
+    } else if (webProperties.getLogConfig() != null && webProperties.getLogConfig().isShowErrorStackTrace()) {
+      LOGGER.warn("ex:::{}::{}", ex.getErrorCode().getNumber(), ex.getErrorCode().getMessage(), ex);
+    } else {
+      LOGGER.warn("ex:::{}::{}", ex.getErrorCode().getNumber(), ex.getErrorCode().getMessage());
+    }
+
     response.setStatus(StatusBind.instance().statusCode(ex.getErrorCode().getNumber()));
     String contentType = request.getContentType();
     if (contentType != null && contentType.startsWith("application/json")) {
@@ -263,7 +274,6 @@ public class ExceptionHandlerController {
   @ExceptionHandler(ValidationException.class)
   public ModelAndView handleValidationException(
           ValidationException ex, HttpServletRequest request, HttpServletResponse response) {
-    LOGGER.warn("Handling ValidationException: {}", ex.getMessage(), ex);
     SystemException systemException = SystemException.create(DefaultErrorCode.INVALID_ARGS);
     if (!ex.getErrorDetail().isEmpty()) {
       systemException.set("details", ex.getErrorDetail().asMap());

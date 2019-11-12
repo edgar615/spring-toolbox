@@ -2,8 +2,9 @@ spring:
     application:
         name: web
 web:
-  log:
+  logConfig:
     showTrace: false
+    showErrorStackTrace: false
   interceptors:
     SimpleAuthInterceptor:
       exclude:
