@@ -1,6 +1,6 @@
 package com.github.edgar615.spring.web;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -24,14 +24,24 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnWebApplication
-@EnableConfigurationProperties({SystemProperty.class, LogProperty.class})
+@EnableConfigurationProperties({WebProperties.class})
 public class SystemPropertyAutoConfiguration {
 
   @Bean
-  @ConditionalOnProperty(name = "system.log.enabled", havingValue = "true", matchIfMissing = false)
-  public RequestLoggerFilter loggerFilter(LogProperty logProperty) {
+  public RequestLoggerFilter loggerFilter(WebProperties webProperties) {
     RequestLoggerFilter filter = new RequestLoggerFilter();
-    for (String ignore : logProperty.getIgnore()) {
+    if (webProperties.getWebLogConfig() == null) {
+      return filter;
+    }
+    WebLogConfig webLogConfig = webProperties.getWebLogConfig();
+    webLogConfig.setShowTrace(webLogConfig.isShowTrace());
+    webLogConfig.setShowReqBody(webLogConfig.isShowReqBody());
+
+    if (webLogConfig.getIgnoreLogPath() == null) {
+      return filter;
+    }
+    List<String> ignoreList = webProperties.getWebLogConfig().getIgnoreLogPath();
+    for (String ignore : ignoreList) {
       filter.addIgnorePrefix(ignore);
     }
     return filter;

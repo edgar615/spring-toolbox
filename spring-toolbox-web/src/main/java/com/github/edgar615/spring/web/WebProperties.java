@@ -1,5 +1,6 @@
 package com.github.edgar615.spring.web;
 
+import java.util.List;
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class WebProperties {
 
+  private WebLogConfig webLogConfig;
+
   private Map<String, InterceptorConfig> interceptors;
 
   public Map<String, InterceptorConfig> getInterceptors() {
@@ -22,5 +25,13 @@ public class WebProperties {
   public void setInterceptors(
       Map<String, InterceptorConfig> interceptors) {
     this.interceptors = interceptors;
+  }
+
+  public WebLogConfig getWebLogConfig() {
+    return webLogConfig;
+  }
+
+  public void setWebLogConfig(WebLogConfig webLogConfig) {
+    this.webLogConfig = webLogConfig;
   }
 }

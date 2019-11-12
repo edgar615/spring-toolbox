@@ -42,9 +42,6 @@ public class ExceptionHandlerController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
-  @Autowired
-  private SystemProperty systemProperty;
-
   @ExceptionHandler(value = NoHandlerFoundException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ModelAndView defaultErrorHandler(NoHandlerFoundException ex,
@@ -245,20 +242,11 @@ public class ExceptionHandlerController {
       mav.addAllObjects(ex.getProperties());
       return mav;
     } else {
-      int statusCode = StatusBind.instance().statusCode(ex.getErrorCode().getNumber());
-      if (systemProperty.getErrorPage().containsKey(statusCode + "")) {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName(systemProperty.getErrorPage().get(statusCode + ""));
-        mav.addObject("code", ex.getErrorCode().getNumber());
-        mav.addObject("message", ex.getErrorCode().getMessage());
-        return mav;
-      } else {
-        ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
-        mav.addObject("code", ex.getErrorCode().getNumber());
-        mav.addObject("message", ex.getErrorCode().getMessage());
-        mav.addAllObjects(ex.getProperties());
-        return mav;
-      }
+      ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
+      mav.addObject("code", ex.getErrorCode().getNumber());
+      mav.addObject("message", ex.getErrorCode().getMessage());
+      mav.addAllObjects(ex.getProperties());
+      return mav;
     }
 
   }

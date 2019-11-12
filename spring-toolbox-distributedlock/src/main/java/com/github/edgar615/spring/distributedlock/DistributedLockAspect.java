@@ -25,15 +25,15 @@ public class DistributedLockAspect {
   private final ExpressionParser parser = new SpelExpressionParser();
   private final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
 
-  private final DistributedLockProvider distributedLockProvider;
+  private final DistributedLockManager distributedLockManager;
 
   /**
    * 应用ID，暂时先随机生成，后面根据服务发现来生成
    */
   private final String applicationId;
 
-  public DistributedLockAspect(DistributedLockProvider distributedLockProvider) {
-    this.distributedLockProvider = distributedLockProvider;
+  public DistributedLockAspect(DistributedLockManager distributedLockManager) {
+    this.distributedLockManager = distributedLockManager;
     this.applicationId = UUID.randomUUID().toString().replace("-", "");
   }
 
@@ -59,7 +59,7 @@ public class DistributedLockAspect {
         lockKey, lockValue, distributeLock.expireMills());
     distributedLock.setRetryIntervalMills(distributeLock.retryIntervalMills());
     distributedLock.setRetryTimes(distributeLock.retryTimes());
-    boolean lockAquired = distributedLockProvider.acquire(distributedLock);
+    boolean lockAquired = distributedLockManager.acquire(distributedLock);
     if (!lockAquired) {
       LOGGER.warn("Acquire lock failed");
       throw SystemException.create(DefaultErrorCode.RESOURCE_OCCUPIED);
@@ -69,7 +69,7 @@ public class DistributedLockAspect {
 
     Object rawResult = pjp.proceed();
 
-    boolean lockReleased = distributedLockProvider
+    boolean lockReleased = distributedLockManager
         .release(distributedLock.storeName(), lockKey, lockValue);
     if (!lockReleased) {
       LOGGER.warn("Released lock failed");

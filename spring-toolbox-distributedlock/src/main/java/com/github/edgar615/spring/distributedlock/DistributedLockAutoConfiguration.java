@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass(DistributedLockProvider.class)
+@ConditionalOnClass(DistributedLockManager.class)
 public class DistributedLockAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(DistributedLockProvider.class)
-    public DistributedLockAspect distributedLockAspect(DistributedLockProvider distributedLockProvider) {
-        return new DistributedLockAspect(distributedLockProvider);
+    @ConditionalOnBean(DistributedLockManager.class)
+    public DistributedLockAspect distributedLockAspect(DistributedLockManager distributedLockManager) {
+        return new DistributedLockAspect(distributedLockManager);
     }
 }

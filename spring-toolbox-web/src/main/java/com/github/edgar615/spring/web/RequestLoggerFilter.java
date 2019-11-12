@@ -1,8 +1,21 @@
 package com.github.edgar615.spring.web;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -11,20 +24,11 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-
 /**
  * Doogies very cool HTTP request logging
  * <p>
- * There is also {@link org.springframework.web.filter.CommonsRequestLoggingFilter}  but it
- * cannot log request method
- * And it cannot easily be extended.
+ * There is also {@link org.springframework.web.filter.CommonsRequestLoggingFilter}  but it cannot
+ * log request method And it cannot easily be extended.
  * <p>
  * https://mdeinum.wordpress.com/2015/07/01/spring-framework-hidden-gems/
  * http://stackoverflow.com/questions/8933054/how-to-read-and-copy-the-http-servlet-response
@@ -42,19 +46,19 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
 
   private boolean logReqBody = true;
 
+  private boolean logTraceId = true;
+
   /**
    * Log each request and respponse with full Request URI, content payload and duration of the
    * request in ms.
    *
-   * @param request     the request
-   * @param response    the response
+   * @param request the request
+   * @param response the response
    * @param filterChain chain of filters
-   * @throws ServletException
-   * @throws IOException
    */
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                  FilterChain filterChain) throws ServletException, IOException {
+      FilterChain filterChain) throws ServletException, IOException {
     String url = request.getServletPath();
     for (String prefix : ignorePrefixes) {
       if (url.startsWith(prefix)) {
@@ -77,42 +81,71 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     // NOT WORK!
     // So we need to apply some stronger magic here :-)
     ResettableStreamRequestWrapper wrappedRequest
-            = new ResettableStreamRequestWrapper(request);
+        = new ResettableStreamRequestWrapper(request);
     ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(response);
 
     // I can only log the request's body AFTER the request has been made and
     // ContentCachingRequestWrapper did its work.
-    String body = wrappedRequest.getRequestBody();
-//     [跟踪ID] [SR] [类型] [接口] [入参]...[入参] [调用方]
-    LOGGER.info("[{}] [SR] [HTTP] [{} {}] [{}] [{}] [{}] [{}]", traceId, request.getMethod(), request.getServletPath(),
-            headerString(request), paramString(request),
-            !logReqBody || Strings.isNullOrEmpty(body) ? "no body" : body,
-            getClientIp(request));
+
+    logReceviced(traceId, wrappedRequest);
     long startTime = System.currentTimeMillis();
     filterChain.doFilter(wrappedRequest,
-            wrappedResponse);     // ======== This performs the actual request!
+        wrappedResponse);     // ======== This performs the actual request!
     wrappedResponse.addHeader("X-Request-Id", traceId);
-
-    //[跟踪ID] [SS] [类型] [结果] ... [结果] [耗时]
-    LOGGER.info("[{}] [SS] [HTTP] [{}] [{}] [{}bytes] [{}ms]", traceId,
-            response.getStatus(),
-            respHeaderString(response),
-            wrappedResponse.getContentAsByteArray().length,
-            System.currentTimeMillis() - startTime);
+    logSend(traceId, startTime, wrappedResponse);
 
     wrappedResponse
-            .copyBodyToResponse();
+        .copyBodyToResponse();
     MDC.remove("x-request-id");
     // IMPORTANT: copy content of response back into original response
-
-  }
-
-  public void addIgnorePrefix(String prefix) {
-    ignorePrefixes.add(prefix);
   }
 
   public void setLogReqBody(boolean logReqBody) {
     this.logReqBody = logReqBody;
+  }
+
+  public void setLogTraceId(boolean logTraceId) {
+    this.logTraceId = logTraceId;
+  }
+
+  private void logSend(String traceId, long startTime, ContentCachingResponseWrapper response) {
+    if (logTraceId) {
+      // 跟踪ID:::HTTP:::SS:::响应码:::耗时:::响应字节数:::响应头
+      LOGGER.info("{}:::HTTP:::SS:::{}:::{}ms:::{}:::{}", traceId, response.getStatus(),
+          System.currentTimeMillis() - startTime,
+          response.getContentAsByteArray().length,
+          respHeaderString(response));
+    } else {
+      LOGGER.info("HTTP:::SS:::{}:::{}ms:::{}:::{}", response.getStatus(),
+          System.currentTimeMillis() - startTime,
+          response.getContentAsByteArray().length,
+          respHeaderString(response));
+    }
+  }
+
+  private void logReceviced(String traceId, ResettableStreamRequestWrapper request) {
+    String body = request.getRequestBody();
+    if (logTraceId) {
+      // 跟踪ID:::HTTP:::SR:::调用方IP:::请求方法 请求地址:::请求体字节数:::请求头:::请求参数:::请求体
+      LOGGER
+          .info("{}:::HTTP:::SR:::{}:::{} {}:::{}bytes:::{}:::{}:::{}", traceId,
+              getClientIp(request),
+              request.getMethod(), request.getServletPath(),
+              !logReqBody || Strings.isNullOrEmpty(body) ? "0" : body.getBytes().length,
+              headerString(request), paramString(request),
+              !logReqBody || Strings.isNullOrEmpty(body) ? "-" : body);
+    } else {
+      LOGGER
+          .info("HTTP:::SR:::{}:::{} {}:::{}bytes:::{}:::{}:::{}", getClientIp(request),
+              request.getMethod(), request.getServletPath(),
+              !logReqBody || Strings.isNullOrEmpty(body) ? "0" : body.getBytes().length,
+              headerString(request), paramString(request),
+              !logReqBody || Strings.isNullOrEmpty(body) ? "-" : body);
+    }
+  }
+
+  public void addIgnorePrefix(String prefix) {
+    ignorePrefixes.add(prefix);
   }
 
   @Deprecated
@@ -120,7 +153,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     // wrap request to make sure we can read the body of the request (otherwise it will be consumed by the actual
     // request handler)
     ContentCachingRequestWrapper wrapper = WebUtils
-            .getNativeRequest(request, ContentCachingRequestWrapper.class);
+        .getNativeRequest(request, ContentCachingRequestWrapper.class);
     if (wrapper != null) {
       byte[] buf = wrapper.getContentAsByteArray();
       if (buf.length > 0) {
@@ -134,12 +167,14 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
         return payload;
       }
     }
-    return "no body";
+    return "-";
   }
 
   @Deprecated
   private String getContentAsString(byte[] buf, int maxLength, String charsetName) {
-    if (buf == null || buf.length == 0) return "";
+    if (buf == null || buf.length == 0) {
+      return "";
+    }
     int length = Math.min(buf.length, this.maxPayloadLength);
     try {
       return new String(buf, 0, length, charsetName);
@@ -148,50 +183,55 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     }
   }
 
-  private String headerString(HttpServletRequest request) {
-    StringBuilder sb = new StringBuilder();
+  private Map<String, Object> headerString(HttpServletRequest request) {
+    Map<String, Object> headerMap = new HashMap<>();
     Enumeration<String> headers = request.getHeaderNames();
     while (headers.hasMoreElements()) {
       String name = headers.nextElement();
       Enumeration<String> value = request.getHeaders(name);
-      sb.append(name).append(":")
-              .append(Joiner.on(",").join(Iterators.forEnumeration(value)))
-              .append(";");
+      List<String> valueList = Lists.newArrayList(Iterators.forEnumeration(value));
+      if (valueList.isEmpty()) {
+        // ignore
+      } else if (valueList.size() == 1) {
+        headerMap.put(name, valueList.get(0));
+      } else {
+        headerMap.put(name, valueList);
+      }
     }
-    if (sb.length() == 0) {
-      return "no header";
-    }
-    return sb.toString();
+    return headerMap;
   }
 
-  private String paramString(HttpServletRequest request) {
-    StringBuilder sb = new StringBuilder();
+  private Map<String, Object> paramString(HttpServletRequest request) {
+    Map<String, Object> paramMap = new HashMap<>();
     Enumeration<String> names = request.getParameterNames();
     while (names.hasMoreElements()) {
       String name = names.nextElement();
-      String[] values = request.getParameterValues(name);
-      sb.append(name).append(":")
-              .append(Joiner.on(",").join(Iterators.forArray(values)))
-              .append(";");
+      List<String> valueList = Lists.newArrayList(request.getParameterValues(name));
+      if (valueList.isEmpty()) {
+        // ignore
+      } else if (valueList.size() == 1) {
+        paramMap.put(name, valueList.get(0));
+      } else {
+        paramMap.put(name, valueList);
+      }
     }
-    if (sb.length() == 0) {
-      return "no param";
-    }
-    return sb.toString();
+    return paramMap;
   }
 
-  private String respHeaderString(HttpServletResponse response) {
-    StringBuilder sb = new StringBuilder();
+  private Map<String, Object> respHeaderString(HttpServletResponse response) {
+    Map<String, Object> headerMap = new HashMap<>();
     Collection<String> headers = response.getHeaderNames();
     for (String name : headers) {
-      sb.append(name).append(":")
-              .append(Joiner.on(",").join(response.getHeaders(name)))
-              .append(";");
+      List<String> valueList = new ArrayList<>(response.getHeaders(name));
+      if (valueList.isEmpty()) {
+        // ignore
+      } else if (valueList.size() == 1) {
+        headerMap.put(name, valueList.get(0));
+      } else {
+        headerMap.put(name, valueList);
+      }
     }
-    if (sb.length() == 0) {
-      return "no header";
-    }
-    return sb.toString();
+    return headerMap;
   }
 
   private String getClientIp(HttpServletRequest request) {
@@ -211,5 +251,4 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     }
     return request.getRemoteHost();
   }
-
 }

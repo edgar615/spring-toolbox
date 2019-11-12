@@ -1,12 +1,9 @@
 spring:
     application:
         name: web
-
-system:
-  log:
-    enabled: true
-
 web:
+  log:
+    showTrace: false
   interceptors:
     SimpleAuthInterceptor:
       exclude:
