@@ -14,8 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class JdbcDistributedLockAutoConfiguration {
 
-    @Bean(name = "simpleJdbcDistributedLockProvider")
-    @ConditionalOnMissingBean(name = "simpleJdbcDistributedLockProvider")
+    @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnBean(DataSource.class)
     public DistributedLockProvider distributedLockProvider(DataSource dataSource) {
         return new SimpleJdbcDistributedLockProvider(new JdbcTemplate(dataSource));

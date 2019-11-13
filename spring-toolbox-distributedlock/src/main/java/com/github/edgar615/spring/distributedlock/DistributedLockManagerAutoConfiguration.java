@@ -1,6 +1,5 @@
 package com.github.edgar615.spring.distributedlock;
 
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -8,15 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass(DistributedLockManager.class)
-@AutoConfigureAfter(DistributedLockManagerAutoConfiguration.class)
-public class DistributedLockAutoConfiguration {
+@ConditionalOnClass(DistributedLockProvider.class)
+public class DistributedLockManagerAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    @ConditionalOnBean(DistributedLockManager.class)
-    public DistributedLockAspect distributedLockAspect(DistributedLockManager distributedLockManager) {
-        return new DistributedLockAspect(distributedLockManager);
+    @ConditionalOnBean(DistributedLockProvider.class)
+    public DistributedLockManager distributedLockManager(DistributedLockProvider distributedLockProvider) {
+        return new SimpleDistributedLockManager(distributedLockProvider);
     }
-
 }

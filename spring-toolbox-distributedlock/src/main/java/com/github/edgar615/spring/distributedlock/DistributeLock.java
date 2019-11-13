@@ -17,7 +17,6 @@ public @interface DistributeLock {
     /**
      * 锁的存储空间，对于redis来说，这个就是redis key的前缀，对于数据库来说这个值是数据库表名
      *
-     * 支持spring EL表达式，便于DB在高并发时候对热点资源进行拆分，redis锁一般用不到
      * @return
      */
     String storeName() default "distributed_lock";

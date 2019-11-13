@@ -5,6 +5,7 @@ import com.github.edgar615.util.exception.ErrorCode;
 import com.github.edgar615.util.exception.SystemException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import org.awaitility.Awaitility;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,8 +42,8 @@ public class DistributedLockAspectTest {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    int count = ((MockLocalLockProvier) distributedLockProvider).count();
-    Assert.assertEquals(1, count);
+
+    Awaitility.await().until(() -> ((MockLocalLockProvier) distributedLockProvider).count() == 1);
     try {
       orderService.pay(orderNo, 0);
     } catch (Exception e) {
