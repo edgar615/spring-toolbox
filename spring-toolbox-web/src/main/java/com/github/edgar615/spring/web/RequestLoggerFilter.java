@@ -131,7 +131,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
           .info("{}:::HTTP:::SR:::{}:::{} {}:::{}bytes:::{}:::{}:::{}", traceId,
               getClientIp(request),
               request.getMethod(), request.getServletPath(),
-              !logReqBody || Strings.isNullOrEmpty(body) ? "0" : body.getBytes().length,
+              Strings.isNullOrEmpty(body) ? "0" : body.getBytes().length,
               headerString(request), paramString(request),
               !logReqBody || Strings.isNullOrEmpty(body) ? "-" : body);
     } else {
