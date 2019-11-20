@@ -1,6 +1,8 @@
 package com.github.edgar615.spring.jdbc;
 
 import com.github.edgar615.util.db.Persistent;
+import com.github.edgar615.util.db.PersistentKit;
+import com.github.edgar615.util.reflect.ReflectionException;
 import com.github.edgar615.util.search.Example;
 import com.github.edgar615.util.search.MoreExample;
 import java.util.ArrayList;
@@ -83,11 +85,13 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
     if (fields == null || fields.isEmpty()) {
       return result;
     }
-    Map<String, Object> map = result.toMap();
+    PersistentKit kit = kit(elementType);
+    Map<String, Object> map = new HashMap<>();
+    kit.toMap(result, map);
     Map<String, Object> newMap = new HashMap<>();
     fields.stream().forEach(f -> newMap.put(f, map.get(f)));
     Persistent<ID> newResult = Persistent.create(elementType);
-    newResult.fromMap(newMap);
+    kit.fromMap(newMap, newResult);
     return (T) newResult;
   }
 
@@ -178,6 +182,14 @@ public class CachedJdbcOperationImpl implements JdbcOperation {
   public <ID, T extends Persistent<ID>> int countByExample(Class<T> elementType,
       Example example) {
     return jdbcOperation.countByExample(elementType, example);
+  }
+
+  private <ID, T extends Persistent<ID>> PersistentKit kit(Class<T> elementType) {
+    try {
+      return (PersistentKit) Class.forName(elementType.getName() + "Kit").newInstance();
+    } catch (Exception e) {
+      throw new ReflectionException("create instance failed");
+    }
   }
 
 }

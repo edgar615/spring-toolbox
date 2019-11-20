@@ -163,50 +163,6 @@ public class Device implements Persistent<Integer> {
     return deviceId;
   }
 
-  @Override
-  public List<String> fields() {
-    return Lists.newArrayList("deviceId",
-        "parentId",
-        "isVirtual",
-        "companyCode",
-        "name",
-        "barcode",
-        "macAddress",
-        "encryptKey",
-        "type",
-        "isOnline",
-        "addOn",
-        "createdOn");
-  }
-
-  @Override
-  public String primaryField() {
-    return "deviceId";
-  }
-
-  @Override
-  public Map<String, Object> toMap() {
-    Map<String, Object> map = Maps.newHashMap();
-    map.put("deviceId", deviceId);
-    map.put("parentId", parentId);
-    map.put("isVirtual", isVirtual);
-    map.put("companyCode", companyCode);
-    map.put("name", name);
-    map.put("barcode", barcode);
-    map.put("macAddress", macAddress);
-    map.put("encryptKey", encryptKey);
-    map.put("type", type);
-    map.put("isOnline", isOnline);
-    map.put("addOn", addOn);
-    map.put("createdOn", createdOn);
-    return map;
-  }
-
-  @Override
-  public void fromMap(Map<String, Object> map) {
-
-  }
-
   public Integer getDeviceId() {
     return deviceId;
   }

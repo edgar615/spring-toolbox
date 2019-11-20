@@ -2,8 +2,10 @@ package com.github.edgar615.spring.jdbc;
 
 import com.github.edgar615.util.base.StringUtils;
 import com.github.edgar615.util.db.Persistent;
+import com.github.edgar615.util.db.PersistentKit;
 import com.github.edgar615.util.db.SQLBindings;
 import com.github.edgar615.util.db.SqlBuilder;
+import com.github.edgar615.util.reflect.ReflectionException;
 import com.github.edgar615.util.search.Example;
 import com.github.edgar615.util.search.MoreExample;
 import com.google.common.collect.Lists;
@@ -45,15 +47,22 @@ public class JdbcOperationImpl implements JdbcOperation {
       insert(persistent);
       return persistent.id();
     }
+    PersistentKit kit = null;
+    try {
+       kit = (PersistentKit) Class.forName(persistent.getClass().getName() + "Kit").newInstance();
+    } catch (Exception e) {
+      throw new ReflectionException("create instance failed");
+    }
     SQLBindings sqlBindings = SqlBuilder.insert(persistent);
     JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
     KeyHolder keyHolder = new GeneratedKeyHolder();
+    PersistentKit finalKit = kit;
     jdbcTemplate.update(
         connection -> {
           PreparedStatement ps
               = connection.prepareStatement(sqlBindings.sql(),
               new String[]{StringUtils.underscoreName(
-                  persistent.primaryField())}
+                  finalKit.primaryField())}
           );
           int i = 1;
           for (Object arg : sqlBindings.bindings()) {
