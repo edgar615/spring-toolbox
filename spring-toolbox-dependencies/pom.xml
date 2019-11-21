@@ -19,7 +19,7 @@
         <HikariCP.version>2.4.1</HikariCP.version>
         <log4jdbc.version>1.0.2</log4jdbc.version>
         <swagger2.version>2.8.0</swagger2.version>
-        <jdbc.codegen.version>1.0.16</jdbc.codegen.version>
+        <jdbc.codegen.version>1.0.18</jdbc.codegen.version>
     </properties>
 
     <dependencyManagement>

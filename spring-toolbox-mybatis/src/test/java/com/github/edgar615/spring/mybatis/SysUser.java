@@ -418,33 +418,6 @@ public class SysUser implements Persistent<Long> {
            .toString();
     }
 
-    @Override
-    public List<String> fields() {
-      return Lists.newArrayList("sysUserId",
-						"companyId",
-						"companyCode",
-						"username",
-						"password",
-						"tel",
-						"mail",
-						"fullname",
-						"salt",
-						"state",
-						"sorted",
-						"mustChangePasswd",
-						"passwdChanged",
-						"lastLoginOn",
-						"addOn",
-						"language",
-						"timeZone",
-						"ext",
-						"internal");
-    }
-
-    @Override
-    public String primaryField() {
-        return "sysUserId";
-    }
 
     @Override
     public Long id () {
@@ -460,96 +433,6 @@ public class SysUser implements Persistent<Long> {
     public void setGeneratedKey(Number key) {
 
         this.sysUserId = key.longValue();
-
-    }
-
-    @Override
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("sysUserId",  sysUserId);
-        map.put("companyId",  companyId);
-        map.put("companyCode",  companyCode);
-        map.put("username",  username);
-        map.put("password",  password);
-        map.put("tel",  tel);
-        map.put("mail",  mail);
-        map.put("fullname",  fullname);
-        map.put("salt",  salt);
-        map.put("state",  state);
-        map.put("sorted",  sorted);
-        map.put("mustChangePasswd",  mustChangePasswd);
-        map.put("passwdChanged",  passwdChanged);
-        map.put("lastLoginOn",  lastLoginOn);
-        map.put("addOn",  addOn);
-        map.put("language",  language);
-        map.put("timeZone",  timeZone);
-        map.put("ext",  ext);
-        map.put("internal",  internal);
-        return map;
-    }
-
-    @Override
-    public void fromMap(Map<String, Object> map) {
-        if (map == null) {
-            return;
-        }
-        if (map.get("sysUserId") instanceof Long) {
-            this.sysUserId = (Long) map.get("sysUserId");
-        }
-        if (map.get("companyId") instanceof Long) {
-            this.companyId = (Long) map.get("companyId");
-        }
-        if (map.get("companyCode") instanceof String) {
-            this.companyCode = (String) map.get("companyCode");
-        }
-        if (map.get("username") instanceof String) {
-            this.username = (String) map.get("username");
-        }
-        if (map.get("password") instanceof String) {
-            this.password = (String) map.get("password");
-        }
-        if (map.get("tel") instanceof String) {
-            this.tel = (String) map.get("tel");
-        }
-        if (map.get("mail") instanceof String) {
-            this.mail = (String) map.get("mail");
-        }
-        if (map.get("fullname") instanceof String) {
-            this.fullname = (String) map.get("fullname");
-        }
-        if (map.get("salt") instanceof String) {
-            this.salt = (String) map.get("salt");
-        }
-        if (map.get("state") instanceof Integer) {
-            this.state = (Integer) map.get("state");
-        }
-        if (map.get("sorted") instanceof Integer) {
-            this.sorted = (Integer) map.get("sorted");
-        }
-        if (map.get("mustChangePasswd") instanceof Boolean) {
-            this.mustChangePasswd = (Boolean) map.get("mustChangePasswd");
-        }
-        if (map.get("passwdChanged") instanceof Boolean) {
-            this.passwdChanged = (Boolean) map.get("passwdChanged");
-        }
-        if (map.get("lastLoginOn") instanceof Integer) {
-            this.lastLoginOn = (Integer) map.get("lastLoginOn");
-        }
-        if (map.get("addOn") instanceof Integer) {
-            this.addOn = (Integer) map.get("addOn");
-        }
-        if (map.get("language") instanceof Integer) {
-            this.language = (Integer) map.get("language");
-        }
-        if (map.get("timeZone") instanceof Integer) {
-            this.timeZone = (Integer) map.get("timeZone");
-        }
-        if (map.get("ext") instanceof String) {
-            this.ext = (String) map.get("ext");
-        }
-        if (map.get("internal") instanceof Boolean) {
-            this.internal = (Boolean) map.get("internal");
-        }
 
     }
 
