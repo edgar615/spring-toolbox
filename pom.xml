@@ -33,7 +33,7 @@
         <module>spring-toolbox-validator</module>
         <module>spring-toolbox-mybatis</module>
         <module>spring-toolbox-distributedlock</module>
-      <module>spring-toolbox-distributedlock-jdbc</module>
+        <module>spring-toolbox-distributedlock-jdbc</module>
         <module>spring-toolbox-distributedlock-redis</module>
     </modules>
 

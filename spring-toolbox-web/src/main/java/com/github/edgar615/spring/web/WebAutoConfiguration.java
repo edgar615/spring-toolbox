@@ -1,5 +1,7 @@
 package com.github.edgar615.spring.web;
 
+import com.github.edgar615.spring.web.log.RequestLoggerFilter;
+import com.github.edgar615.spring.web.log.WebLogConfig;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties({WebProperties.class})
-public class SystemPropertyAutoConfiguration {
+public class WebAutoConfiguration {
 
   @Bean
   public RequestLoggerFilter loggerFilter(WebProperties webProperties) {
@@ -34,7 +36,7 @@ public class SystemPropertyAutoConfiguration {
       return filter;
     }
     WebLogConfig webLogConfig = webProperties.getLogConfig();
-    webLogConfig.setShowTrace(webLogConfig.isShowTrace());
+    webLogConfig.setShowErrorStackTrace(webLogConfig.isShowErrorStackTrace());
     webLogConfig.setShowReqBody(webLogConfig.isShowReqBody());
 
     if (webLogConfig.getIgnoreLogPath() == null) {

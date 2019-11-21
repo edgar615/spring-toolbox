@@ -1,5 +1,6 @@
-package com.github.edgar615.spring.web;
+package com.github.edgar615.spring.web.log;
 
+import com.github.edgar615.spring.web.correlation.RequestCorrelationHolder;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -68,7 +69,7 @@ public class RequestLoggerFilter extends OncePerRequestFilter {
     }
 
 //    //从请求头中取出X-Request-Id，用于全局跟踪ID，如果未找到，自动生成一个新的跟踪ID
-    String traceId = request.getHeader("X-Request-Id");
+    String traceId = RequestCorrelationHolder.get();
     if (Strings.isNullOrEmpty(traceId)) {
       traceId = UUID.randomUUID().toString();
     }

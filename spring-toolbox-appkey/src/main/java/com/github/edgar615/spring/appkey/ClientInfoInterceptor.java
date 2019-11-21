@@ -6,7 +6,7 @@ import com.google.common.base.Strings;
 import com.github.edgar615.util.base.EncryptUtils;
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.SystemException;
-import com.github.edgar615.spring.web.ResettableStreamRequestWrapper;
+import com.github.edgar615.spring.web.log.ResettableStreamRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.Nullable;

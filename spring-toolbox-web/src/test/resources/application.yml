@@ -2,6 +2,7 @@ spring:
     application:
         name: web
 web:
+  correlation: uuid
   logConfig:
     showTrace: false
     showErrorStackTrace: false

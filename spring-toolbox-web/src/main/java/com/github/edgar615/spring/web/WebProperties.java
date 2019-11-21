@@ -1,5 +1,6 @@
 package com.github.edgar615.spring.web;
 
+import com.github.edgar615.spring.web.log.WebLogConfig;
 import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;

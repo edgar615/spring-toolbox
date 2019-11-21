@@ -1,24 +1,33 @@
-package com.github.edgar615.spring.web;
+package com.github.edgar615.spring.web.log;
 
 import java.util.List;
 
 public class WebLogConfig {
 
-  private boolean showTrace;
+  /**
+   *  是否打印请求体
+   */
+  private boolean showReqBody = false;
 
-  private boolean showReqBody;
+  /**
+   * 输出错误的堆栈信息，默认目前只有未知错误才打印
+   */
+  private boolean showErrorStackTrace = true;
 
-  private boolean showErrorStackTrace;
-
+  /**
+   * 忽略日志的路径
+   */
   private List<String> ignoreLogPath;
 
-  public boolean isShowTrace() {
-    return showTrace;
-  }
+  /**
+   * 参数黑名单，包括请求头，请求参数，请求体，响应头
+   */
+  private List<String> paramBlacklist;
 
-  public void setShowTrace(boolean showTrace) {
-    this.showTrace = showTrace;
-  }
+  /**
+   * 黑名单替换的字符串
+   */
+  private String scrubbedValue = "xxxxx";
 
   public List<String> getIgnoreLogPath() {
     return ignoreLogPath;

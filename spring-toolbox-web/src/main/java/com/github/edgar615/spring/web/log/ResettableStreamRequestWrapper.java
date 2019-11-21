@@ -1,4 +1,4 @@
-package com.github.edgar615.spring.web;
+package com.github.edgar615.spring.web.log;
 
 import com.google.common.io.CharStreams;
 
