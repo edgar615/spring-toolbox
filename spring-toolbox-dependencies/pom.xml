@@ -174,7 +174,6 @@
     </dependencyManagement>
 
     <build>
-        <finalName>microservice-${artifactId}-${version}</finalName>
         <pluginManagement>
             <plugins>
                 <!--校验开发环境-->

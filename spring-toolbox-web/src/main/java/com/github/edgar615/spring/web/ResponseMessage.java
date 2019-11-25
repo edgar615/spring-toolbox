@@ -18,6 +18,10 @@ public final class ResponseMessage {
     super();
   }
 
+  public static ModelAndView asSuccess() {
+    return asModelAndView(1);
+  }
+
   /**
    * 根据参数返回视图.
    * 返回的视图包括一个个属性 <code>result :  {result}</code>
