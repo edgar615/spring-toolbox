@@ -236,7 +236,7 @@ public class ExceptionHandlerController {
   public ModelAndView handleSystemException(
           SystemException ex, HttpServletRequest request, HttpServletResponse response) {
     ErrorCode errorCode = ex.getErrorCode();
-    if (errorCode == DefaultErrorCode.UNKOWN) {
+    if (errorCode.getNumber() == DefaultErrorCode.UNKOWN.getNumber()) {
       LOGGER.warn("ex:::{}::{}", ex.getErrorCode().getNumber(), ex.getErrorCode().getMessage(), ex);
     } else if (webProperties.getLogConfig() != null && webProperties.getLogConfig().isShowErrorStackTrace()) {
       LOGGER.warn("ex:::{}::{}", ex.getErrorCode().getNumber(), ex.getErrorCode().getMessage(), ex);
