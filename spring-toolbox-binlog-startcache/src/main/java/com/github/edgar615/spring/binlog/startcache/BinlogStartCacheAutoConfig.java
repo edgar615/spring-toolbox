@@ -1,6 +1,6 @@
 package com.github.edgar615.spring.binlog.startcache;
 
-import com.github.edgar615.spring.cache.StartCacheManager;
+import com.github.edgar615.util.cache.StartCacheManager;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

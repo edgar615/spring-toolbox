@@ -1,19 +1,16 @@
 package com.github.edgar615.spring.binlog.startcache;
 
-import com.github.edgar615.spring.binlog.DmlType;
-import com.google.common.base.CaseFormat;
-
-import com.github.edgar615.util.db.Persistent;
 import com.github.edgar615.spring.binlog.DbChangedData;
 import com.github.edgar615.spring.binlog.DbDataChangedEvent;
-import com.github.edgar615.spring.cache.StartCache;
-import com.github.edgar615.spring.cache.StartCacheManager;
+import com.github.edgar615.spring.binlog.DmlType;
+import com.github.edgar615.util.cache.StartCache;
+import com.github.edgar615.util.cache.StartCacheManager;
+import com.google.common.base.CaseFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class BinlogStartCacheEventListener implements ApplicationListener<DbDataChangedEvent> {
 
@@ -30,13 +27,13 @@ public class BinlogStartCacheEventListener implements ApplicationListener<DbData
     DbChangedData dbChangedData = (DbChangedData) event.getSource();
     try {
       String cacheName = CaseFormat.LOWER_UNDERSCORE.converterTo(CaseFormat.UPPER_CAMEL)
-                                 .convert(dbChangedData.table().toLowerCase()) + "StartCache";
+          .convert(dbChangedData.table().toLowerCase()) + "StartCache";
       StartCache startCache = cacheManager.getCache(cacheName);
       if (startCache != null) {
-        List<? extends Persistent> elements = dbChangedData.data()
-                .stream()
-                .map(d -> startCache.transform(d))
-                .collect(Collectors.toList());
+        List elements = dbChangedData.data()
+            .stream()
+            .map(d -> startCache.transform(d))
+            .collect(Collectors.toList());
         if (dbChangedData.type() == DmlType.INSERT) {
           LOGGER.debug("add cache: {}", elements.size());
           startCache.add(elements);
