@@ -1,13 +1,8 @@
 package com.github.edgar615.spring.cache;
 
-import com.google.common.base.Charsets;
-import com.google.common.hash.Funnel;
-import com.google.common.hash.HashCode;
-import com.google.common.hash.Hashing;
 import com.google.common.util.concurrent.Striped;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,33 +52,21 @@ public class L2Cache extends AbstractValueAdaptingCache {
 
   @Override
   public <T> T get(Object key, Callable<T> valueLoader) {
-    HashCode hashCode = Hashing.md5().newHasher().putObject(key,
-        (Funnel<Object>) (from, into) -> into.putString(from.toString(), Charsets.UTF_8)).hash();
-    int hash = Hashing.consistentHash(hashCode, 128);
-    ReadWriteLock lock = striped.get(hash);
-    Lock rl = lock.readLock();
-    Lock wl = lock.writeLock();
-    Object value = null;
-    try {
-      rl.lock();
-      value = lookup(key);
-    } finally {
-      rl.unlock();
-    }
+    Object value = lookup(key);
     if (value != null) {
       return (T) fromStoreValue(value);
     }
-    try {
-      wl.lock();
-      value = lookup(key);
-      if (value == null) {
-        value = valueLoader.call();
-        put(key, value);
+    String lockKey = "cacheLock:" + key.toString();
+    synchronized (lockKey) {
+      try {
+        value = lookup(key);
+        if (value == null) {
+          value = valueLoader.call();
+          put(key, value);
+        }
+      } catch (Exception e) {
+        throw new RuntimeException(e);
       }
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    } finally {
-      wl.unlock();
     }
     return (T) fromStoreValue(value);
   }

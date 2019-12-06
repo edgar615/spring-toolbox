@@ -26,3 +26,9 @@ caching:
             l1: caffeineCache1
             l2: caffeineCache2
 
+  autRefresh: #自动从数据库刷新缓存，防止缓存失效时造成的雪崩效应打爆数据库
+    caffeineCache1:
+      stopRefreshAfterLastAccess: 10000 #如果key在一段时间内未访问，不再执行自动更新，单位秒
+      refreshAfterEvict: true # 是否在缓存驱逐后自动更新
+      refreshAfterFirstAccess: 3000 #在key加入缓存后多久执行一次自动更新，如果缓存被驱逐，时间要从下次加入重新计算，单位秒
+
