@@ -22,16 +22,13 @@
         <module>spring-toolbox-jdbc</module>
         <module>spring-toolbox-eventbus-kafka</module>
         <module>spring-toolbox-auth</module>
-        <module>spring-toolbox-cache</module>
         <module>spring-toolbox-binlog</module>
         <module>spring-toolbox-operatelog</module>
         <module>spring-toolbox-feign</module>
         <module>spring-toolbox-appkey</module>
         <module>spring-toolbox-eventbus-local</module>
         <module>spring-toolbox-binlog-startcache</module>
-        <module>spring-toolbox-cache-redis</module>
         <module>spring-toolbox-validator</module>
-        <module>spring-toolbox-mybatis</module>
     </modules>
 
     <properties>
