@@ -2,9 +2,7 @@ package com.github.edgar615.spring.web;
 
 import com.github.edgar615.util.exception.DefaultErrorCode;
 import com.github.edgar615.util.exception.ErrorCode;
-import com.github.edgar615.util.exception.StatusBind;
 import com.github.edgar615.util.exception.SystemException;
-import com.github.edgar615.util.validation.ValidationException;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
@@ -244,7 +242,7 @@ public class ExceptionHandlerController {
       LOGGER.warn("ex:::{}::{}", ex.getErrorCode().getNumber(), ex.getErrorCode().getMessage());
     }
 
-    response.setStatus(StatusBind.instance().statusCode(ex.getErrorCode().getNumber()));
+//    response.setStatus(StatusBind.instance().statusCode(ex.getErrorCode().getNumber()));
     String contentType = request.getContentType();
     if (contentType != null && contentType.startsWith("application/json")) {
       ModelAndView mav = new ModelAndView(new MappingJackson2JsonView());
@@ -271,15 +269,15 @@ public class ExceptionHandlerController {
    * @param response HttpServletResponse
    * @return ModelAndView
    */
-  @ExceptionHandler(ValidationException.class)
-  public ModelAndView handleValidationException(
-          ValidationException ex, HttpServletRequest request, HttpServletResponse response) {
-    SystemException systemException = SystemException.create(DefaultErrorCode.INVALID_ARGS);
-    if (!ex.getErrorDetail().isEmpty()) {
-      systemException.set("details", ex.getErrorDetail().asMap());
-    }
-    return handleSystemException(systemException, request, response);
-  }
+//  @ExceptionHandler(ValidationException.class)
+//  public ModelAndView handleValidationException(
+//          ValidationException ex, HttpServletRequest request, HttpServletResponse response) {
+//    SystemException systemException = SystemException.create(DefaultErrorCode.INVALID_ARGS);
+//    if (!ex.getErrorDetail().isEmpty()) {
+//      systemException.set("details", ex.getErrorDetail().asMap());
+//    }
+//    return handleSystemException(systemException, request, response);
+//  }
 
   private ErrorCode createError(int code, String message, HttpStatus status) {
     return new ErrorCode() {
